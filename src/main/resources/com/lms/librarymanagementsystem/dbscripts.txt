@@ -1,0 +1,29 @@
+-- url:  "jdbc:mysql://localhost:3306/javafxtest"
+-- username: "your mysql username" (default is root)
+-- password: "your mysql password" (default is 1234)
+
+-- change url username and password in DBUtils.java if your db name, username and password differs from default
+-- check data source configuration in intellij for troubleshooting
+-- for mysql intellij setup tutorial, visit: https://www.youtube.com/watch?v=e8g9eNnFpHQ
+
+-- mysql database scripts
+
+create database javafxtest;
+
+create table javafxtest.users 	(
+								id INT NOT NULL AUTO_INCREMENT,
+								username VARCHAR(50) NOT NULL UNIQUE,
+                                password VARCHAR(50) NOT NULL,
+                                firstname VARCHAR(50) NOT NULL,
+                                lastname VARCHAR(50) NOT NULL,
+                                usertype VARCHAR(20) NOT NULL,
+                                PRIMARY KEY(id)
+                                );
+
+insert into javafxtest.users	(username, password, firstname, lastname, usertype
+								)
+VALUES
+                                (
+								'ltustudent1', 'abc', 'Lena', 'PH', 'student'
+								);
+

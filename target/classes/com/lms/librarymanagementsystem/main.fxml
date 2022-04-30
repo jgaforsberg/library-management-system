@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.MainController">
+   <children>
+      <AnchorPane prefHeight="200.0" prefWidth="225.0" style="-fx-background-color: #011B3E;">
+         <children>
+            <ImageView fitHeight="150.0" fitWidth="225.0" layoutX="35.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@ltu_logga.jpg" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane prefHeight="500.0" prefWidth="387.0" style="-fx-background-color: #F0F0F0;">
+         <children>
+            <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="172.0" layoutY="55.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@padlock_icon.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="usernameTextField" layoutX="115.0" layoutY="141.0" prefHeight="30.0" prefWidth="225.0" promptText="Användarnamn" style="-fx-cursor: text;" />
+            <PasswordField fx:id="passwordPasswordField" layoutX="115.0" layoutY="170.0" prefHeight="30.0" prefWidth="225.0" promptText="Lösenord" style="-fx-cursor: text;" />
+            <Button fx:id="loginButton" alignment="CENTER" layoutX="79.0" layoutY="215.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Logga in" textFill="#f0f0f0">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+            <Button fx:id="signupButton" alignment="CENTER" layoutX="79.0" layoutY="410.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Registrera" textFill="#f0f0f0">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <Button fx:id="exitButton" alignment="CENTER" layoutX="79.0" layoutY="450.0" mnemonicParsing="false" onAction="#exitProgram" prefHeight="25.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Avsluta" textFill="#f0f0f0">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+            <Label layoutX="14.0" layoutY="143.0" text="Användarnamn">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="175.0" text="Lösenord">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" layoutY="384.0" prefWidth="379.0" text="Inte medlem?">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </children>
+</HBox>
