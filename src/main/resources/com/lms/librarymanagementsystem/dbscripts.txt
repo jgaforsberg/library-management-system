@@ -3,7 +3,7 @@
 -- password: "your mysql password" (default is 1234)
 
 -- change url username and password in DBUtils.java if your db name, username and password differs from default
--- check data source configuration in intellij for troubleshooting 
+-- check data source configuration in intellij for troubleshooting
 -- for mysql intellij setup tutorial, visit: https://www.youtube.com/watch?v=e8g9eNnFpHQ
 
 -- mysql database scripts
