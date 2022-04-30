@@ -11,6 +11,9 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+//  #011B3E blue
+//  #F0F0F0 light gray
+
 public class MainController implements Initializable {
 
     @FXML
@@ -35,7 +38,7 @@ public class MainController implements Initializable {
         signupButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "sign-up.fxml", "Bibliotektssystem Kontoregistrering ", null);
+                DBUtils.changeScene(event, "sign-up.fxml", "D0024E Bibliotekssystem - Kontoregistrering ", null);
             }
         });
 
@@ -51,8 +54,7 @@ public class MainController implements Initializable {
     public void exitProgram(ActionEvent event) {
     }
 
-//  #011B3E blue
-//  #F0F0F0 light gray
+
 
 
 }

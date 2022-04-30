@@ -12,6 +12,9 @@ import java.io.IOException;
 
 import java.sql.*;
 
+//  #011B3E blue
+//  #F0F0F0 light gray
+
 public class DBUtils {
 
     //  login change scene
@@ -81,7 +84,7 @@ public class DBUtils {
                 psInsert.setString(5, usertype);
                 psInsert.executeUpdate();
 //                      change scenes to logged in scene
-                changeScene(event,"login.fxml", "Välkommen!", firstname);
+                changeScene(event,"login.fxml", "D0024E Bibliotekssystem - Inloggad ", username);
             }
 
         }   catch(SQLException e) {
@@ -143,7 +146,7 @@ public class DBUtils {
                     String retrievePassword = resultSet.getString("password");
                     String retrieveName = resultSet.getString(("firstname"));
                     if(retrievePassword.equals(password))   {
-                        changeScene(event, "login.fxml", "Välkommen! ", username);
+                        changeScene(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ", username);
                     }   else    {
                         System.out.println("Lösenord matchar ej användare! ");
                         Alert alert = new Alert(Alert.AlertType.ERROR);

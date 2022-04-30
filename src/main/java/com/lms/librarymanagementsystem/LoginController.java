@@ -10,6 +10,9 @@ import javafx.scene.control.Label;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+//  #011B3E blue
+//  #F0F0F0 light gray
+
 public class LoginController implements Initializable {
 
 
