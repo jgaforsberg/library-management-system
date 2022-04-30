@@ -70,7 +70,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.lms.librarymanagementsystem/com.lms.librarymanagementsystem.HelloApplication
+                                com.lms.librarymanagementsystem/com.lms.librarymanagementsystem.Main
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
