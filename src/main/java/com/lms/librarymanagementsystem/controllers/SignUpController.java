@@ -1,5 +1,7 @@
-package com.lms.librarymanagementsystem;
+package com.lms.librarymanagementsystem.controllers;
 
+import com.lms.librarymanagementsystem.utils.Constants;
+import com.lms.librarymanagementsystem.DBUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -43,7 +45,7 @@ public class SignUpController implements Initializable {
                 }else   {
                     System.out.println("All information krävs! ");
                     Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Fyll i all information för att skapa gå vidare. ");
+                    alert.setContentText("Fyll i all information för att gå vidare. ");
                     alert.show();
                 }
             }
@@ -52,7 +54,7 @@ public class SignUpController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "main.fxml", "Logga in! ", null);
+                DBUtils.changeScene(event, "main.fxml", "D0024E Bibliotekssystem - Välkommen! ", null);
             }
         });
 

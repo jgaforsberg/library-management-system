@@ -1,0 +1,136 @@
+-- url:  "jdbc:mysql://localhost:3306/javafxtest"
+-- username: "your mysql username" (default is root)
+-- password: "your mysql password" (default is 1234)
+
+-- change url username and password in DBUtils.java if your db name, username and password differs from default
+-- check data source configuration in intellij for troubleshooting
+-- for mysql intellij setup tutorial, visit: https://www.youtube.com/watch?v=e8g9eNnFpHQ
+
+-- mysql database scripts
+
+create database javafxtest;
+
+create table javafxtest.users 	(
+								id INT NOT NULL AUTO_INCREMENT,
+								username VARCHAR(50) NOT NULL UNIQUE,
+                                password VARCHAR(50) NOT NULL,
+                                firstname VARCHAR(50) NOT NULL,
+                                lastname VARCHAR(50) NOT NULL,
+                                usertype VARCHAR(20) NOT NULL,
+                                PRIMARY KEY(id)
+                                );
+
+insert into javafxtest.users	(username, password, firstname, lastname, usertype
+								)
+VALUES
+                                (
+								'ltustudent1', 'abc', 'Lena', 'PH', 'student'
+								);
+
+CREATE TABLE `javafxtest`.`media` (
+  `mediaid` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(245) NOT NULL,
+  `format` VARCHAR(25) NOT NULL COMMENT 'Bok, Film, Journal',
+  `category` VARCHAR(245) NOT NULL COMMENT 'cat1,cat2,cat3 etc. for keyword searches',
+  `description` VARCHAR(245) NULL COMMENT 'included in keyword search',
+  `publisher` VARCHAR(245) NULL,
+  `edition` VARCHAR(25) NULL COMMENT 'e.g., journal = 04/2022, bok = 6e, film = director\'s cut',
+  `author` VARCHAR(245) NULL COMMENT 'auth1,auth2,auth3 etc.',
+  `isbn` VARCHAR(25) NULL,
+  `director` VARCHAR(245) NULL COMMENT 'dir1,dir2,dir3, etc.',
+  `actor` VARCHAR(245) NULL COMMENT 'act1,act2,act3 etc.',
+  `country` VARCHAR(45) NULL,
+  `rating` VARCHAR(5) NULL COMMENT 'in integers, e.g., 3, 13, 18',
+  `available` VARCHAR(45) NOT NULL COMMENT 'ex:  referens, utlånad, reserverad, ledig',
+  PRIMARY KEY (`mediaid`),
+  UNIQUE INDEX `mediaid_UNIQUE` (`mediaid` ASC) VISIBLE)
+COMMENT = 'table for storing all media';
+
+
+INSERT INTO javafxtest.book  (title, author, isbn, category, publisher, description, available)
+VALUES
+('Database Systems: A Practical Approach To Design, Implementation, And Management', 'Carolyn Begg,Thomas Connolly', '9781292061184', 'It,Databas,Kurslitteratur',
+'Pearson', 'D0004N, D0005N, This book is ideal for a one- or two-term course in database management or database design in an undergraduate or graduate level course.', 0),
+('Database Systems: A Practical Approach To Design, Implementation, And Management', 'Carolyn Begg,thomas Connolly', '9781292061184', 'It,Databas,Kurslitteratur',
+'Pearson', 'D0004N, D0005N, This book is ideal for a one- or two-term course in database management or database design in an undergraduate or graduate level course.', 1),
+('Java How to Program - Early Objects', 'Paul Deitel,Harvey Deitel', '9781292223858', 'IT,Java,Programmering,Kurslitteratur',
+'Pearson', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts', 0),
+('Java How to Program - Early Objects', 'Paul Deitel,Harvey Deitel', '9781292223858', 'IT,Java,Programmering,Kurslitteratur',
+'Pearson', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts', 1),
+('Java How to Program - Early Objects', 'Paul Deitel,Harvey Deitel', '9781292223858', 'IT,Java,Programmering,Kurslitteratur',
+'Pearson', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts', 1),
+('Praktisk Mjukvarutestning', 'Eva Holmquist', '9789144117775', 'IT,Test,Mjukvarutest,Kurslitteratur',
+'Studentlitteratur', 'I0015N, I Praktisk mjukvarutestning behandlas ämnen som sammanhangets påverkan på test, testledning, att genomföra tester, testmiljöer, testdata, automatiserade tester.', 0),
+('Praktisk Mjukvarutestning', 'Eva Holmquist', '9789144117775', 'IT,Test,Mjukvarutest,Kurslitteratur',
+'Studentlitteratur', 'I0015N, I Praktisk mjukvarutestning behandlas ämnen som sammanhangets påverkan på test, testledning, att genomföra tester, testmiljöer, testdata, automatiserade tester.', 1),
+('Object-oriented system analysis and design', 'Simon Bennett, Steve McRobb, Ray Farmer', '9780077125363', 'IT,OOP,OOAD,Objekt Orienterad Analys och Design,UML,Kurslitteratur',
+'McGraw Hill', 'D0006N, The book provides a clear, practical framework for development that uses all the major techniques from UML 2.2.', 0),
+('Object-oriented system analysis and design', 'Simon Bennett, Steve McRobb, Ray Farmer', '9780077125363', 'IT,OOP,OOAD,Objekt Orienterad Analys och Design,UML,Kurslitteratur',
+'McGraw Hill', 'D0006N, The book provides a clear, practical framework for development that uses all the major techniques from UML 2.2.', 1),
+('Matematiska utmaningar - En kurs i problemlösning', 'Paul Vaderlind', '9789144157566', 'Matematik,Problemlösning',
+'Studentlitteratur', 'Träning i matematisk problemlösning ger kunskap om tänkbara lösningsstrategier, systematiskt utnyttjande av ett analytisk tänkande, korrekt argumentation och motivering av varje steg i en slutledning.', 1),
+('Arbetsmiljöregler	för bygg- och anläggningsverksamhet', 'Sveriges Byggindustrier', '', 'Bygg,Arbetsmiljö,Anläggning,Förordningar',
+'Sveriges Byggindustrier', 'Alla som befinner sig på byggarbetsplatsen ska ha goda kunskaper i arbetsmiljö. Kunskaper om regler kring arbetsmiljö skyddar dig själv och dina medarbetare från skador och olyckor.', 1),
+('Tillämpad Byggnadsfysik', 'Bengt-Åke Petersson', '9789144123936', 'Fysik,Bygg,Anläggning,Byggnadskonstruktion',
+'Studentlitteratur', 'Boken behandlar tillämpningen av byggnadsfysikens värme, fukt och luft i husbyggnader, dess väggar, tak och grunder.', 1),
+('UBUNTU-boken', 'Jesper Nilsson', '9789197726016', 'IT,Linux,Ubuntu,Programmering,Operativsystem',
+'HME publishing', 'Är du nyfiken på Linux och Ubuntu? Då är det har rätt bok för dig. Här får du lära dig både grundläggande och avancerad användning av Ubuntu Linux.', 1),
+('Musikboken', 'Lasse Carlsson, Hans Nordström', '9124165336', 'Musik,Musikinstrument',
+'Akademiförlaget', 'Musik', 1),
+('Cuba', 'Brendan Sainsbury, Luke Waterson', '9781743216781', 'Resa,Kuba,Reseguide,Globetrotter',
+'Lonely Planet', "Lonely Planet's Cuba is your passport to the most relevant, up-to-date advice on what to see and skip, and what hidden discoveries await you.", 1),
+('Interaktionsdesign Bortom människa-dator-interaktion', 'Jennifer Preece, Yvonne Rogers, Helen Sharp', '9789144092072', 'IT,UX,MDI,HMI,Agil',
+'Studentlitteratur', 'Översättare: Lena Svensson, Maria Drangel, Interaktionsdesign: bortom människa-dator-interaktion ger ett tvärvetenskapligt, praktiskt och processorienterat synsätt på människa-dator-interaktion.', 1),
+('Interaktionsdesign Bortom människa-dator-interaktion', 'Jennifer Preece, Yvonne Rogers, Helen Sharp', '9789144092072', 'IT,UX,MDI,HMI,Agil',
+'Studentlitteratur', 'Översättare: Lena Svensson, Maria Drangel, Interaktionsdesign: bortom människa-dator-interaktion ger ett tvärvetenskapligt, praktiskt och processorienterat synsätt på människa-dator-interaktion.', 0),
+('Minimikrav på elmaterial	i olika slags utrymmen enligt elinstallationsreglerna', 'Tord Martinsen', '9197514322', 'El,Arbetsmiljö,Förordningar,Installation',
+'Elförlaget', 'Elsäkerhetsverkets föreskrifter, Elektriska installatörsorganisationen', 1),
+('Groundwork for a better Vocabulary', 'Beth Johnson, Carole Mohr, Janet M. Goldstein', '1591940141', 'Språk,Grammatik,Engelska,Glosor',
+'Townsend press', 'Groundwork for a Better Vocabulary (3rd, 04) by Smith, Kent R [Paperback (2004)]', 1),
+('The Bitter Harvest ', 'Ian Smith', '9781857826043', 'Historia,Memoar,Biografi,Afrika,Kolonialism,Självständighet',
+'John Blake publishing Ltd', 'In this revealing and important historical document, Ian Smith charts the rise and fall of a one-great nation.', 1),
+('Starting Strength	Basic Barbell training', 'Mark Rippetoe', '9780982522738', 'Hälsa,Träning,Fysionomi,Tyngdlyftning',
+'The Aasgaard Company', 'Starting Strength has been called the best and most useful of fitness books.', 1),
+('Java Network Programming 4ed: Developing Networked Applications','Elliotte Rusty Harold','9781449357672','IT,Java,Kurslitteratur,Programmering',
+"O'Reilly Media", 'The style of both Java and network programming have slowly changed over the past seven years, and the new edition of this popular book reflects that. ', 1);
+
+INSERT INTO javafxtest.film  (title, director, category, description, rating, country, actors, available)
+VALUES
+('The Running Man', 'Paul Michael Glaser', 'Action,Science Fiction,Thriller',
+'In the year 2019 an innocent man accused of a crime has a choice - Hard Time or Prime Time. Tim Zinneman,George Linder', 18,
+'USA','Arnold Schwarzenegger,Maria Conchita Alonso, Richard Dawson', 1),
+('Stallone Collection', 'Geroge P. Cosmatos,Richard Donner,Andrey Konchalovskiy, Albert Magnoli,Luis Llosa,Marco Brambilla', 'Action, Science Fiction,Thriller',
+'Cobra,Assassins,Tango and Cash,The Specialist,Demolition Man', 18,
+'USA','Sylvester Stallone,Antonio Banderas,Julianne Moore,Kurt Russel,Sharon Stone,Wesley Snipes,Sandra Bullock,Benjamin Bratt', 1),
+('Ondskan', 'Mikael Håfström', 'Drama,Thriller',
+'Ondksan är en berättelse om våldet och om vägen ut ur våldsspiralen - men lika mycket om stark vänskap och spirande kärlek.', 11,
+'Sverige','Andreas Wilson,Linda Zilliacus,Henrik Lundström,Gustaf Skarsgård,Jesper Salén,Marie Richardson,Johan Rabéus,Kjell Bergqvist,Magnus Roosman, Lennart Hjulström,Björn Granath', 1),
+('Master and Commander The Far Side of The World', 'Peter Weir', 'Action,Drama,Historia',
+'During the Napoleonic Wars, a brash British captain pushes his ship and crew to their limits in pursuit of a formidable French war vessel around South America.', 11,
+'USA','Russel Crowe,Paul Bettany', 1),
+('Braveheart', 'Mel Gibson', 'Action,Historia,Drama',
+'Scottish warrior William Wallace leads his countrymen in a rebellion to free his homeland from the tyranny of King Edward I of England.', 15,
+'USA','Mel Gibson,Sophie Marceuau,Patrick McGoohan,Catherine McCormack,Brendan Gleeson', 1),
+('The Matrix', 'Andy Wachowski,Larry Wachowski', 'Action,Science Fiction',
+'When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence.', 18,
+'USA','Keanu Reeves,Lawrence Fishburne,Carrie Ann Moss,Joe Pantoliano,Hugo Weaving', 1),
+('The Die Hard Collection', 'John McTiernan,Renny Harlin,Len Wiseman,Noam Murro', 'Action,Thriller',
+'Bruce Willis is John McClane. Die Hard,Die Hard 2, Die Hard With a Vengeance,Die Hard 4.0 Live Free or Die Hard,A Good Day to Die Hard', 15,
+'USA','Bruce Willis,Alan Rickman,Bonnie Bedelia,William Sadler, John Amos,Samuel L. Jackson,Jeremy Irons,Graham Greene,Justin Long,Timothy Olyphant,Maggie Q,Jai Courtney,Sebastian Koch', 1),
+('Mad Max Collection', 'George Miller', 'Action,Science Fiction,Thriller',
+'Mad Max, The Road Warrior,Md Max Beyond Thunderdome', 16,
+'Australien,USA','Mel Gibson,Tina Turner,Roger Ward,Hugh Keays-Byrne,Joanne Samuel,Kjell Nilsson,Bruce Spence,Virginia Hey', 1),
+('Predator Collection', 'John McTiernan,Stephen Hopkins,', 'Action,Science Fiction,Thriller',
+'In the year 2019 an innocent man accused of a crime has a choice - Hard Time or Prime Time. Tim Zinneman,George Linder', 18,
+'USA','Arnold Schwarzenegger,Carl Weathers,Shane Black,Jesse Ventura,Danny Glover,Gary Busey,Maria Conchita Alonso,Bill Paxton,Rubén Blades,Adrien Brody,Topher Grace,Alice Braga,Lawrence Fishburne,Walton Goggins', 1);
+
+INSERT INTO javafxtest.journal  (title, publisher, number, category, available)
+VALUES
+('Chef', 'Ledarna','04/2022',
+'Ledarskap,Organisation,Fackförbund', 0),
+('Elinstallatören', 'Installatörsföretagen','10/2021',
+'Teknik,Installation,El,Elteknik', 0),
+('365', 'Naturkompaniet','02/2015',
+'Friluftsliv,Utomhus,Fjällräven', 0),
+('365', 'Naturkompaniet','01/2022',
+'Friluftsliv,Utomhus,Fjällräven', 0);
