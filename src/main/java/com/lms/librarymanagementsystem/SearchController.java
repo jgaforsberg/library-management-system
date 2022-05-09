@@ -37,10 +37,12 @@ public class SearchController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         DBUtils getDBLink = new DBUtils();
         Connection connection = null;
+        PreparedStatement psFetchArticles = null;
+        ResultSet resultSet = null;
         try {
             connection = DBUtils.getDBLink();
-            PreparedStatement psFetchArticles = connection.prepareStatement("SELECT mediaid, title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available FROM media;");
-            ResultSet resultSet = psFetchArticles.executeQuery();
+            psFetchArticles = connection.prepareStatement("SELECT mediaid, title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available FROM media;");
+            resultSet = psFetchArticles.executeQuery();
             while (resultSet.next()) {
                 Integer queryMediaId = resultSet.getInt("mediaid");
                 String queryTitle = resultSet.getString("title");
@@ -140,7 +142,31 @@ public class SearchController implements Initializable {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }finally    {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psFetchArticles != null) {
+                try {
+                    psFetchArticles.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
+
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
