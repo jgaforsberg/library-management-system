@@ -18,11 +18,11 @@ import java.util.ResourceBundle;
 
 public class SearchController implements Initializable {
     @FXML
-    public TableView<MediaSearchModel> searchTableView;
+    public TableView<MediaModel> searchTableView;
     @FXML
-    public TableColumn<MediaSearchModel, Integer>   mediaIdColumn;
+    public TableColumn<MediaModel, Integer>   mediaIdColumn;
     @FXML
-    public TableColumn<MediaSearchModel, String>    titleColumn, formatColumn, categoryColumn, descriptionColumn,
+    public TableColumn<MediaModel, String>    titleColumn, formatColumn, categoryColumn, descriptionColumn,
                                                     publisherColumn, editionColumn, authorColumn, isbnColumn,
                                                     directorColumn, actorColumn, countryColumn, ratingColumn,
                                                     availableColumn;
@@ -31,7 +31,7 @@ public class SearchController implements Initializable {
     @FXML
     public Button loginButton;
 
-    public ObservableList<MediaSearchModel> mediaSearchModelObservableList = FXCollections.observableArrayList();
+    public ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
 //  Database values can't be NULL for the SearchController class to function, empty strings like '' must be used
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -59,7 +59,7 @@ public class SearchController implements Initializable {
                 String queryRating = resultSet.getString("rating");
                 String queryAvailable = resultSet.getString("available");
 //              populates the observable list
-                mediaSearchModelObservableList.add(new MediaSearchModel(    queryMediaId,
+                mediaModelObservableList.add(new MediaModel(    queryMediaId,
                                                                             queryTitle,
                                                                             queryFormat,
                                                                             queryCategory,
@@ -90,11 +90,11 @@ public class SearchController implements Initializable {
                 ratingColumn.setCellValueFactory((new PropertyValueFactory<>("rating")));
                 availableColumn.setCellValueFactory((new PropertyValueFactory<>("available")));
 
-                searchTableView.setItems(mediaSearchModelObservableList);
+                searchTableView.setItems(mediaModelObservableList);
 //              initialize filtered list for interactive search
-                FilteredList<MediaSearchModel> filteredData = new FilteredList<>(mediaSearchModelObservableList, b -> true);
+                FilteredList<MediaModel> filteredData = new FilteredList<>(mediaModelObservableList, b -> true);
                 searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    filteredData.setPredicate(mediaSearchModel -> {
+                    filteredData.setPredicate(mediaModel -> {
 //                  if no search value is present, all records, or all current records will be displayed
                     if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
                         return true;
@@ -102,32 +102,32 @@ public class SearchController implements Initializable {
                         String searchKeyWord = newValue.toLowerCase();
 //                      an index > 0 means a match has been found
 //                      to return Integer type, use toString() method
-                        if (mediaSearchModel.getTitle().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        if (mediaModel.getTitle().toLowerCase().indexOf(searchKeyWord) > -1)  {
 //                      match in book title etc.
                             return true;
-                        }else if (mediaSearchModel.getFormat().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.getFormat().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaSearchModel.getCategory().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.getCategory().toLowerCase().indexOf(searchKeyWord) > -1) {
                             return true;
-                        }else if (mediaSearchModel.getDescription().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if (mediaModel.getDescription().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaSearchModel.getPublisher().toLowerCase().indexOf(searchKeyWord) > -1){
+                        }else if (mediaModel.getPublisher().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        }else if (mediaSearchModel.getEdition().toLowerCase().indexOf(searchKeyWord) > -1){
+                        }else if (mediaModel.getEdition().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        }else if (mediaSearchModel.getAuthor().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.getAuthor().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaSearchModel.getIsbn().toLowerCase().indexOf(searchKeyWord) > -1)     {
+                        }else if (mediaModel.getIsbn().toLowerCase().indexOf(searchKeyWord) > -1)     {
                             return true;
-                        }else if(mediaSearchModel.getDirector().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if(mediaModel.getDirector().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaSearchModel.getActor().toLowerCase().indexOf(searchKeyWord) > -1)    {
+                        }else if (mediaModel.getActor().toLowerCase().indexOf(searchKeyWord) > -1)    {
                             return true;
-                        }else if (mediaSearchModel.getCountry().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if (mediaModel.getCountry().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaSearchModel.getRating().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.getRating().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaSearchModel.getAvailable().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.getAvailable().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
                         }else
                             return false;
@@ -135,7 +135,7 @@ public class SearchController implements Initializable {
                     });
                 });
 //              bind sorted result with table view
-                SortedList<MediaSearchModel> sortedData = new SortedList<>(filteredData);
+                SortedList<MediaModel> sortedData = new SortedList<>(filteredData);
                 sortedData.comparatorProperty().bind(searchTableView.comparatorProperty());
 //              apply filtered and sorted data to the table view
                 searchTableView.setItems(sortedData);
@@ -165,120 +165,11 @@ public class SearchController implements Initializable {
                 }
             }
         }
-
-
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 DBUtils.changeScene(event, "main.fxml", "D0024E Bibliotekssystem - Välkommen! ");
             }
         });
-    }
-    public class MediaSearchModel {
-        Integer mediaid;
-        String  title, format, category, description,
-                publisher, edition, author, isbn,
-                director, actor, country, rating,
-                available;
-        public MediaSearchModel(Integer mediaid,
-                                String title, String format, String category, String description,
-                                String publisher, String edition, String author, String isbn,
-                                String director, String actor, String country, String rating,
-                                String available) {
-            this.mediaid = mediaid;
-            this.title = title;
-            this.format = format;
-            this.category = category;
-            this.description = description;
-            this.publisher = publisher;
-            this.edition = edition;
-            this.author = author;
-            this.isbn = isbn;
-            this.director = director;
-            this.actor = actor;
-            this.country = country;
-            this.rating = rating;
-            this.available = available;
-        }
-        public Integer getMediaid() {
-            return mediaid;
-        }
-        public String getTitle() {
-            return title;
-        }
-        public String getFormat() {
-            return format;
-        }
-        public String getCategory() {
-            return category;
-        }
-        public String getDescription() {
-            return description;
-        }
-        public String getPublisher() {
-            return publisher;
-        }
-        public String getEdition(){return edition;}
-        public String getAuthor() {
-            return author;
-        }
-        public String getIsbn() {
-            return isbn;
-        }
-        public String getDirector() {
-            return director;
-        }
-        public String getActor() {
-            return actor;
-        }
-        public String getCountry() {
-            return country;
-        }
-        public String getRating() {
-            return rating;
-        }
-        public String getAvailable() {
-            return available;
-        }
-        public void setMediaid(Integer mediaid) {
-            this.mediaid = mediaid;
-        }
-        public void setTitle(String title) {
-            this.title = title;
-        }
-        public void setFormat(String format) {
-            this.format = format;
-        }
-        public void setCategory(String category) {
-            this.category = category;
-        }
-        public void setDescription(String description) {
-            this.description = description;
-        }
-        public void setPublisher(String publisher) {
-            this.publisher = publisher;
-        }
-        public void setEdition(String edition){this.edition=edition;}
-        public void setAuthor(String author) {
-            this.author = author;
-        }
-        public void setIsbn(String isbn) {
-            this.isbn = isbn;
-        }
-        public void setDirector(String director) {
-            this.director = director;
-        }
-        public void setActor(String actor) {
-            this.actor = actor;
-        }
-        public void setCountry(String country) {
-            this.country = country;
-        }
-        public void setRating(String rating) {
-            this.rating = rating;
-        }
-        public void setAvailable(String available) {
-            this.available = available;
-        }
     }
 }

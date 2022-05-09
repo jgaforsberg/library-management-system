@@ -46,7 +46,7 @@
       </Label>
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutY="850.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../../../../../../../BookFinder/src/main/resources/ltu_logga.jpg" />
+            <Image url="@media/ltu_logga.jpg" />
          </image>
       </ImageView>
       <Label layoutX="1119.0" layoutY="932.0" text="Vill du låna? Se till att" textFill="#f0f0f0">
