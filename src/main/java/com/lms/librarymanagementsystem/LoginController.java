@@ -1,4 +1,4 @@
-package com.lms.librarymanagementsystem.controllers;
+package com.lms.librarymanagementsystem;
 
 import com.lms.librarymanagementsystem.utils.Constants;
 import com.lms.librarymanagementsystem.DBUtils;

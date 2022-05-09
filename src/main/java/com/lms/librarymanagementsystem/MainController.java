@@ -1,8 +1,6 @@
-package com.lms.librarymanagementsystem.controllers;
+package com.lms.librarymanagementsystem;
 
-import com.lms.librarymanagementsystem.utils.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
-import com.lms.librarymanagementsystem.Main;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -18,14 +16,18 @@ import java.util.ResourceBundle;
 //  #F0F0F0 light gray
 
 public class MainController implements Initializable {
-
     @FXML
-    private Button loginButton, signupButton, searchButton, exitButton;
+    private Button loginButton;
+    @FXML
+    private Button signupButton;
+    @FXML
+    private Button searchButton;
+    @FXML
+    private Button exitButton;
     @FXML
     private TextField usernameTextField;
     @FXML
     private PasswordField passwordPasswordField;
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -33,6 +35,12 @@ public class MainController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 DBUtils.logInUser(event, usernameTextField.getText(), passwordPasswordField.getText());
+            }
+        });
+        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtils.changeScene(event, "search.fxml", "D0024E Bibliotekssystem - Sök artiklar ");
             }
         });
         signupButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -47,19 +55,8 @@ public class MainController implements Initializable {
                 exitProgram();
             }
         });
-        searchButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "search.fxml", "D0024E Bibliotekssystem - Sök artiklar ");
-            }
-        });
     }
-
     public void exitProgram() {
         System.exit(0);
     }
-
-
-
-
 }

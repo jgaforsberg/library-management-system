@@ -12,7 +12,7 @@ public class Constants {
     public static final String LOGIN = "login.fxml";
     public static final String SIGN_UP = "sign-up.fxml";
     public static final String SEARCH = "search.fxml";
-    public static final String advSearch = "search-login.fxml";
+    public static final String advSearch = "loan.fxml";
     public static final String ACCOUNT = "account.fxml";
     public static final String inventory = "inventory.fxml";
     public static final String sample = ".fxml";

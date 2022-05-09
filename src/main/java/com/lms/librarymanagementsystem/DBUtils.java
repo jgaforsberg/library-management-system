@@ -1,7 +1,5 @@
 package com.lms.librarymanagementsystem;
 
-import com.lms.librarymanagementsystem.controllers.LoginController;
-import com.lms.librarymanagementsystem.utils.Constants;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,13 +18,13 @@ import java.sql.*;
 // purpose of using prepared statements is increased protection against sql injection, easier to set parameters,
 // and to improve application performance due to being precompiled
 public class DBUtils {
-    private final static String URL = "jdbc:mysql://localhost:3306/javafxtest";
-    private final static String USER = "root";
-    private final static String PWD = "1234";
-//  for connecting through controller classes for e.g., search function
-    public Connection DBLink;
+    private static final String URL = "jdbc:mysql://localhost:3306/javafxtest";
+    private static final String USER = "root";
+    private static final String PWD = "1234";
+    //  for connecting through controller classes for e.g., search function
+    public static Connection DBLink;
 
-    public Connection getDBConnection() throws SQLException {
+    public static Connection getDBLink() throws SQLException {
         try{
         Class.forName("com.mysql.cj.jdbc.Driver");
             DBLink = DriverManager.getConnection(URL,USER,PWD);
@@ -38,8 +36,6 @@ public class DBUtils {
     //  login change scene
     public static void changeScene(ActionEvent event, String fxmlFile, String title, String username)   {
         Parent root = null;
-
-
 //      make sure username is passed to login scene
         if(username != null)    {
             try {
@@ -56,6 +52,7 @@ public class DBUtils {
                 root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
             }   catch(IOException e)    {
                 e.printStackTrace();
+                e.getCause();
             }
         }
 //      event is the click of button -> source of the click, scene of source, window of scene
@@ -65,21 +62,20 @@ public class DBUtils {
         stage.setScene((new Scene(root, 600, 500)));
         stage.show();
     }
-
 //  logged in change scene search
     public static void changeScene(ActionEvent event, String fxmlFile, String title) {
         Parent root = null;
         try {
             root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
         } catch (IOException e) {
+            e.printStackTrace();
             e.getCause();
         }
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setTitle(title);
-        stage.setScene((new Scene(root, 600, 1500)));
+        stage.setScene((new Scene(root)));
         stage.show();
     }
-
 //  method for adding new users to DB
     public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype) {
         Connection connection = null;
@@ -88,7 +84,6 @@ public class DBUtils {
         PreparedStatement psCheckUserExists = null;
 //      resultset is query result
         ResultSet resultSet = null;
-
         try {
 //              change parameters depending on dbms
             connection = DriverManager.getConnection(URL,USER,PWD);
@@ -99,7 +94,6 @@ public class DBUtils {
             psCheckUserExists.setString(1, username);
 //              if resultSet is empty, no equal username exists -> sign-up completes
             resultSet = psCheckUserExists.executeQuery();
-
 //              isBeforeFirst() checks if returned username query is empty, if returned true the username is taken
             if (resultSet.isBeforeFirst()) {
                 System.out.println("Användare finns redan! ");
@@ -119,7 +113,6 @@ public class DBUtils {
 //                      change scenes to logged in scene
                 changeScene(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ", username);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
 //          close connection to DB with finally block - executed no matter what happens before
@@ -156,8 +149,7 @@ public class DBUtils {
             }
         }
     }
-
-    //  method logging in user from main screen
+//  method logging in user from main screen
 //  TODO add parameter usertype to validate actions in next scene
     public static void logInUser(ActionEvent event, String username, String password) {
         Connection connection = null;
@@ -215,111 +207,4 @@ public class DBUtils {
             }
         }
     }
-// simple title search
-// TODO implement other parameter search function
-    /*public static void search(String articleType) {
-        System.out.println("DBUtils.searchArticle()");
-
-        Connection connection = null;
-        PreparedStatement psFetchBook = null, psFetchFilm = null, psFetchJournal = null;
-        ResultSet resultSet = null;
-        try {
-            if(articleType.equalsIgnoreCase("book")){
-                psFetchBook = connection.prepareStatement("SELECT bookid, title, author, isbn, category, publisher, description, available FROM ?;");
-                psFetchBook.setString(1, articleType);
-                resultSet = psFetchBook.executeQuery();
-
-                while(resultSet.next()) {
-                    Integer queryId = resultSet.getInt("bookid");
-                    String queryTitle = resultSet.getString("title");
-                    String queryAuthor = resultSet.getString("author");
-                    String queryIsbn = resultSet.getString("isbn");
-                    String queryCategory = resultSet.getString("category");
-                    String queryPublisher = resultSet.getString("publisher");
-                    String queryDescription = resultSet.getString("description");
-                    Integer queryAvailable = resultSet.getInt("available");
-//                  populates the observable list
-                    SearchController.bookSearchModelObservableList.add(new BookSearchModel( queryId,
-                                                                                            queryTitle,
-                                                                                            queryAuthor,
-                                                                                            queryIsbn,
-                                                                                            queryCategory,
-                                                                                            queryPublisher,
-                                                                                            queryDescription,
-                                                                                            queryAvailable));
-//              PropertyValueFactory corresponds to the new BookSearchModel
-//              populate the tableview columns
-                    SearchController.bookIdColumn.setCellValueFactory((new PropertyValueFactory<>("bookid")));
-                    SearchController.titleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
-                    SearchController.authorColumn.setCellValueFactory((new PropertyValueFactory<>("author")));
-                    SearchController.isbnColumn.setCellValueFactory((new PropertyValueFactory<>("isbn")));
-                    SearchController.categoryColumn.setCellValueFactory((new PropertyValueFactory<>("category")));
-                    SearchController.publisherColumn.setCellValueFactory((new PropertyValueFactory<>("publisher")));
-                    SearchController.descriptionColumn.setCellValueFactory((new PropertyValueFactory<>("description")));
-                    SearchController.availableColumn.setCellValueFactory((new PropertyValueFactory<>("available")));
-
-                    SearchController.searchTableView.setItems(SearchController.bookSearchModelObservableList);
-
-                }
-            }else if(articleType.equalsIgnoreCase("film"))    {
-                psFetchFilm = connection.prepareStatement("SELECT filmid, title, director, category, description, rating, country, actors, available FROM ?;");
-                psFetchFilm.setString(1, articleType);
-                resultSet = psFetchFilm.executeQuery();
-            }else if (articleType.equalsIgnoreCase("journal"))  {
-                psFetchJournal = connection.prepareStatement("SELECT journalid, title, publisher, number, category, available FROM ?;");
-                psFetchJournal.setString(1, articleType);
-                resultSet = psFetchJournal.executeQuery();
-            }else;
-
-            connection = DriverManager.getConnection(Constants.url, Constants.user, Constants.pw);
-             = connection.prepareStatement("select * from articles where title like ?;");
-            psFetchArticles.setString(1, "%"+searchTerm+"%");
-//              if resultSet is empty, no equal database record exists
-            resultSet = psFetchArticles.executeQuery();
-            if(!resultSet.isBeforeFirst())  {
-                System.out.println("Tomt sökfält! ");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Ange ett sökord ");
-                alert.show();
-            }   else    {
-                while(resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String title = resultSet.getString("title");
-                    String authorCreator = resultSet.getString("authorcreator");
-                    String isbn = resultSet.getString("isbn");
-                    String category = resultSet.getString("category");
-                    String articleType = resultSet.getString("articletype");
-                    String actors = resultSet.getString("actors");
-
-                    System.out.println("Resultat: "+id+", "+title+", "+authorCreator+", "+isbn+", "+category+", "+articleType+", "+actors+", ");
-                    searchResult = id+", "+title+", "+authorCreator+", "+isbn+", "+category+", "+articleType+", "+actors+", ";
-                }
-            }
-        SearchController.printSearchResult(searchResult);
-        } catch (SQLException e) {
-            e.getCause();
-        }finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchArticles != null) {
-                try {
-                    psFetchArticles.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }*/
 }

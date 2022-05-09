@@ -24,9 +24,7 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
 
-        /*new Thread(()-> {
 
-        }).start();*/
     }
 
     public static void main(String[] args) {
