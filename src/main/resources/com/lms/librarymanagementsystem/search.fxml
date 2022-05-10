@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.SearchController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.SearchController">
    <children>
       <TableView fx:id="searchTableView" layoutX="24.0" layoutY="50.0" prefHeight="800.0" prefWidth="1450.0" style="-fx-cursor: hand;">
          <columns>
@@ -34,7 +34,7 @@
          </columnResizePolicy>
       </TableView>
       <TextField fx:id="searchTextField" layoutX="59.0" layoutY="14.0" prefHeight="25.0" prefWidth="1415.0" promptText="Ange nyckelord" style="-fx-cursor: text;" />
-      <Button fx:id="loginButton" layoutX="1261.0" layoutY="925.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Logga in" textFill="#011b3e">
+      <Button fx:id="loginButton" layoutX="1261.0" layoutY="925.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
@@ -49,7 +49,7 @@
             <Image url="@media/ltu_logga.jpg" />
          </image>
       </ImageView>
-      <Label layoutX="1119.0" layoutY="932.0" text="Vill du låna? Se till att" textFill="#f0f0f0">
+      <Label layoutX="1062.0" layoutY="933.0" text="Vill du låna? Se till att logga in" textFill="#f0f0f0">
          <font>
             <Font size="14.0" />
          </font>

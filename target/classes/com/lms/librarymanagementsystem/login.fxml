@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.LoginController">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoginController">
    <children>
       <AnchorPane prefHeight="500.0" prefWidth="225.0" style="-fx-background-color: #011B3E;">
          <children>
@@ -23,27 +23,27 @@
          <children>
             <Button fx:id="searchButton" layoutX="79.0" layoutY="125.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Sök" textFill="#f0f0f0">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="activeLoansButton" layoutX="79.0" layoutY="165.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Låna" textFill="#f0f0f0">
+            <Button fx:id="loanButton" layoutX="79.0" layoutY="165.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Låna" textFill="#f0f0f0">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="accountLoans" layoutX="79.0" layoutY="205.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Mina lån" textFill="#f0f0f0">
+            <Button fx:id="accountButton" layoutX="79.0" layoutY="205.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Mina lån" textFill="#f0f0f0">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
             <Button fx:id="inventoryButton" layoutX="79.0" layoutY="245.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Hantera artiklar" textFill="#f0f0f0">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
             <Button fx:id="logoutButton" layoutX="79.0" layoutY="450.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Logga ut" textFill="#f0f0f0">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
             <Label fx:id="welcomeLabel" alignment="CENTER" layoutY="14.0" prefHeight="30.0" prefWidth="385.0" text="Välkommen!" textFill="#011b3e">

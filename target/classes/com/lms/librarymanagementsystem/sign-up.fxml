@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.SignUpController">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.SignUpController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="225.0" style="-fx-background-color: #011B3E;">
          <children>
@@ -77,12 +77,12 @@
             </Label>
             <Button fx:id="signupButton" layoutX="79.0" layoutY="270.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Registrera" textFill="#f0f0f0">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
             <Button fx:id="loginButton" layoutX="79.0" layoutY="425.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Logga in" textFill="#f0f0f0">
                <font>
-                  <Font name="System Bold" size="14.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Button>
             <Label alignment="CENTER" layoutY="400.0" prefWidth="379.0" text="Redan medlem?">

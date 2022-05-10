@@ -1,5 +1,6 @@
-package com.lms.librarymanagementsystem;
-
+package com.lms.librarymanagementsystem.models;
+//  #011B3E blue
+//  #F0F0F0 light gray
 public class MediaModel {
     Integer mediaid;
     String  title, format, category, description,

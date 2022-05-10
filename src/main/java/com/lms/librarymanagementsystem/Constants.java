@@ -1,4 +1,4 @@
-package com.lms.librarymanagementsystem.utils;
+package com.lms.librarymanagementsystem;
 
 public class Constants {
 

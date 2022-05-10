@@ -1,6 +1,8 @@
-package com.lms.librarymanagementsystem;
+package com.lms.librarymanagementsystem.controllers;
 
+import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -8,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -55,6 +58,7 @@ public class MainController implements Initializable {
         });
     }
     public void exitProgram() {
+        Platform.exit();
         System.exit(0);
     }
 }

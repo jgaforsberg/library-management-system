@@ -1,6 +1,8 @@
-package com.lms.librarymanagementsystem;
+package com.lms.librarymanagementsystem.controllers;
 //  #011B3E blue
 //  #F0F0F0 light gray
+import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.models.MediaModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -22,7 +24,7 @@ public class SearchController implements Initializable {
     @FXML
     public TableColumn<MediaModel, Integer>   mediaIdColumn;
     @FXML
-    public TableColumn<MediaModel, String>    titleColumn, formatColumn, categoryColumn, descriptionColumn,
+    public TableColumn<MediaModel, String>          titleColumn, formatColumn, categoryColumn, descriptionColumn,
                                                     publisherColumn, editionColumn, authorColumn, isbnColumn,
                                                     directorColumn, actorColumn, countryColumn, ratingColumn,
                                                     availableColumn;
@@ -35,7 +37,7 @@ public class SearchController implements Initializable {
 //  Database values can't be NULL for the SearchController class to function, empty strings like '' must be used
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        DBUtils getDBLink = new DBUtils();
+
         Connection connection = null;
         PreparedStatement psFetchArticles = null;
         ResultSet resultSet = null;
@@ -59,7 +61,7 @@ public class SearchController implements Initializable {
                 String queryRating = resultSet.getString("rating");
                 String queryAvailable = resultSet.getString("available");
 //              populates the observable list
-                mediaModelObservableList.add(new MediaModel(    queryMediaId,
+                mediaModelObservableList.add(new MediaModel(                queryMediaId,
                                                                             queryTitle,
                                                                             queryFormat,
                                                                             queryCategory,

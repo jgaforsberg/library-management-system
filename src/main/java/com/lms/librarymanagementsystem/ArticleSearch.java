@@ -1,4 +1,6 @@
 package com.lms.librarymanagementsystem;
 
-public class LoanController {
+public class ArticleSearch {
+
+
 }

@@ -1,63 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.LoanController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoanController">
    <children>
-      <AnchorPane prefHeight="500.0" prefWidth="225.0" style="-fx-background-color: #011B3E;">
-         <children>
-            <Label alignment="CENTER" layoutY="15.0" prefHeight="35.0" prefWidth="225.0" text="Sök artikel" textFill="#f0f0f0">
-               <font>
-                  <Font name="System Bold" size="21.0" />
-               </font>
-            </Label>
-            <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="38.0" layoutY="336.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@media/ltu_logga.jpg" />
-               </image>
-            </ImageView>
-            <TextField fx:id="titleTextField" layoutX="12.0" layoutY="70.0" prefHeight="25.0" prefWidth="200.0" promptText="Titel" style="-fx-cursor: text;" />
-            <TextField fx:id="authorCreatorTextField" layoutX="12.0" layoutY="100.0" prefHeight="25.0" prefWidth="200.0" promptText="Författare / Skapare" style="-fx-cursor: text;" />
-            <TextField fx:id="isbnTextField" layoutX="12.0" layoutY="130.0" prefHeight="25.0" prefWidth="200.0" promptText="ISBN" style="-fx-cursor: text;" />
-            <TextField fx:id="categoryTextField" layoutX="12.0" layoutY="160.0" prefHeight="25.0" prefWidth="200.0" promptText="Kategori" style="-fx-cursor: text;" />
-            <TextField fx:id="actorTextField" layoutX="12.0" layoutY="220.0" prefHeight="25.0" prefWidth="200.0" promptText="Skådespelare" style="-fx-cursor: text;" />
-            <Button fx:id="searchArticleButton" layoutX="12.0" layoutY="255.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" style="-fx-cursor: hand; -fx-background-color: #f0f0f0;" text="Sök" textFill="#011b3e">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Button>
-            <ChoiceBox fx:id="articleTypeChoiceBox" layoutX="12.0" layoutY="190.0" prefHeight="25.0" prefWidth="200.0" />
-         </children>
-      </AnchorPane>
-      <AnchorPane prefHeight="500.0" prefWidth="375.0" style="-fx-background-color: #f0f0f0;">
-         <children>
-            <ListView layoutX="12.0" layoutY="70.0" prefHeight="370.0" prefWidth="350.0" />
-            <Label fx:id="searchResultLabel" layoutY="15.0" prefHeight="35.0" prefWidth="375.0" textFill="#011b3e" />
-            <Button fx:id="addArticleButton" layoutX="160.0" layoutY="455.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Lägg till artikel" textFill="#f0f0f0">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-            </Button>
-            <Label fx:id="addedArticlesLabel" alignment="CENTER" layoutX="310.0" layoutY="455.0" prefHeight="35.0" prefWidth="50.0">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Button fx:id="loanButton" layoutX="14.0" layoutY="455.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="145.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Låna" textFill="#f0f0f0">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Button>
-         </children>
-      </AnchorPane>
+      <TableView fx:id="searchTableView" layoutX="25.0" layoutY="60.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">
+         <columns>
+            <TableColumn fx:id="mediaIdColumn" maxWidth="35.0" minWidth="25.0" prefWidth="25.0" text="ID" />
+            <TableColumn fx:id="titleColumn" maxWidth="1400.0" minWidth="100.0" prefWidth="100.0" text="Titel" />
+            <TableColumn fx:id="formatColumn" maxWidth="45.0" minWidth="45.0" prefWidth="45.0" text="Format" />
+            <TableColumn fx:id="categoryColumn" maxWidth="1000.0" minWidth="50.0" prefWidth="50.0" text="Kategori" />
+            <TableColumn fx:id="descriptionColumn" maxWidth="1400.0" minWidth="100.0" prefWidth="100.0" text="Beskrivning" />
+            <TableColumn fx:id="publisherColumn" maxWidth="200.0" minWidth="50.0" prefWidth="50.0" text="Utgivare" />
+            <TableColumn fx:id="editionColumn" maxWidth="150.0" minWidth="50.0" prefWidth="50.0" text="Utgåva" />
+            <TableColumn fx:id="authorColumn" maxWidth="1400.0" minWidth="50.0" prefWidth="50.0" text="Författare" />
+            <TableColumn fx:id="isbnColumn" maxWidth="200.0" minWidth="50.0" prefWidth="50.0" text="ISBN" />
+            <TableColumn fx:id="directorColumn" maxWidth="1500.0" minWidth="50.0" prefWidth="50.0" text="Regissör" />
+            <TableColumn fx:id="actorColumn" maxWidth="1500.0" minWidth="100.0" prefWidth="100.0" text="Skådespelare" />
+            <TableColumn fx:id="countryColumn" maxWidth="200.0" minWidth="25.0" prefWidth="25.0" text="Land" />
+            <TableColumn fx:id="ratingColumn" maxWidth="100.0" minWidth="60.0" prefWidth="25.0" text="Rek. ålder" />
+            <TableColumn fx:id="availableColumn" maxWidth="100.0" minWidth="70.0" prefWidth="10.0" text="Tillgänglig" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <TextField fx:id="searchTextField" layoutX="69.0" layoutY="24.0" prefHeight="25.0" prefWidth="1415.0" promptText="Ange nyckelord" style="-fx-cursor: text;" />
+      <Label alignment="CENTER_RIGHT" layoutX="10.0" layoutY="24.0" prefHeight="25.0" prefWidth="49.0" text="Sök" textFill="#f0f0f0">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <TableView fx:id="loanTableView" layoutX="225.0" layoutY="515.0" prefHeight="200.0" prefWidth="400.0">
+        <columns>
+          <TableColumn fx:id="loanTableloanidColumn" maxWidth="80.0" minWidth="80.0" text="Lån ID" />
+          <TableColumn fx:id="loanTablemediaidColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
+            <TableColumn fx:id="loanTableuseridColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
+            <TableColumn fx:id="loanTableloandateColumn" maxWidth="80.0" minWidth="80.0" text="Låndatum" />
+            <TableColumn fx:id="loanTablereturndateColumn" maxWidth="80.0" minWidth="80.0" text="Returdatum" />
+        </columns>
+      </TableView>
+      <TableView fx:id="reserveTableView" layoutX="650.0" layoutY="515.0" prefHeight="200.0" prefWidth="400.0">
+        <columns>
+          <TableColumn fx:id="resTableresidColumn" maxWidth="80.0" minWidth="80.0" text="Res.ID" />
+          <TableColumn fx:id="resTablemediaidColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
+            <TableColumn fx:id="resTableuseridColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
+            <TableColumn fx:id="resTablequeueColumn" maxWidth="80.0" minWidth="80.0" text="Könummer" />
+            <TableColumn fx:id="resTableresdateColumn" maxWidth="80.0" minWidth="80.0" text="Res.Datum" />
+        </columns>
+      </TableView>
+      <Button fx:id="loanButton" layoutX="313.0" layoutY="725.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Låna" textFill="#011b3e">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Button>
+      <Button fx:id="reserveButton" layoutX="738.0" layoutY="725.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Reservera" textFill="#011b3e">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Button>
+      <Label alignment="CENTER" layoutX="225.0" layoutY="480.0" prefHeight="35.0" prefWidth="400.0" text="Lånetabell" textFill="#f0f0f0">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="650.0" layoutY="480.0" prefHeight="35.0" prefWidth="400.0" text="Reservationstabell" textFill="#f0f0f0">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutY="565.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@media/ltu_logga.jpg" />
+         </image>
+      </ImageView>
+      <Button fx:id="finishButton" alignment="CENTER" layoutX="1160.0" layoutY="645.0" mnemonicParsing="false" prefHeight="115.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Klar" textFill="#011b3e">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Button>
+      <TextArea layoutX="1161.0" layoutY="510.0" prefHeight="125.0" prefWidth="225.0" style="-fx-background-color: #011B3E;" text="1. Sök de artiklar du vill ha.&#10;2. För att låna, välj artiklar och tryck sedan på 'Låna'. &#10;3. För att reservera, välj artiklar och tryck sedan på 'Reservera'. &#10;4. För att återgå, tryck på 'Klar'." wrapText="true">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </TextArea>
    </children>
-</HBox>
+</AnchorPane>
