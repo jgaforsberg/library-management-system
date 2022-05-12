@@ -27,6 +27,7 @@ public class MediaModel {
         this.rating = rating;
         this.available = available;
     }
+    @SuppressWarnings("unused")
     public Integer getMediaid() {
         return mediaid;
     }
@@ -67,43 +68,57 @@ public class MediaModel {
     public String getAvailable() {
         return available;
     }
+    @SuppressWarnings("unused")
     public void setMediaid(Integer mediaid) {
         this.mediaid = mediaid;
     }
+    @SuppressWarnings("unused")
     public void setTitle(String title) {
         this.title = title;
     }
+    @SuppressWarnings("unused")
     public void setFormat(String format) {
         this.format = format;
     }
+    @SuppressWarnings("unused")
     public void setCategory(String category) {
         this.category = category;
     }
+    @SuppressWarnings("unused")
     public void setDescription(String description) {
         this.description = description;
     }
+    @SuppressWarnings("unused")
     public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
+    @SuppressWarnings("unused")
     public void setEdition(String edition){this.edition=edition;}
+    @SuppressWarnings("unused")
     public void setAuthor(String author) {
         this.author = author;
     }
+    @SuppressWarnings("unused")
     public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
+    @SuppressWarnings("unused")
     public void setDirector(String director) {
         this.director = director;
     }
+    @SuppressWarnings("unused")
     public void setActor(String actor) {
         this.actor = actor;
     }
+    @SuppressWarnings("unused")
     public void setCountry(String country) {
         this.country = country;
     }
+    @SuppressWarnings("unused")
     public void setRating(String rating) {
         this.rating = rating;
     }
+    @SuppressWarnings("unused")
     public void setAvailable(String available) {
         this.available = available;
     }

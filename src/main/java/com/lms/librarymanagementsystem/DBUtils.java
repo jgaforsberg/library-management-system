@@ -155,6 +155,194 @@ public class DBUtils {
             }
         }
     }
+    public static void addMedia(String title, String format, String category, String description,
+                                String publisher, String edition, String author, String isbn,
+                                String director, String actor, String country, String rating,
+                                String available)   {
+        Connection connection = null;
+        PreparedStatement psInsert = null;
+        PreparedStatement psCheckMediaDuplicate = null;
+        ResultSet resultSet = null;
+        try{
+            connection = getDBLink();
+           /* psCheckMediaDuplicate = connection.prepareStatement("SELECT * FROM media WHERE columnname = ?");
+            psCheckMediaDuplicate.setString(1, columname);
+            resultSet = psCheckMediaDuplicate.executeQuery(); */
+            psInsert = connection.prepareStatement( "INSERT INTO media(title,format,category,description," +
+                                                        "publisher,edition,author,isbn," +
+                                                        "director,actor,country,rating,available)" +
+                                                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+            psInsert.setString(1, title);
+            psInsert.setString(2, format);
+            psInsert.setString(3, category);
+            psInsert.setString(4, description);
+            psInsert.setString(5, publisher);
+            psInsert.setString(6, edition);
+            psInsert.setString(7, author);
+            psInsert.setString(8, isbn);
+            psInsert.setString(9, director);
+            psInsert.setString(10, actor);
+            psInsert.setString(11, country);
+            psInsert.setString(12, rating);
+            psInsert.setString(13, available);
+            psInsert.executeUpdate();
+            System.out.println("Mediaartikel tillagd! ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psInsert != null) {
+                try {
+                    psInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    e.getCause();
+                }
+            }
+        }
+    }
+    public static void updateMedia(Integer mediaid, String title, String format, String category, String description,
+                                   String publisher, String edition, String author, String isbn,
+                                   String director, String actor, String country, String rating,
+                                   String available)    {
+        Connection connection = null;
+        PreparedStatement psUpdate = null;
+        PreparedStatement psCheckMediaExists = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckMediaExists = connection.prepareStatement("SELECT mediaid FROM media WHERE mediaid = ?;");
+            psCheckMediaExists.setInt(1, mediaid);
+            resultSet = psCheckMediaExists.executeQuery();
+            if(!resultSet.isBeforeFirst()) {
+                System.out.println("Artikel med angett artikelnummer finns ej i databasen! ");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Kontrollera att artikelnumret är rätt och försök igen. ");
+                alert.show();
+            }else {
+                psUpdate = connection.prepareStatement( "UPDATE media SET title = ?,format = ?,category = ?,description = ?," +
+                                                            "publisher = ?,edition = ?,author = ?,isbn = ?," +
+                                                            "director = ?,actor = ?,country = ?,rating = ?,available = ?" +
+                                                            "WHERE mediaid = ?;");
+                psUpdate.setString(1, title);
+                psUpdate.setString(2, format);
+                psUpdate.setString(3, category);
+                psUpdate.setString(4, description);
+                psUpdate.setString(5, publisher);
+                psUpdate.setString(6, edition);
+                psUpdate.setString(7, author);
+                psUpdate.setString(8, isbn);
+                psUpdate.setString(9, director);
+                psUpdate.setString(10, actor);
+                psUpdate.setString(11, country);
+                psUpdate.setString(12, rating);
+                psUpdate.setString(13, available);
+                psUpdate.setInt(14, mediaid);
+                psUpdate.executeUpdate();
+                System.out.println("Mediaartikel uppdaterad! ");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psUpdate != null) {
+                try {
+                    psUpdate.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psCheckMediaExists != null) {
+                try {
+                    psCheckMediaExists.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    public static void removeMedia(Integer mediaid)    {
+        Connection connection = null;
+        PreparedStatement psRemove = null;
+        PreparedStatement psCheckMediaExists = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckMediaExists = connection.prepareStatement("SELECT mediaid FROM media WHERE mediaid = ?;");
+            psCheckMediaExists.setInt(1, mediaid);
+            resultSet = psCheckMediaExists.executeQuery();
+            if(!resultSet.isBeforeFirst()) {
+                System.out.println("Artikel med angett artikelnummer finns ej i databasen! ");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Kontrollera att artikelnumret är rätt och försök igen. ");
+                alert.show();
+            }else {
+                psRemove = connection.prepareStatement("DELETE FROM media WHERE mediaid = ?;");
+                psRemove.setInt(1, mediaid);
+                psRemove.executeUpdate();
+                System.out.println("Mediaartikel borttagen! ");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psRemove != null) {
+                try {
+                    psRemove.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psCheckMediaExists != null) {
+                try {
+                    psCheckMediaExists.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 //  method logging in user from main screen
 //  TODO add parameter usertype to validate actions in next scene
     public static void logInUser(ActionEvent event, String username, String password) {
@@ -163,7 +351,7 @@ public class DBUtils {
         ResultSet resultSet = null;
         try {
             connection = getDBLink();
-            psCheckLogin = connection.prepareStatement("SELECT password FROM users WHERE username = ?");
+            psCheckLogin = connection.prepareStatement("SELECT password FROM users WHERE username = ?;");
             psCheckLogin.setString(1, username);
             resultSet = psCheckLogin.executeQuery();
 //          if username query returns false = no username in database
@@ -178,7 +366,7 @@ public class DBUtils {
 //                      DB table columns are varchar, which is why getString("column name") is used
                     String retrievePassword = resultSet.getString("password");
                     if (retrievePassword.equals(password)) {
-                        changeScene(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ", username);
+                        changeScene(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
                     } else {
                         System.out.println("Lösenord matchar ej användare! ");
                         Alert alert = new Alert(Alert.AlertType.ERROR);

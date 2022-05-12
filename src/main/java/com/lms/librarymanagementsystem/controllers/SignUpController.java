@@ -1,5 +1,6 @@
 package com.lms.librarymanagementsystem.controllers;
 
+import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 //  #011B3E blue
 //  #F0F0F0 light gray
+@SuppressWarnings({"Convert2Lambda", "Convert2Diamond"})
 public class SignUpController implements Initializable {
     @FXML
     private Button signupButton, loginButton;
@@ -23,8 +25,7 @@ public class SignUpController implements Initializable {
     @FXML
     private ChoiceBox<String> usertypeChoiceBox;
 
-    private final String [] usertypes = {"admin", "bibliotekarie", "forskare", "student", "plebej"};
-    ObservableList<String> userTypes = FXCollections.observableArrayList("admin", "bibliotekarie", "forskare", "student", "plebej");
+    private final ObservableList<String> userTypes = FXCollections.observableArrayList("admin", "bibliotekarie", "forskare", "student", "plebej");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -46,7 +47,7 @@ public class SignUpController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "main.fxml", "D0024E Bibliotekssystem - Välkommen! ", null);
+                DBUtils.changeScene(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
     }

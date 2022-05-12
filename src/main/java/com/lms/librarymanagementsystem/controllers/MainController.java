@@ -10,12 +10,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 //  #011B3E blue
 //  #F0F0F0 light gray
+@SuppressWarnings({"Convert2Lambda", "Convert2Diamond"})
 public class MainController implements Initializable {
     @FXML
     private Button loginButton;
@@ -41,13 +41,13 @@ public class MainController implements Initializable {
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "search.fxml", "D0024E Bibliotekssystem - Sök artiklar ");
+                DBUtils.changeScene(event, Constants.SEARCH, Constants.SEARCH_TITLE);
             }
         });
         signupButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "sign-up.fxml", "D0024E Bibliotekssystem - Kontoregistrering ",null);
+                DBUtils.changeScene(event, Constants.SIGN_UP, Constants.SIGN_UP_TITLE,null);
             }
         });
         exitButton.setOnAction(new EventHandler<ActionEvent>() {

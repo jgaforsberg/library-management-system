@@ -1,5 +1,6 @@
 package com.lms.librarymanagementsystem.controllers;
 
+import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,10 +16,11 @@ import java.util.ResourceBundle;
 //  #011B3E blue
 //  #F0F0F0 light gray
 
+@SuppressWarnings({"Convert2Lambda", "Convert2Diamond"})
 public class LoginController implements Initializable {
     @FXML
-    private Button logoutButton, searchButton, loanButton, inventoryButton, accountButton;
-    @FXML
+    private Button logoutButton, searchButton, inventoryButton, accountButton;
+    @FXML @SuppressWarnings("unused")
     private Label welcomeLabel, nameLabel;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -26,33 +28,28 @@ public class LoginController implements Initializable {
 //          changes scenes through DBUtils at press of logoutButton
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "main.fxml", " Bibliotekssystem - Välkommen! ");
+                DBUtils.changeScene(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
         searchButton.setOnAction(new EventHandler<ActionEvent>()    {
             @Override
             public void handle(ActionEvent event) {
                 //information();
-                DBUtils.changeScene(event, "loan.fxml", "D0024E Bibliotekssystem - Låna ");
-            }
-        });
-        loanButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                information();
-                //DBUtils.changeScene(event, "account.fxml", "D0024E Bibliotekssystem - Konto", null);
+                DBUtils.changeScene(event, Constants.LOAN, Constants.LOAN_TITLE);
             }
         });
         inventoryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                information();
+                //information();
+                DBUtils.changeScene(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, null);
             }
         });
         accountButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 information();
+                //DBUtils.changeScene(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, null);
             }
         });
 

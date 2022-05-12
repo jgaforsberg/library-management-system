@@ -5,6 +5,7 @@ import com.lms.librarymanagementsystem.DBUtils;
 import com.lms.librarymanagementsystem.models.LoanModel;
 import com.lms.librarymanagementsystem.models.MediaModel;
 import com.lms.librarymanagementsystem.models.ReservationModel;
+import com.lms.librarymanagementsystem.models.UserModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -23,6 +24,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
+@SuppressWarnings({"IndexOfReplaceableByContains", "ConstantConditions", "Convert2Diamond", "Convert2Lambda", "CodeBlock2Expr", "RedundantIfStatement", "DuplicatedCode"})
 public class LoanController implements Initializable {
     @FXML
     public TableView<MediaModel> searchTableView;
@@ -38,47 +40,67 @@ public class LoanController implements Initializable {
                                                     directorColumn, actorColumn, countryColumn, ratingColumn,
                                                     availableColumn;
     @FXML
-    public TableColumn<LoanModel, Integer>          loanTableloanidColumn, loanTablemediaidColumn, loanTableuseridColumn;
+    public TableColumn<LoanModel, Integer> loanLoanIdColumn, loanMediaIdColumn, loanUserIdColumn;
     @FXML
-    public TableColumn<LoanModel, Date> loanTableloandateColumn, loanTablereturndateColumn;
+    public TableColumn<LoanModel, Date> loanLoanDateColumn, loanReturnDateColumn;
     @FXML
-    public TableColumn<ReservationModel, Integer>   resTableresidColumn, resTablemediaidColumn, resTableuseridColumn, resTablequeueColumn;
+    public TableColumn<ReservationModel, Integer> resResIdColumn, resMediaIdColumn, resUserIdColumn, resQueueColumn;
     @FXML
-    public TableColumn<ReservationModel, Date> resTableresdateColumn;
+    public TableColumn<ReservationModel, Date> resResDateColumn;
     @FXML
     public TextField searchTextField;
     @FXML
     public Button loanButton, reserveButton, finishButton;
 
     public ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
+    @SuppressWarnings("unused")
     public ObservableList<LoanModel> loanModelObservableList = FXCollections.observableArrayList();
+    @SuppressWarnings("unused")
     public ObservableList<ReservationModel> reservationModelObservableList = FXCollections.observableArrayList();
 
+    private UserModel activeUser;
+    private LoanModel activeLoan;
+    private ReservationModel activeReservation;
+
+    private final String fetchLoan = "";
+    private String userid, loanid, reservationid;
+
+//  accepts a person to initialize the view
+    public void initData(UserModel user, LoanModel loan, ReservationModel reservation)    {
+        activeUser = user;
+        userid = String.valueOf(user.getUserid());
+        activeLoan = loan;
+        loanid = String.valueOf(loan.getLoanid());
+        activeReservation = reservation;
+        reservationid = String.valueOf(reservation.getReservationid());
+
+    }
+    Connection connection = null;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        Connection connection = null;
-        PreparedStatement psFetchArticles = null;
-        ResultSet resultSet = null;
+
+        PreparedStatement psFetchArticles = null, psFetchLoans = null, psFetchReservations = null;
+        ResultSet resultSetSearch = null, resultSetLoan = null, resultSetReservation = null;
         try {
             connection = DBUtils.getDBLink();
             psFetchArticles = connection.prepareStatement("SELECT mediaid, title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available FROM media;");
-            resultSet = psFetchArticles.executeQuery();
-            while (resultSet.next()) {
-                Integer queryMediaId = resultSet.getInt("mediaid");
-                String queryTitle = resultSet.getString("title");
-                String queryFormat = resultSet.getString("format");
-                String queryCategory = resultSet.getString("category");
-                String queryDescription = resultSet.getString("description");
-                String queryPublisher = resultSet.getString("publisher");
-                String queryEdition = resultSet.getString("edition");
-                String queryAuthor = resultSet.getString("author");
-                String queryIsbn = resultSet.getString("isbn");
-                String queryDirector = resultSet.getString("director");
-                String queryActor = resultSet.getString("actor");
-                String queryCountry = resultSet.getString("country");
-                String queryRating = resultSet.getString("rating");
-                String queryAvailable = resultSet.getString("available");
+            resultSetSearch = psFetchArticles.executeQuery();
+            while (resultSetSearch.next()) {
+                Integer queryMediaId = resultSetSearch.getInt("mediaid");
+                String queryTitle = resultSetSearch.getString("title");
+                String queryFormat = resultSetSearch.getString("format");
+                String queryCategory = resultSetSearch.getString("category");
+                String queryDescription = resultSetSearch.getString("description");
+                String queryPublisher = resultSetSearch.getString("publisher");
+                String queryEdition = resultSetSearch.getString("edition");
+                String queryAuthor = resultSetSearch.getString("author");
+                String queryIsbn = resultSetSearch.getString("isbn");
+                String queryDirector = resultSetSearch.getString("director");
+                String queryActor = resultSetSearch.getString("actor");
+                String queryCountry = resultSetSearch.getString("country");
+                String queryRating = resultSetSearch.getString("rating");
+                String queryAvailable = resultSetSearch.getString("available");
 //              populates the observable list
                 mediaModelObservableList.add(new MediaModel(                queryMediaId,
                                                                             queryTitle,
@@ -163,10 +185,44 @@ public class LoanController implements Initializable {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        try {
+            connection = DBUtils.getDBLink();
+            psFetchLoans = connection.prepareStatement("SELECT loanid, mediaid, userid, loandate, returndate FROM loan WHERE userid = ?;");
+            psFetchLoans.setInt(1, Integer.parseInt(userid));
+            resultSetLoan = psFetchLoans.executeQuery();
+            while (resultSetLoan.next()) {
+                Integer queryLoanID = resultSetLoan.getInt("loanid");
+                Integer queryMediaId = resultSetLoan.getInt("mediaid");
+                Integer queryUserId = resultSetLoan.getInt("userid");
+                Date queryLoanDate = resultSetLoan.getDate("loandate");
+                Date queryReturnDate = resultSetLoan.getDate("returndate");
+//              populates the observable list
+                loanModelObservableList.add(new LoanModel(      queryLoanID,
+                                                                queryMediaId,
+                                                                queryUserId,
+                                                                queryLoanDate,
+                                                                queryReturnDate
+                                                                ));
+                loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
+                loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
+                loanUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
+                loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
+                loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
+
+                loanTableView.setItems((loanModelObservableList));
+
+                FilteredList<LoanModel> filteredData = new FilteredList<>(loanModelObservableList, b -> true);
+//
+
+            }
+        }catch (SQLException el) {
+            el.printStackTrace();
+            el.getCause();
+        }
         }finally    {
-            if (resultSet != null) {
+            if (resultSetSearch != null) {
                 try {
-                    resultSet.close();
+                    resultSetSearch.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -190,6 +246,8 @@ public class LoanController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 // TODO retrieve information from search tableview and create loan object/DB record
+
+
             }
         });
         reserveButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -204,5 +262,8 @@ public class LoanController implements Initializable {
                 DBUtils.changeScene(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ");
             }
         });
+    }
+    public void buildData() {
+
     }
 }

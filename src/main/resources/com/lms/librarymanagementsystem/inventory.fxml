@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -11,16 +12,16 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.InventoryController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.InventoryController">
    <children>
-      <AnchorPane prefHeight="475.0" prefWidth="1500.0" style="-fx-background-color: #011b3e;">
+      <AnchorPane prefHeight="500.0" prefWidth="1500.0" style="-fx-background-color: #011b3e;">
          <children>
-            <Label alignment="CENTER" layoutY="15.0" prefWidth="1500.0" text="Hantera mediaartiklar genom att fylla i önskade attribut. Tryck sedan på valfri knapp. För att avsluta, tryck på knappen 'Klar'." textFill="#f0f0f0">
+            <Label alignment="CENTER" layoutY="15.0" prefWidth="1500.0" text="Artikelhantering" textFill="#f0f0f0">
                <font>
-                  <Font size="21.0" />
+                  <Font name="System Bold" size="21.0" />
                </font>
             </Label>
-            <TableView fx:id="mediaTableView" layoutX="25.0" layoutY="55.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">
+            <TableView fx:id="searchTableView" layoutX="25.0" layoutY="86.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">
                <columns>
                   <TableColumn fx:id="mediaIdColumn" maxWidth="35.0" minWidth="25.0" prefWidth="25.0" text="ID" />
                   <TableColumn fx:id="titleColumn" maxWidth="1400.0" minWidth="100.0" prefWidth="100.0" text="Titel" />
@@ -41,9 +42,20 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
+            <Label alignment="CENTER" layoutY="45.0" prefHeight="25.0" prefWidth="1500.0" textFill="#f0f0f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="searchTextField" layoutX="60.0" layoutY="58.0" prefHeight="25.0" prefWidth="1415.0" promptText="Ange nyckelord" style="-fx-cursor: text;" />
+            <Label alignment="CENTER_RIGHT" layoutY="58.0" prefHeight="25.0" prefWidth="49.0" text="Sök" textFill="#f0f0f0">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
-      <AnchorPane prefHeight="200.0" prefWidth="1500.0" style="-fx-background-color: #011b3e;">
+      <AnchorPane prefHeight="300.0" prefWidth="1500.0" style="-fx-background-color: #011b3e;">
          <children>
             <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="-6.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true" x="10.0">
                <image>
@@ -55,11 +67,7 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="formatTextField" layoutX="160.0" layoutY="75.0" prefWidth="225.0" promptText="Bok, Film, eller Journal">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
+            <ChoiceBox fx:id="formatChoiceBox" layoutX="160.0" layoutY="75.0" prefHeight="30.0" prefWidth="225.0" style="-fx-background-color: white;" />
             <TextField fx:id="categoryTextField" layoutX="160.0" layoutY="105.0" prefWidth="225.0" promptText="Kategori">
                <font>
                   <Font size="14.0" />
@@ -110,11 +118,7 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <TextField fx:id="availableTextField" layoutX="835.0" layoutY="45.0" prefWidth="225.0" promptText="Referens eller Ledig">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
+            <ChoiceBox fx:id="availableChoiceBox" layoutX="835.0" layoutY="45.0" prefHeight="30.0" prefWidth="225.0" style="-fx-background-color: white;" />
             <TextField fx:id="mediaIdTextField" layoutX="835.0" layoutY="75.0" prefWidth="225.0" promptText="Media ID">
                <font>
                   <Font size="14.0" />
@@ -141,6 +145,31 @@
                </font>
             </Button>
             <Label fx:id="messageLabel" alignment="CENTER" layoutY="11.0" prefHeight="25.0" prefWidth="1500.0" textFill="#f0f0f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="160.0" layoutY="192.0" text="Vid 'Lägg till media' : Fyll i alla önskade fält förutom Media ID, fyll även i ej använda fält med tomma strängar" textFill="#f0f0f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="160.0" layoutY="212.0" text="Vid 'Uppdatera media' : Fyll i alla önskade fält och Media ID, fyll även i de fält som inte ska uppdateras med gammalt värde" textFill="#f0f0f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="160.0" layoutY="232.0" text="Vid 'Ta bort media' : Fyll endast i Media ID" textFill="#f0f0f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="160.0" layoutY="252.0" text="För att återgå till tidigare meny, tryck 'Klar'" textFill="#f0f0f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="160.0" layoutY="172.0" text="Sök den media du vill hantera eller följ direkt anvisningarna nedan om media är känd" textFill="#f0f0f0">
                <font>
                   <Font size="14.0" />
                </font>

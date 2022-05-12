@@ -1,14 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.lms.librarymanagementsystem.controllers.AccountController"
-            prefHeight="500.0" prefWidth="600.0">
 
+<AnchorPane prefHeight="500.0" prefWidth="750.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.AccountController">
+   <children>
+      <Label alignment="CENTER" layoutY="23.0" prefHeight="35.0" prefWidth="750.0" text="Ditt lånekonto" textFill="#f0f0f0">
+         <font>
+            <Font name="System Bold" size="21.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@media/ltu_logga.jpg" />
+         </image>
+      </ImageView>
+      <GridPane layoutX="14.0" layoutY="86.0" prefWidth="275.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label prefWidth="135.0" text="AnvändarID :" textFill="#f0f0f0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label prefWidth="135.0" text="Användarnamn :" textFill="#f0f0f0" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label prefWidth="135.0" text="Förnamn :" textFill="#f0f0f0" GridPane.rowIndex="2">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label prefWidth="135.0" text="Efternamn :" textFill="#f0f0f0" GridPane.rowIndex="3">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label prefWidth="135.0" text="Kontotyp :" textFill="#f0f0f0" GridPane.rowIndex="4">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label prefWidth="135.0" text="Tillåtna lån :" textFill="#f0f0f0" GridPane.rowIndex="5">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label prefWidth="135.0" text="Tillåtna reservationer :" textFill="#f0f0f0" GridPane.rowIndex="6">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="idLabel" prefHeight="20.0" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="usernameLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="firstnameLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="lastnameLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="accounttypeLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="maxLoanLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="maxReservationLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </GridPane>
+      <Label layoutX="300.0" layoutY="67.0" prefWidth="200.0" text="Dina lån :" textFill="#f0f0f0">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <ListView fx:id="loanListView" layoutX="300.0" layoutY="86.0" prefHeight="200.0" prefWidth="200.0" />
+      <Button fx:id="returnLoanButton" layoutX="300.0" layoutY="325.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Returnera" textFill="#011b3e">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Button>
+      <Label layoutX="520.0" layoutY="67.0" prefWidth="200.0" text="Dina reservationer :" textFill="#f0f0f0">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <ListView fx:id="reservationListView" layoutX="520.0" layoutY="86.0" prefHeight="200.0" prefWidth="200.0" />
+      <Button fx:id="endReservationButton" layoutX="520.0" layoutY="325.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Säg upp" textFill="#011b3e">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Button>
+      <Label layoutX="300.0" layoutY="381.0" text="Lämna tillbaka? Välj objekt i listan och tryck sedan på 'Returnera'" textFill="#f0f0f0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="300.0" layoutY="398.0" text="Avboka? Välj objekt i listan och tryck sedan på 'Säg upp'" textFill="#f0f0f0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Button fx:id="returnButton" layoutX="536.0" layoutY="451.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="200.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Button>
+   </children>
 </AnchorPane>

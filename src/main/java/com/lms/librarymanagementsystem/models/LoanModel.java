@@ -16,14 +16,26 @@ public class LoanModel {
         this.loandate = loandate;
         this.returndate = returndate;
     }
+
+
+    @SuppressWarnings("unused")
     public Integer getLoanid() {return loanid;}
+    @SuppressWarnings("unused")
     public void setLoanid(Integer loanid) {this.loanid = loanid;}
+    @SuppressWarnings("unused")
     public Integer getMediaid() {return mediaid;}
+    @SuppressWarnings("unused")
     public void setMediaid(Integer mediaid) {this.mediaid = mediaid;}
+    @SuppressWarnings("unused")
     public Integer getUserid() {return userid;}
+    @SuppressWarnings("unused")
     public void setUserid(Integer userid) {this.userid = userid;}
+    @SuppressWarnings("unused")
     public Date getLoandate() {return loandate;}
+    @SuppressWarnings("unused")
     public void setLoandate(Date loandate) {this.loandate = loandate;}
+    @SuppressWarnings("unused")
     public Date getReturndate() {return returndate;}
+    @SuppressWarnings("unused")
     public void setReturndate(Date returndate) {this.returndate = returndate;}
 }

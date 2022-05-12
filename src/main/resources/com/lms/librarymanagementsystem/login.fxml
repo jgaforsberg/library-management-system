@@ -21,17 +21,12 @@
       </AnchorPane>
       <AnchorPane prefHeight="500.0" prefWidth="391.0" style="-fx-background-color: F0F0F0;">
          <children>
-            <Button fx:id="searchButton" layoutX="79.0" layoutY="125.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Sök" textFill="#f0f0f0">
+            <Button fx:id="searchButton" layoutX="79.0" layoutY="165.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Sök &amp; Låna" textFill="#f0f0f0">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="loanButton" layoutX="79.0" layoutY="165.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Låna" textFill="#f0f0f0">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Button>
-            <Button fx:id="accountButton" layoutX="79.0" layoutY="205.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Mina lån" textFill="#f0f0f0">
+            <Button fx:id="accountButton" layoutX="79.0" layoutY="205.0" minHeight="30.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Mitt konto" textFill="#f0f0f0">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>

@@ -197,3 +197,67 @@ VALUES
 'Naturkompaniet', '01/2022', '', '',
 '', '', 'Sverige', '',
 'Referens');
+
+-- loan and reservation tables
+
+CREATE TABLE `javafxtest`.`loan` (
+  `loanid` INT NOT NULL,
+  `mediaid` INT NOT NULL,
+  `userid` INT NOT NULL,
+  `loandate` DATE NOT NULL,
+  `returndate` DATE NULL COMMENT 'can be null, is set when loanobject is returned through interface',
+  PRIMARY KEY (`loanid`),
+  INDEX `mediaid_idx` (`mediaid` ASC) VISIBLE,
+  INDEX `userid_idx` (`userid` ASC) VISIBLE,
+  CONSTRAINT `mediaLoanID`
+    FOREIGN KEY (`mediaid`)
+    REFERENCES `javafxtest`.`media` (`mediaid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `userLoanID`
+    FOREIGN KEY (`userid`)
+    REFERENCES `javafxtest`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = 'table for storing loans';
+
+CREATE TABLE `javafxtest`.`reservation` (
+  `reservationid` INT NOT NULL,
+  `mediaid` INT NOT NULL,
+  `userid` INT NOT NULL,
+  `queuenumber` INT NOT NULL COMMENT 'place in reservation queue',
+  `reservationdate` DATE NOT NULL COMMENT 'date of reservation',
+  PRIMARY KEY (`reservationid`),
+  INDEX `mediaid_idx` (`mediaid` ASC) VISIBLE,
+  INDEX `userid_idx` (`userid` ASC) VISIBLE,
+  CONSTRAINT `mediaReservationID`
+    FOREIGN KEY (`mediaid`)
+    REFERENCES `javafxtest`.`media` (`mediaid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `userReservationID`
+    FOREIGN KEY (`userid`)
+    REFERENCES `javafxtest`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = 'table for storing media reservations';
+
+UPDATE `javafxtest`.`media`
+SET
+`title` = <{title: }>,
+`format` = <{format: }>,
+`category` = <{category: }>,
+`description` = <{description: }>,
+`publisher` = <{publisher: }>,
+`edition` = <{edition: }>,
+`author` = <{author: }>,
+`isbn` = <{isbn: }>,
+`director` = <{director: }>,
+`actor` = <{actor: }>,
+`country` = <{country: }>,
+`rating` = <{rating: }>,
+`available` = <{available: }>
+WHERE `mediaid` = <{expr}>;
+
+DELETE FROM `javafxtest`.`media`
+WHERE <{where_expression}>;
