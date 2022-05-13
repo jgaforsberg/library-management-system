@@ -12,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -93,7 +92,7 @@ public class AccountController implements Initializable {
         returnButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, Constants.LOGIN, Constants.LOGIN_TITLE);
+                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, usernameLabel.getText());
             }
         });
     }

@@ -50,10 +50,14 @@ public class InventoryController implements Initializable {
                                             availableColumn;
     @FXML
     private TextField searchTextField;
+    @FXML
+    private Label nameLabel;
 
     private final ObservableList<String> format = FXCollections.observableArrayList("Bok", "Film", "Journal");
     private final ObservableList<String> available = FXCollections.observableArrayList("Referens", "Ledig");
     private final ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
+
+    private Integer userid;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -97,7 +101,7 @@ public class InventoryController implements Initializable {
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, Constants.LOGIN, Constants.LOGIN_TITLE);
+                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, nameLabel.getText());
             }
         });
     }
@@ -234,5 +238,10 @@ public class InventoryController implements Initializable {
                 }
             }
         }
+    }
+
+    public void setUserInformation(String username) {
+        this.userid = DBUtils.getUserId(username);
+        nameLabel.setText(username);
     }
 }

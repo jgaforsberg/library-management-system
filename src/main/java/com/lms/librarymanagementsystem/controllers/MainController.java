@@ -41,13 +41,14 @@ public class MainController implements Initializable {
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, Constants.SEARCH, Constants.SEARCH_TITLE);
+            //TODO change scene method name
+                DBUtils.changeSceneLogout(event, Constants.SEARCH, Constants.SEARCH_TITLE);
             }
         });
         signupButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, Constants.SIGN_UP, Constants.SIGN_UP_TITLE,null);
+                DBUtils.changeSceneLogin(event, Constants.SIGN_UP, Constants.SIGN_UP_TITLE,null);
             }
         });
         exitButton.setOnAction(new EventHandler<ActionEvent>() {

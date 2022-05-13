@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 
 @SuppressWarnings({"Convert2Lambda", "Convert2Diamond"})
 public class LoginController implements Initializable {
-    @FXML
+    @FXML @SuppressWarnings("unused")
     private Button logoutButton, searchButton, inventoryButton, accountButton;
     @FXML @SuppressWarnings("unused")
     private Label welcomeLabel, nameLabel;
@@ -28,28 +28,28 @@ public class LoginController implements Initializable {
 //          changes scenes through DBUtils at press of logoutButton
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, Constants.MAIN, Constants.MAIN_TITLE);
+                DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
         searchButton.setOnAction(new EventHandler<ActionEvent>()    {
             @Override
             public void handle(ActionEvent event) {
                 //information();
-                DBUtils.changeScene(event, Constants.LOAN, Constants.LOAN_TITLE, nameLabel.getText());
+                DBUtils.changeSceneLoan(event, Constants.LOAN, Constants.LOAN_TITLE, nameLabel.getText());
             }
         });
         inventoryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //information();
-                DBUtils.changeScene(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, nameLabel.getText());
+                DBUtils.validateUser(event, nameLabel.getText());
             }
         });
         accountButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //information();
-                DBUtils.changeScene(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
+                DBUtils.changeSceneLogin(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
             }
         });
 
@@ -58,6 +58,8 @@ public class LoginController implements Initializable {
     public void setUserInformation(String username)    {
         nameLabel.setText(username);
     }
+//  DUMMY METHOD FOR NOT YET IMPLEMENTED SCENES
+    @SuppressWarnings("unused")
     public void information()   {
         System.out.println("Ej implementerad funktion! ");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

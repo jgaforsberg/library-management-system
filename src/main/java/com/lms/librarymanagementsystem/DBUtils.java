@@ -1,5 +1,7 @@
 package com.lms.librarymanagementsystem;
 
+import com.lms.librarymanagementsystem.controllers.InventoryController;
+import com.lms.librarymanagementsystem.controllers.LoanController;
 import com.lms.librarymanagementsystem.controllers.LoginController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -38,7 +40,7 @@ public class DBUtils {
     // TODO username can be used as unique identifier since its value is unique
 
     //  login change scene
-    public static void changeScene(ActionEvent event, String fxmlFile, String title, String username)   {
+    public static void changeSceneLogin(ActionEvent event, String fxmlFile, String title, String username)   {
         Parent root = null;
 //      make sure username is passed to login scene
         if(username != null)    {
@@ -50,6 +52,7 @@ public class DBUtils {
                 loginController.setUserInformation(username);
             }   catch(IOException e) {
                 e.printStackTrace();
+                e.getCause();
             }
         }   else    {
             try {
@@ -66,8 +69,36 @@ public class DBUtils {
         stage.setScene((new Scene(root)));
         stage.show();
     }
+    // loan scene change
+    public static void changeSceneLoan(ActionEvent event, String fxmlfile, String title, String username)   {
+        Parent root = null;
+        if(username != null)    {
+            try{
+                FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlfile));
+                root = loader.load();
+                LoanController loanController = loader.getController();
+                loanController.setUserInformation(username);
+                System.out.println("Användarnamn initierat! ");
+            }catch (IOException e)  {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }else{
+            try {
+                root = FXMLLoader.load(DBUtils.class.getResource(fxmlfile));
+                System.out.println("Kunde ej initiera användarnamn! ");
+            }catch (IOException e)  {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }
+        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        stage.setTitle(title);
+        stage.setScene((new Scene(root)));
+        stage.show();
+    }
 //  logged in change scene search
-    public static void changeScene(ActionEvent event, String fxmlFile, String title) {
+    public static void changeSceneLogout(ActionEvent event, String fxmlFile, String title) {
         Parent root = null;
         try {
             root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
@@ -79,6 +110,47 @@ public class DBUtils {
         stage.setTitle(title);
         stage.setScene((new Scene(root)));
         stage.show();
+    }
+    public static Integer getUserId(String username)    {
+        Integer userid = null;
+        Connection connection = null;
+        PreparedStatement psFetchUserId = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DBUtils.getDBLink();
+            psFetchUserId = connection.prepareStatement("SELECT id FROM users WHERE username = ?;");
+            psFetchUserId.setString(1, username);
+            resultSet = psFetchUserId.executeQuery();
+            while(resultSet.next()) {
+                userid = resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            if(psFetchUserId != null)  {
+                try{
+                    psFetchUserId.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(resultSet != null){
+                try{
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(connection != null){
+                try{
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return userid;
     }
 //  method for adding new users to DB
     public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype) {
@@ -115,7 +187,7 @@ public class DBUtils {
                 psInsert.setString(5, usertype);
                 psInsert.executeUpdate();
 //                      change scenes to logged in scene
-                changeScene(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ", username);
+                changeSceneLogin(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ", username);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -140,6 +212,140 @@ public class DBUtils {
             if (psCheckUserExists != null) {
                 try {
                     psCheckUserExists.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    public static void validateUser(ActionEvent event, String username) {
+        String authorizedLibrarian = "bibliotekarie";
+        String authorizedAdmin = "admin";
+        Connection connection = null;
+        PreparedStatement psCheckUserType = null;
+        ResultSet resultSet = null;
+        try{
+            connection = getDBLink();
+            psCheckUserType = connection.prepareStatement("SELECT usertype FROM users WHERE username = ?;");
+            psCheckUserType.setString(1, username);
+            resultSet = psCheckUserType.executeQuery();
+            while (resultSet.next())    {
+                String actualUsertype = resultSet.getString("usertype");
+                if(actualUsertype.equalsIgnoreCase(authorizedLibrarian) || actualUsertype.equalsIgnoreCase(authorizedAdmin)) {
+                    changeSceneInventory(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, username);
+                    System.out.println("Användare validerad! ");
+                }else {
+                    System.out.println();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Du har inte behörighet för denna funktion. ");
+                    alert.show();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psCheckUserType != null) {
+                try {
+                    psCheckUserType.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    public static void changeSceneInventory(ActionEvent event, String fxmlFile, String title, String username)   {
+        Parent root = null;
+        if(username != null)    {
+            try{
+                FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
+                root = loader.load();
+                InventoryController inventoryController = loader.getController();
+                inventoryController.setUserInformation(username);
+                System.out.println("Användarnamn initierat! ");
+            }catch (IOException e)  {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }else{
+            try {
+                root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
+                System.out.println("Kunde ej initiera användarnamn! ");
+            }catch (IOException e)  {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }
+        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        stage.setTitle(title);
+        stage.setScene((new Scene(root)));
+        stage.show();
+    }
+    //  method logging in user from main screen
+    public static void logInUser(ActionEvent event, String username, String password) {
+        Connection connection = null;
+        PreparedStatement psCheckLogin = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckLogin = connection.prepareStatement("SELECT password FROM users WHERE username = ?;");
+            psCheckLogin.setString(1, username);
+            resultSet = psCheckLogin.executeQuery();
+//          if username query returns false = no username in database
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("Användare finns ej i databasen! ");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Ogiltigt användarnamn, försök igen. ");
+                alert.show();
+            } else {
+//                  querying if entered password matches username's password in database
+                while (resultSet.next()) {
+//                      DB table columns are varchar, which is why getString("column name") is used
+                    String retrievePassword = resultSet.getString("password");
+                    if (retrievePassword.equals(password)) {
+                        changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
+                    } else {
+                        System.out.println("Lösenord matchar ej användare! ");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Ogiltigt lösenord, försök igen. ");
+                        alert.show();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psCheckLogin != null) {
+                try {
+                    psCheckLogin.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -328,64 +534,6 @@ public class DBUtils {
             if (psCheckMediaExists != null) {
                 try {
                     psCheckMediaExists.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-//  method logging in user from main screen
-//  TODO add parameter usertype to validate actions in next scene
-    public static void logInUser(ActionEvent event, String username, String password) {
-        Connection connection = null;
-        PreparedStatement psCheckLogin = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckLogin = connection.prepareStatement("SELECT password FROM users WHERE username = ?;");
-            psCheckLogin.setString(1, username);
-            resultSet = psCheckLogin.executeQuery();
-//          if username query returns false = no username in database
-            if (!resultSet.isBeforeFirst()) {
-                System.out.println("Användare finns ej i databasen! ");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Ogiltigt användarnamn, försök igen. ");
-                alert.show();
-            } else {
-//                  querying if entered password matches username's password in database
-                while (resultSet.next()) {
-//                      DB table columns are varchar, which is why getString("column name") is used
-                    String retrievePassword = resultSet.getString("password");
-                    if (retrievePassword.equals(password)) {
-                        changeScene(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
-                    } else {
-                        System.out.println("Lösenord matchar ej användare! ");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setContentText("Ogiltigt lösenord, försök igen. ");
-                        alert.show();
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psCheckLogin != null) {
-                try {
-                    psCheckLogin.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

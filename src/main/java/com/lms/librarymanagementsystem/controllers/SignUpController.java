@@ -47,7 +47,8 @@ public class SignUpController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, Constants.MAIN, Constants.MAIN_TITLE);
+            // TODO change scene method name
+                DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
     }
