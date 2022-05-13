@@ -34,6 +34,9 @@ public class DBUtils {
         }
         return DBLink;
     }
+    // TODO changeScene methods for each unique scene change that utilizies username
+    // TODO username can be used as unique identifier since its value is unique
+
     //  login change scene
     public static void changeScene(ActionEvent event, String fxmlFile, String title, String username)   {
         Parent root = null;

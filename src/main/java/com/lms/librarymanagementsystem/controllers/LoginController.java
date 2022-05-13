@@ -35,21 +35,21 @@ public class LoginController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 //information();
-                DBUtils.changeScene(event, Constants.LOAN, Constants.LOAN_TITLE);
+                DBUtils.changeScene(event, Constants.LOAN, Constants.LOAN_TITLE, nameLabel.getText());
             }
         });
         inventoryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //information();
-                DBUtils.changeScene(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, null);
+                DBUtils.changeScene(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, nameLabel.getText());
             }
         });
         accountButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                information();
-                //DBUtils.changeScene(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, null);
+                //information();
+                DBUtils.changeScene(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
             }
         });
 

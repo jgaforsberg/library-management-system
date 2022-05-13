@@ -78,26 +78,27 @@ public class LoanController implements Initializable {
     Connection connection = null;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-
-        PreparedStatement psFetchArticles = null, psFetchLoans = null, psFetchReservations = null;
-        ResultSet resultSetSearch = null, resultSetLoan = null, resultSetReservation = null;
-
-
-
-
+        search();
+        loan();
+        reservation();
         loanButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // TODO retrieve information from search tableview and create loan object/DB record
-
-
+                refreshLoan();
+                refreshSearch();
+                loan();
+                search();
             }
         });
         reserveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // TODO retrieve information from search tableview and create reservation object/DB record
+                refreshReservation();
+                refreshSearch();
+                reservation();
+                search();
             }
         });
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -107,7 +108,16 @@ public class LoanController implements Initializable {
             }
         });
     }
-    public void search()  {
+    private void refreshLoan() {
+        loanModelObservableList.clear();
+    }
+    private void refreshSearch()    {
+        mediaModelObservableList.clear();
+    }
+    private void refreshReservation()    {
+
+    }
+    private void search()  {
         Connection connection = null;
         PreparedStatement psFetchArticles = null;
         ResultSet resultSet = null;
@@ -238,6 +248,9 @@ public class LoanController implements Initializable {
                 }
             }
         }
+    }
+    private void reservation() {
+
     }
     public void loan() {
         PreparedStatement psFetchArticles = null, psFetchLoans = null, psFetchReservations = null;

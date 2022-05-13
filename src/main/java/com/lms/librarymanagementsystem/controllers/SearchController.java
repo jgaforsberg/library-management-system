@@ -36,7 +36,7 @@ public class SearchController implements Initializable {
     public Button loginButton;
 
     public ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
-//  Database values can't be NULL for the SearchController class to function, empty strings like '' must be used
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         DBUtils getDBLink = new DBUtils();

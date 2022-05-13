@@ -22,8 +22,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-//  TODO class for adding, editing, and deleting articles from DB
-//  TODO implement same interactive search from search controller ???
 // INSERT statement
 // INSERT INTO media(title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available) VALUES('title', 'format', 'category', 'description', 'publisher', 'edition', 'author', 'isbn', 'director', 'actor', 'country', 'rating', 'available');
 // UPDATE statement
@@ -103,9 +101,9 @@ public class InventoryController implements Initializable {
             }
         });
     }
-    public void refreshSearch() {mediaModelObservableList.clear();}
-    public void setActionInformation(String actionInformation){ messageLabel.setText(actionInformation);}
-    public void search()  {
+    private void refreshSearch() {mediaModelObservableList.clear();}
+    private void setActionInformation(String actionInformation){ messageLabel.setText(actionInformation);}
+    private void search()  {
         Connection connection = null;
         PreparedStatement psFetchArticles = null;
         ResultSet resultSet = null;
