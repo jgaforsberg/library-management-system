@@ -4,6 +4,7 @@ package com.lms.librarymanagementsystem.controllers;
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
 import com.lms.librarymanagementsystem.models.MediaModel;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -25,10 +26,10 @@ public class SearchController implements Initializable {
     @FXML
     public TableColumn<MediaModel, Integer>   mediaIdColumn;
     @FXML
-    public TableColumn<MediaModel, String>    titleColumn, formatColumn, categoryColumn, descriptionColumn,
-                                                    publisherColumn, editionColumn, authorColumn, isbnColumn,
-                                                    directorColumn, actorColumn, countryColumn, ratingColumn,
-                                                    availableColumn;
+    public TableColumn<MediaModel, SimpleStringProperty>    titleColumn, formatColumn, categoryColumn, descriptionColumn,
+                                                            publisherColumn, editionColumn, authorColumn, isbnColumn,
+                                                            directorColumn, actorColumn, countryColumn, ratingColumn,
+                                                            availableColumn;
     @FXML
     public TextField searchTextField;
     @FXML
@@ -60,9 +61,9 @@ public class SearchController implements Initializable {
                 String queryActor = resultSet.getString("actor");
                 String queryCountry = resultSet.getString("country");
                 String queryRating = resultSet.getString("rating");
-                String queryAvailable = resultSet.getString("available");
+                String queryAvailable =  resultSet.getString("available");
 //              populates the observable list
-                mediaModelObservableList.add(new MediaModel(    queryMediaId,
+                mediaModelObservableList.add(new MediaModel(                queryMediaId,
                                                                             queryTitle,
                                                                             queryFormat,
                                                                             queryCategory,
@@ -105,32 +106,32 @@ public class SearchController implements Initializable {
                         String searchKeyWord = newValue.toLowerCase();
 //                      an index > 0 means a match has been found
 //                      to return Integer type, use toString() method
-                        if (mediaModel.getTitle().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        if (mediaModel.titleProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
 //                      match in book title etc.
                             return true;
-                        }else if (mediaModel.getFormat().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.formatProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaModel.getCategory().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.categoryProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1) {
                             return true;
-                        }else if (mediaModel.getDescription().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if (mediaModel.descriptionProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaModel.getPublisher().toLowerCase().indexOf(searchKeyWord) > -1){
+                        }else if (mediaModel.publisherProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        }else if (mediaModel.getEdition().toLowerCase().indexOf(searchKeyWord) > -1){
+                        }else if (mediaModel.editionProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        }else if (mediaModel.getAuthor().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.authorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaModel.getIsbn().toLowerCase().indexOf(searchKeyWord) > -1)     {
+                        }else if (mediaModel.isbnProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)     {
                             return true;
-                        }else if(mediaModel.getDirector().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if(mediaModel.directorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaModel.getActor().toLowerCase().indexOf(searchKeyWord) > -1)    {
+                        }else if (mediaModel.actorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)    {
                             return true;
-                        }else if (mediaModel.getCountry().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if (mediaModel.countryProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaModel.getRating().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.ratingProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaModel.getAvailable().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.availableProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
                         }else
                             return false;

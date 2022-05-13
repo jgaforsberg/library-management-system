@@ -1,71 +1,74 @@
 package com.lms.librarymanagementsystem.models;
+
+import javafx.beans.property.SimpleStringProperty;
+
 //  #011B3E blue
 //  #F0F0F0 light gray
 public class MediaModel {
     Integer mediaid;
-    String  title, format, category, description,
-            publisher, edition, author, isbn,
-            director, actor, country, rating,
-            available;
+    SimpleStringProperty    title, format, category, description,
+                            publisher, edition, author, isbn,
+                            director, actor, country, rating,
+                            available;
     public MediaModel(Integer mediaid,
                       String title, String format, String category, String description,
                       String publisher, String edition, String author, String isbn,
                       String director, String actor, String country, String rating,
                       String available) {
         this.mediaid = mediaid;
-        this.title = title;
-        this.format = format;
-        this.category = category;
-        this.description = description;
-        this.publisher = publisher;
-        this.edition = edition;
-        this.author = author;
-        this.isbn = isbn;
-        this.director = director;
-        this.actor = actor;
-        this.country = country;
-        this.rating = rating;
-        this.available = available;
+        this.title = new SimpleStringProperty(title);
+        this.format = new SimpleStringProperty(format);
+        this.category = new SimpleStringProperty(category);
+        this.description = new SimpleStringProperty(description);
+        this.publisher = new SimpleStringProperty(publisher);
+        this.edition = new SimpleStringProperty(edition);
+        this.author = new SimpleStringProperty(author);
+        this.isbn = new SimpleStringProperty(isbn);
+        this.director = new SimpleStringProperty(director);
+        this.actor = new SimpleStringProperty(actor);
+        this.country = new SimpleStringProperty(country);
+        this.rating = new SimpleStringProperty(rating);
+        this.available = new SimpleStringProperty(available);
     }
     @SuppressWarnings("unused")
     public Integer getMediaid() {
         return mediaid;
     }
-    public String getTitle() {
+    public SimpleStringProperty titleProperty() {
         return title;
     }
-    public String getFormat() {
+    public SimpleStringProperty formatProperty() {
         return format;
     }
-    public String getCategory() {
+    public SimpleStringProperty categoryProperty() {
         return category;
     }
-    public String getDescription() {
+    public SimpleStringProperty descriptionProperty() {
         return description;
     }
-    public String getPublisher() {
+    public SimpleStringProperty publisherProperty() {
         return publisher;
     }
-    public String getEdition(){return edition;}
-    public String getAuthor() {
+    public SimpleStringProperty editionProperty(){return edition;}
+    public SimpleStringProperty authorProperty() {
         return author;
     }
-    public String getIsbn() {
+    public SimpleStringProperty isbnProperty() {
         return isbn;
     }
-    public String getDirector() {
+    public SimpleStringProperty directorProperty() {
         return director;
     }
-    public String getActor() {
+    public SimpleStringProperty actorProperty() {
         return actor;
     }
-    public String getCountry() {
+    public SimpleStringProperty countryProperty() {
         return country;
     }
-    public String getRating() {
+    public SimpleStringProperty ratingProperty() {
         return rating;
     }
-    public String getAvailable() {
+    public SimpleStringProperty availableProperty() {
         return available;
     }
     @SuppressWarnings("unused")
@@ -73,53 +76,53 @@ public class MediaModel {
         this.mediaid = mediaid;
     }
     @SuppressWarnings("unused")
-    public void setTitle(String title) {
+    public void setTitle(SimpleStringProperty title) {
         this.title = title;
     }
     @SuppressWarnings("unused")
-    public void setFormat(String format) {
+    public void setFormat(SimpleStringProperty format) {
         this.format = format;
     }
     @SuppressWarnings("unused")
-    public void setCategory(String category) {
+    public void setCategory(SimpleStringProperty category) {
         this.category = category;
     }
     @SuppressWarnings("unused")
-    public void setDescription(String description) {
+    public void setDescription(SimpleStringProperty description) {
         this.description = description;
     }
     @SuppressWarnings("unused")
-    public void setPublisher(String publisher) {
+    public void setPublisher(SimpleStringProperty publisher) {
         this.publisher = publisher;
     }
     @SuppressWarnings("unused")
-    public void setEdition(String edition){this.edition=edition;}
+    public void setEdition(SimpleStringProperty edition){this.edition=edition;}
     @SuppressWarnings("unused")
-    public void setAuthor(String author) {
+    public void setAuthor(SimpleStringProperty author) {
         this.author = author;
     }
     @SuppressWarnings("unused")
-    public void setIsbn(String isbn) {
+    public void setIsbn(SimpleStringProperty isbn) {
         this.isbn = isbn;
     }
     @SuppressWarnings("unused")
-    public void setDirector(String director) {
+    public void setDirector(SimpleStringProperty director) {
         this.director = director;
     }
     @SuppressWarnings("unused")
-    public void setActor(String actor) {
+    public void setActor(SimpleStringProperty actor) {
         this.actor = actor;
     }
     @SuppressWarnings("unused")
-    public void setCountry(String country) {
+    public void setCountry(SimpleStringProperty country) {
         this.country = country;
     }
     @SuppressWarnings("unused")
-    public void setRating(String rating) {
+    public void setRating(SimpleStringProperty rating) {
         this.rating = rating;
     }
     @SuppressWarnings("unused")
-    public void setAvailable(String available) {
+    public void setAvailable(SimpleStringProperty available) {
         this.available = available;
     }
 }

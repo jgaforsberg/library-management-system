@@ -32,10 +32,9 @@ import java.util.ResourceBundle;
 // DELETE FROM media WHERE mediaid = mediaid;
 public class InventoryController implements Initializable {
     @FXML
-    private TextField   mediaIdTextField, titleTextField, formatTextField, categoryTextField, descriptionTextField,
+    private TextField   mediaIdTextField, titleTextField, categoryTextField, descriptionTextField,
                         editionTextField, publisherTextField, authorTextField, isbnTextField,
-                        directorTextField, actorTextField, countryTextField, ratingTextField,
-                        availableTextField;
+                        directorTextField, actorTextField, countryTextField, ratingTextField;
     @FXML
     private ChoiceBox<String> formatChoiceBox, availableChoiceBox;
     @FXML
@@ -54,18 +53,63 @@ public class InventoryController implements Initializable {
     @FXML
     private TextField searchTextField;
 
-    private final ObservableList<String> format = FXCollections.observableArrayList("bok", "film", "journal");
-    private final ObservableList<String> available = FXCollections.observableArrayList("referens", "ledig");
+    private final ObservableList<String> format = FXCollections.observableArrayList("Bok", "Film", "Journal");
+    private final ObservableList<String> available = FXCollections.observableArrayList("Referens", "Ledig");
     private final ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         formatChoiceBox.getItems().addAll(format);
         availableChoiceBox.getItems().addAll(available);
+        search();
 
+        addMediaButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtils.addMedia(   titleTextField.getText(), formatChoiceBox.getValue(), categoryTextField.getText(), descriptionTextField.getText(),
+                                    publisherTextField.getText(),editionTextField.getText(), authorTextField.getText(), isbnTextField.getText(),
+                                    directorTextField.getText(), actorTextField.getText(), countryTextField.getText(), ratingTextField.getText(),
+                                    availableChoiceBox.getValue());
+                setActionInformation("Media tillagd ");
+                refreshSearch();
+                search();
+            }
+        });
+        updateMediaButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtils.updateMedia(Integer.valueOf(mediaIdTextField.getText()), titleTextField.getText(), formatChoiceBox.getValue(), categoryTextField.getText(), descriptionTextField.getText(),
+                                                    publisherTextField.getText(),editionTextField.getText(), authorTextField.getText(), isbnTextField.getText(),
+                                                    directorTextField.getText(), actorTextField.getText(), countryTextField.getText(), ratingTextField.getText(),
+                                                    availableChoiceBox.getValue());
+                setActionInformation("Media uppdaterad ");
+                refreshSearch();
+                search();
+            }
+        });
+        removeMediaButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtils.removeMedia(Integer.valueOf(mediaIdTextField.getText()));
+                setActionInformation("Media borttagen ");
+                refreshSearch();
+                search();
+            }
+        });
+        finishButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtils.changeScene(event, Constants.LOGIN, Constants.LOGIN_TITLE);
+            }
+        });
+    }
+    public void refreshSearch() {mediaModelObservableList.clear();}
+    public void setActionInformation(String actionInformation){ messageLabel.setText(actionInformation);}
+    public void search()  {
         Connection connection = null;
         PreparedStatement psFetchArticles = null;
         ResultSet resultSet = null;
+
         try {
             connection = DBUtils.getDBLink();
             psFetchArticles = connection.prepareStatement(  "SELECT mediaid, title, format, category, description, " +
@@ -89,21 +133,19 @@ public class InventoryController implements Initializable {
                 String queryAvailable = resultSet.getString("available");
 //              populates the observable list
                 mediaModelObservableList.add(new MediaModel(queryMediaId,
-                        queryTitle,
-                        queryFormat,
-                        queryCategory,
-                        queryDescription,
-                        queryPublisher,
-                        queryEdition,
-                        queryAuthor,
-                        queryIsbn,
-                        queryDirector,
-                        queryActor,
-                        queryCountry,
-                        queryRating,
-                        queryAvailable));
-//              PropertyValueFactory corresponds to the new BookSearchModel
-//              populate the tableview columns
+                                                            queryTitle,
+                                                            queryFormat,
+                                                            queryCategory,
+                                                            queryDescription,
+                                                            queryPublisher,
+                                                            queryEdition,
+                                                            queryAuthor,
+                                                            queryIsbn,
+                                                            queryDirector,
+                                                            queryActor,
+                                                            queryCountry,
+                                                            queryRating,
+                                                            queryAvailable));
                 mediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
                 titleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
                 formatColumn.setCellValueFactory((new PropertyValueFactory<>("format")));
@@ -131,34 +173,34 @@ public class InventoryController implements Initializable {
                         String searchKeyWord = newValue.toLowerCase();
 //                      an index > 0 means a match has been found
 //                      to return Integer type, use toString() method
-                        if (mediaModel.getTitle().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        if (mediaModel.titleProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
 //                      match in book title etc.
                             return true;
-                        } else if (mediaModel.getFormat().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.formatProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        } else if (mediaModel.getCategory().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.categoryProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1) {
                             return true;
-                        } else if (mediaModel.getDescription().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.descriptionProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        } else if (mediaModel.getPublisher().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.publisherProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        } else if (mediaModel.getEdition().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.editionProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        } else if (mediaModel.getAuthor().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.authorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        } else if (mediaModel.getIsbn().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.isbnProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)     {
                             return true;
-                        } else if (mediaModel.getDirector().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if(mediaModel.directorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        } else if (mediaModel.getActor().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.actorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)    {
                             return true;
-                        } else if (mediaModel.getCountry().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.countryProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        } else if (mediaModel.getRating().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.ratingProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        } else if (mediaModel.getAvailable().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.availableProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        } else
+                        }else
                             return false;
 //                      return false = no match found in database
                     });
@@ -170,75 +212,29 @@ public class InventoryController implements Initializable {
                 searchTableView.setItems(sortedData);
             }
         }catch (SQLException e) {
-                e.printStackTrace();
-            }finally    {
-                if (resultSet != null) {
-                    try {
-                        resultSet.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (psFetchArticles != null) {
-                    try {
-                        psFetchArticles.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (connection != null) {
-                    try {
-                        connection.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
+            e.printStackTrace();
+        }finally    {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
-
-        addMediaButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtils.addMedia(   titleTextField.getText(), formatTextField.getText(), categoryTextField.getText(), descriptionTextField.getText(),
-                                    publisherTextField.getText(),editionTextField.getText(), authorTextField.getText(), isbnTextField.getText(),
-                                    directorTextField.getText(), actorTextField.getText(), countryTextField.getText(), ratingTextField.getText(),
-                                    availableTextField.getText());
-                messageLabel.setText("Media tillagd ");
-
-                updateSearch();
+            if (psFetchArticles != null) {
+                try {
+                    psFetchArticles.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-        });
-
-        updateMediaButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtils.updateMedia(Integer.valueOf(mediaIdTextField.getText()), titleTextField.getText(), formatChoiceBox.getValue(), categoryTextField.getText(), descriptionTextField.getText(),
-                                                    publisherTextField.getText(),editionTextField.getText(), authorTextField.getText(), isbnTextField.getText(),
-                                                    directorTextField.getText(), actorTextField.getText(), countryTextField.getText(), ratingTextField.getText(),
-                                                    availableChoiceBox.getValue());
-                setActionInformation("Media uppdaterad ");
-                updateSearch();
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-        });
-        removeMediaButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtils.removeMedia(Integer.valueOf(mediaIdTextField.getText()));
-                setActionInformation("Media borttagen ");
-                updateSearch();
-            }
-        });
-//      finish button triggers changes to CRUD the database
-        finishButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, Constants.LOGIN, Constants.LOGIN_TITLE);
-            }
-        });
-    }
-    public void setActionInformation(String actionInformation){ messageLabel.setText(actionInformation);}
-    public void updateSearch()  {
-    // TODO reinit search
-
-
+        }
     }
 }

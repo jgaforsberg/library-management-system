@@ -1,17 +1,12 @@
 package com.lms.librarymanagementsystem;
 
 import com.lms.librarymanagementsystem.controllers.LoginController;
-import com.lms.librarymanagementsystem.controllers.SearchController;
-import com.lms.librarymanagementsystem.models.MediaModel;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -65,7 +60,7 @@ public class DBUtils {
 //      stage is the window of the GUI, scene is what is displayed in the window. Stages can have multiple scenes
         Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
         stage.setTitle(title);
-        stage.setScene((new Scene(root, 600, 500)));
+        stage.setScene((new Scene(root)));
         stage.show();
     }
 //  logged in change scene search
@@ -401,8 +396,8 @@ public class DBUtils {
             }
         }
     }
-    /* TODO delegate search function to DBUtils
-    public static void searchArticle(ActionEvent event, Integer mediaid, String title, String format, String category, String description, String publisher, String edition, String author, String isbn, String director, String actor, String country, String rating, String available)  {
+    // TODO delegate search function to DBUtils
+    public static void initSearch()  {
         Connection connection = null;
         PreparedStatement psFetchArticles = null;
         ResultSet resultSet = null;
@@ -425,87 +420,6 @@ public class DBUtils {
                 String queryCountry = resultSet.getString("country");
                 String queryRating = resultSet.getString("rating");
                 String queryAvailable = resultSet.getString("available");
-//              populates the observable list
-                mediaModelObservableList.add(new MediaModel(                queryMediaId,
-                                                                            queryTitle,
-                                                                            queryFormat,
-                                                                            queryCategory,
-                                                                            queryDescription,
-                                                                            queryPublisher,
-                                                                            queryEdition,
-                                                                            queryAuthor,
-                                                                            queryIsbn,
-                                                                            queryDirector,
-                                                                            queryActor,
-                                                                            queryCountry,
-                                                                            queryRating,
-                                                                            queryAvailable));
-//              PropertyValueFactory corresponds to the new BookSearchModel
-//              populate the tableview columns
-                mediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
-                titleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
-                formatColumn.setCellValueFactory((new PropertyValueFactory<>("format")));
-                categoryColumn.setCellValueFactory((new PropertyValueFactory<>("category")));
-                descriptionColumn.setCellValueFactory((new PropertyValueFactory<>("description")));
-                publisherColumn.setCellValueFactory((new PropertyValueFactory<>("publisher")));
-                editionColumn.setCellValueFactory((new PropertyValueFactory<>("edition")));
-                authorColumn.setCellValueFactory((new PropertyValueFactory<>("author")));
-                isbnColumn.setCellValueFactory((new PropertyValueFactory<>("isbn")));
-                directorColumn.setCellValueFactory((new PropertyValueFactory<>("director")));
-                actorColumn.setCellValueFactory((new PropertyValueFactory<>("actor")));
-                countryColumn.setCellValueFactory((new PropertyValueFactory<>("country")));
-                ratingColumn.setCellValueFactory((new PropertyValueFactory<>("rating")));
-                availableColumn.setCellValueFactory((new PropertyValueFactory<>("available")));
-
-                searchTableView.setItems(mediaModelObservableList);
-//              initialize filtered list for interactive search
-                FilteredList<MediaModel> filteredData = new FilteredList<>(mediaModelObservableList, b -> true);
-                searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    filteredData.setPredicate(mediaModel -> {
-//                  if no search value is present, all records, or all current records will be displayed
-                        if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
-                            return true;
-                        }
-                        String searchKeyWord = newValue.toLowerCase();
-//                      an index > 0 means a match has been found
-//                      to return Integer type, use toString() method
-                        if (mediaModel.getTitle().toLowerCase().indexOf(searchKeyWord) > -1)  {
-//                      match in book title etc.
-                            return true;
-                        }else if (mediaModel.getFormat().toLowerCase().indexOf(searchKeyWord) > -1)   {
-                            return true;
-                        }else if (mediaModel.getCategory().toLowerCase().indexOf(searchKeyWord) > -1) {
-                            return true;
-                        }else if (mediaModel.getDescription().toLowerCase().indexOf(searchKeyWord) > -1)  {
-                            return true;
-                        }else if (mediaModel.getPublisher().toLowerCase().indexOf(searchKeyWord) > -1){
-                            return true;
-                        }else if (mediaModel.getEdition().toLowerCase().indexOf(searchKeyWord) > -1){
-                            return true;
-                        }else if (mediaModel.getAuthor().toLowerCase().indexOf(searchKeyWord) > -1)   {
-                            return true;
-                        }else if (mediaModel.getIsbn().toLowerCase().indexOf(searchKeyWord) > -1)     {
-                            return true;
-                        }else if(mediaModel.getDirector().toLowerCase().indexOf(searchKeyWord) > -1)  {
-                            return true;
-                        }else if (mediaModel.getActor().toLowerCase().indexOf(searchKeyWord) > -1)    {
-                            return true;
-                        }else if (mediaModel.getCountry().toLowerCase().indexOf(searchKeyWord) > -1)  {
-                            return true;
-                        }else if (mediaModel.getRating().toLowerCase().indexOf(searchKeyWord) > -1)   {
-                            return true;
-                        }else if (mediaModel.getAvailable().toLowerCase().indexOf(searchKeyWord) > -1)   {
-                            return true;
-                        }else
-                            return false;
-//                      return false = no match found in database
-                    });
-                });
-//              bind sorted result with table view
-                SortedList<MediaModel> sortedData = new SortedList<>(filteredData);
-                sortedData.comparatorProperty().bind(searchTableView.comparatorProperty());
-//              apply filtered and sorted data to the table view
-                searchTableView.setItems(sortedData);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -532,5 +446,5 @@ public class DBUtils {
                 }
             }
         }
-    } */
+    }
 }

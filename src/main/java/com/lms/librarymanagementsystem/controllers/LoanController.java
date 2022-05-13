@@ -82,42 +82,72 @@ public class LoanController implements Initializable {
 
         PreparedStatement psFetchArticles = null, psFetchLoans = null, psFetchReservations = null;
         ResultSet resultSetSearch = null, resultSetLoan = null, resultSetReservation = null;
+
+
+
+
+        loanButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // TODO retrieve information from search tableview and create loan object/DB record
+
+
+            }
+        });
+        reserveButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // TODO retrieve information from search tableview and create reservation object/DB record
+            }
+        });
+        finishButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                DBUtils.changeScene(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ");
+            }
+        });
+    }
+    public void search()  {
+        Connection connection = null;
+        PreparedStatement psFetchArticles = null;
+        ResultSet resultSet = null;
+
         try {
             connection = DBUtils.getDBLink();
-            psFetchArticles = connection.prepareStatement("SELECT mediaid, title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available FROM media;");
-            resultSetSearch = psFetchArticles.executeQuery();
-            while (resultSetSearch.next()) {
-                Integer queryMediaId = resultSetSearch.getInt("mediaid");
-                String queryTitle = resultSetSearch.getString("title");
-                String queryFormat = resultSetSearch.getString("format");
-                String queryCategory = resultSetSearch.getString("category");
-                String queryDescription = resultSetSearch.getString("description");
-                String queryPublisher = resultSetSearch.getString("publisher");
-                String queryEdition = resultSetSearch.getString("edition");
-                String queryAuthor = resultSetSearch.getString("author");
-                String queryIsbn = resultSetSearch.getString("isbn");
-                String queryDirector = resultSetSearch.getString("director");
-                String queryActor = resultSetSearch.getString("actor");
-                String queryCountry = resultSetSearch.getString("country");
-                String queryRating = resultSetSearch.getString("rating");
-                String queryAvailable = resultSetSearch.getString("available");
+            psFetchArticles = connection.prepareStatement(  "SELECT mediaid, title, format, category, description, " +
+                    "publisher, edition, author, isbn, " +
+                    "director, actor, country, rating, available FROM media;");
+            resultSet = psFetchArticles.executeQuery();
+            while (resultSet.next()) {
+                Integer queryMediaId = resultSet.getInt("mediaid");
+                String queryTitle = resultSet.getString("title");
+                String queryFormat = resultSet.getString("format");
+                String queryCategory = resultSet.getString("category");
+                String queryDescription = resultSet.getString("description");
+                String queryPublisher = resultSet.getString("publisher");
+                String queryEdition = resultSet.getString("edition");
+                String queryAuthor = resultSet.getString("author");
+                String queryIsbn = resultSet.getString("isbn");
+                String queryDirector = resultSet.getString("director");
+                String queryActor = resultSet.getString("actor");
+                String queryCountry = resultSet.getString("country");
+                String queryRating = resultSet.getString("rating");
+                String queryAvailable = resultSet.getString("available");
 //              populates the observable list
-                mediaModelObservableList.add(new MediaModel(                queryMediaId,
-                                                                            queryTitle,
-                                                                            queryFormat,
-                                                                            queryCategory,
-                                                                            queryDescription,
-                                                                            queryPublisher,
-                                                                            queryEdition,
-                                                                            queryAuthor,
-                                                                            queryIsbn,
-                                                                            queryDirector,
-                                                                            queryActor,
-                                                                            queryCountry,
-                                                                            queryRating,
-                                                                            queryAvailable));
-//              PropertyValueFactory corresponds to the new BookSearchModel
-//              populate the tableview columns
+                mediaModelObservableList.add(new MediaModel(queryMediaId,
+                        queryTitle,
+                        queryFormat,
+                        queryCategory,
+                        queryDescription,
+                        queryPublisher,
+                        queryEdition,
+                        queryAuthor,
+                        queryIsbn,
+                        queryDirector,
+                        queryActor,
+                        queryCountry,
+                        queryRating,
+                        queryAvailable));
                 mediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
                 titleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
                 formatColumn.setCellValueFactory((new PropertyValueFactory<>("format")));
@@ -145,32 +175,32 @@ public class LoanController implements Initializable {
                         String searchKeyWord = newValue.toLowerCase();
 //                      an index > 0 means a match has been found
 //                      to return Integer type, use toString() method
-                        if (mediaModel.getTitle().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        if (mediaModel.titleProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
 //                      match in book title etc.
                             return true;
-                        }else if (mediaModel.getFormat().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.formatProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaModel.getCategory().toLowerCase().indexOf(searchKeyWord) > -1) {
+                        }else if (mediaModel.categoryProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1) {
                             return true;
-                        }else if (mediaModel.getDescription().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if (mediaModel.descriptionProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaModel.getPublisher().toLowerCase().indexOf(searchKeyWord) > -1){
+                        }else if (mediaModel.publisherProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        }else if (mediaModel.getEdition().toLowerCase().indexOf(searchKeyWord) > -1){
+                        }else if (mediaModel.editionProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1){
                             return true;
-                        }else if (mediaModel.getAuthor().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.authorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaModel.getIsbn().toLowerCase().indexOf(searchKeyWord) > -1)     {
+                        }else if (mediaModel.isbnProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)     {
                             return true;
-                        }else if(mediaModel.getDirector().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if(mediaModel.directorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaModel.getActor().toLowerCase().indexOf(searchKeyWord) > -1)    {
+                        }else if (mediaModel.actorProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)    {
                             return true;
-                        }else if (mediaModel.getCountry().toLowerCase().indexOf(searchKeyWord) > -1)  {
+                        }else if (mediaModel.countryProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
                             return true;
-                        }else if (mediaModel.getRating().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.ratingProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
-                        }else if (mediaModel.getAvailable().toLowerCase().indexOf(searchKeyWord) > -1)   {
+                        }else if (mediaModel.availableProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
                         }else
                             return false;
@@ -183,46 +213,12 @@ public class LoanController implements Initializable {
 //              apply filtered and sorted data to the table view
                 searchTableView.setItems(sortedData);
             }
-        } catch (SQLException e) {
+        }catch (SQLException e) {
             e.printStackTrace();
-        try {
-            connection = DBUtils.getDBLink();
-            psFetchLoans = connection.prepareStatement("SELECT loanid, mediaid, userid, loandate, returndate FROM loan WHERE userid = ?;");
-            psFetchLoans.setInt(1, Integer.parseInt(userid));
-            resultSetLoan = psFetchLoans.executeQuery();
-            while (resultSetLoan.next()) {
-                Integer queryLoanID = resultSetLoan.getInt("loanid");
-                Integer queryMediaId = resultSetLoan.getInt("mediaid");
-                Integer queryUserId = resultSetLoan.getInt("userid");
-                Date queryLoanDate = resultSetLoan.getDate("loandate");
-                Date queryReturnDate = resultSetLoan.getDate("returndate");
-//              populates the observable list
-                loanModelObservableList.add(new LoanModel(      queryLoanID,
-                                                                queryMediaId,
-                                                                queryUserId,
-                                                                queryLoanDate,
-                                                                queryReturnDate
-                                                                ));
-                loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
-                loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
-                loanUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
-                loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
-                loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
-
-                loanTableView.setItems((loanModelObservableList));
-
-                FilteredList<LoanModel> filteredData = new FilteredList<>(loanModelObservableList, b -> true);
-//
-
-            }
-        }catch (SQLException el) {
-            el.printStackTrace();
-            el.getCause();
-        }
         }finally    {
-            if (resultSetSearch != null) {
+            if (resultSet != null) {
                 try {
-                    resultSetSearch.close();
+                    resultSet.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -242,28 +238,58 @@ public class LoanController implements Initializable {
                 }
             }
         }
-        loanButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // TODO retrieve information from search tableview and create loan object/DB record
-
-
-            }
-        });
-        reserveButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                // TODO retrieve information from search tableview and create reservation object/DB record
-            }
-        });
-        finishButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtils.changeScene(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ");
-            }
-        });
     }
-    public void buildData() {
+    public void loan() {
+        PreparedStatement psFetchArticles = null, psFetchLoans = null, psFetchReservations = null;
+        ResultSet resultSetSearch = null, resultSetLoan = null, resultSetReservation = null;
+        try {
+            connection = DBUtils.getDBLink();
+            psFetchLoans = connection.prepareStatement("SELECT loanid, mediaid, userid, loandate, returndate FROM loan WHERE userid = ?;");
+            psFetchLoans.setInt(1, Integer.parseInt(userid));
+            resultSetLoan = psFetchLoans.executeQuery();
+            while (resultSetLoan.next()) {
+                Integer queryLoanID = resultSetLoan.getInt("loanid");
+                Integer queryMediaId = resultSetLoan.getInt("mediaid");
+                Integer queryUserId = resultSetLoan.getInt("userid");
+                Date queryLoanDate = resultSetLoan.getDate("loandate");
+                Date queryReturnDate = resultSetLoan.getDate("returndate");
+//              populates the observable list
+                loanModelObservableList.add(new LoanModel(queryLoanID,
+                        queryMediaId,
+                        queryUserId,
+                        queryLoanDate,
+                        queryReturnDate
+                ));
+                loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
+                loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
+                loanUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
+                loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
+                loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
 
+                loanTableView.setItems((loanModelObservableList));
+
+                FilteredList<LoanModel> filteredData = new FilteredList<>(loanModelObservableList, b -> true);
+//
+
+            }
+        } catch (SQLException el) {
+            el.printStackTrace();
+            el.getCause();
+        } finally {
+            if (resultSetLoan != null) {
+                try {
+                    resultSetLoan.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psFetchLoans != null) {
+                try {
+                    psFetchLoans.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

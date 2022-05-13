@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.InventoryController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.InventoryController">
    <children>
       <AnchorPane prefHeight="500.0" prefWidth="1500.0" style="-fx-background-color: #011b3e;">
          <children>
@@ -47,8 +47,8 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <TextField fx:id="searchTextField" layoutX="60.0" layoutY="58.0" prefHeight="25.0" prefWidth="1415.0" promptText="Ange nyckelord" style="-fx-cursor: text;" />
-            <Label alignment="CENTER_RIGHT" layoutY="58.0" prefHeight="25.0" prefWidth="49.0" text="Sök" textFill="#f0f0f0">
+            <TextField fx:id="searchTextField" layoutX="75.0" layoutY="55.0" prefHeight="25.0" prefWidth="1400.0" promptText="Ange nyckelord" style="-fx-cursor: text;" />
+            <Label alignment="CENTER" layoutY="55.0" prefHeight="25.0" prefWidth="75.0" text="Sök" textFill="#f0f0f0">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -124,22 +124,22 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <Button fx:id="addMediaButton" alignment="CENTER" layoutX="1070.0" layoutY="45.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Lägg till media" textFill="#011b3e">
+            <Button fx:id="addMediaButton" alignment="CENTER" layoutX="1070.0" layoutY="45.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Lägg till media" textFill="#011b3e">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="updateMediaButton" alignment="CENTER" layoutX="1070.0" layoutY="85.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Uppdatera media" textFill="#011b3e">
+            <Button fx:id="updateMediaButton" alignment="CENTER" layoutX="1070.0" layoutY="85.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Uppdatera media" textFill="#011b3e">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="removeMediaButton" alignment="CENTER" layoutX="1070.0" layoutY="125.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Ta bort media" textFill="#011b3e">
+            <Button fx:id="removeMediaButton" alignment="CENTER" layoutX="1070.0" layoutY="125.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Ta bort media" textFill="#011b3e">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Button fx:id="finishButton" alignment="CENTER" layoutX="1300.0" layoutY="45.0" mnemonicParsing="false" prefHeight="115.0" prefWidth="175.0" style="-fx-background-color: #f0f0f0;" text="Klar" textFill="#011b3e">
+            <Button fx:id="finishButton" alignment="CENTER" layoutX="1300.0" layoutY="45.0" mnemonicParsing="false" prefHeight="115.0" prefWidth="175.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
@@ -149,12 +149,12 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="160.0" layoutY="192.0" text="Vid 'Lägg till media' : Fyll i alla önskade fält förutom Media ID, fyll även i ej använda fält med tomma strängar" textFill="#f0f0f0">
+            <Label layoutX="160.0" layoutY="192.0" text="Vid 'Lägg till media' : Fyll i alla önskade fält förutom Media ID" textFill="#f0f0f0">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="160.0" layoutY="212.0" text="Vid 'Uppdatera media' : Fyll i alla önskade fält och Media ID, fyll även i de fält som inte ska uppdateras med gammalt värde" textFill="#f0f0f0">
+            <Label layoutX="160.0" layoutY="212.0" text="Vid 'Uppdatera media' : Fyll i alla önskade fält och Media ID, fyll även i de fält som inte ska uppdateras med befintligt värde" textFill="#f0f0f0">
                <font>
                   <Font size="14.0" />
                </font>
@@ -164,7 +164,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label layoutX="160.0" layoutY="252.0" text="För att återgå till tidigare meny, tryck 'Klar'" textFill="#f0f0f0">
+            <Label layoutX="160.0" layoutY="252.0" text="Kontrollera åtgärden i söktabellen" textFill="#f0f0f0">
                <font>
                   <Font size="14.0" />
                </font>
