@@ -81,26 +81,28 @@ public class LoanController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         search();
-        loan();
-        reservation();
         loanButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // TODO retrieve information from search tableview and create loan object/DB record
-                refreshLoan();
                 refreshSearch();
-                loan();
                 search();
+                if(loanModelObservableList != null) {
+                    refreshLoan();
+                    loan();
+                }
             }
         });
         reserveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 // TODO retrieve information from search tableview and create reservation object/DB record
-                refreshReservation();
                 refreshSearch();
-                reservation();
                 search();
+                if(reservationModelObservableList != null) {
+                    refreshReservation();
+                    reservation();
+               }else System.out.println("Reservationer ej laddade.");
             }
         });
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -111,8 +113,51 @@ public class LoanController implements Initializable {
         });
     }
     public void setUserInformation(String username){
-        this.userid = DBUtils.getUserId(username);
         nameLabel.setText(username);
+        setUserId();
+    }
+    public void setUserId()    {
+        String username = nameLabel.getText();
+        if(!username.isEmpty()) {
+            Connection connection = null;
+            PreparedStatement psFetchUserId = null;
+            ResultSet resultSet = null;
+            try {
+                connection = DBUtils.getDBLink();
+                psFetchUserId = connection.prepareStatement("SELECT id FROM users WHERE username = ?;");
+                psFetchUserId.setString(1, username);
+                resultSet = psFetchUserId.executeQuery();
+                while (resultSet.next()) {
+                    userid = resultSet.getInt("id");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                e.getCause();
+            } finally {
+                if (psFetchUserId != null) {
+                    try {
+                        psFetchUserId.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (resultSet != null) {
+                    try {
+                        resultSet.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        System.out.println(userid);
     }
     public String getUsername(){return nameLabel.getText();}
     private void refreshLoan() {
@@ -122,6 +167,7 @@ public class LoanController implements Initializable {
         mediaModelObservableList.clear();
     }
     private void refreshReservation(){reservationModelObservableList.clear();}
+
     private void search()  {
         Connection connection = null;
         PreparedStatement psFetchArticles = null;
@@ -129,8 +175,8 @@ public class LoanController implements Initializable {
         try {
             connection = DBUtils.getDBLink();
             psFetchArticles = connection.prepareStatement(  "SELECT mediaid, title, format, category, description, " +
-                                                                    "publisher, edition, author, isbn, " +
-                                                                    "director, actor, country, rating, available FROM media;");
+                                                                "publisher, edition, author, isbn, " +
+                                                                "director, actor, country, rating, available FROM media;");
             resultSet = psFetchArticles.executeQuery();
             while (resultSet.next()) {
                 Integer queryMediaId = resultSet.getInt("mediaid");
@@ -263,16 +309,16 @@ public class LoanController implements Initializable {
             psFetchReservations.setInt(1, userid);
             resultSetReservation = psFetchReservations.executeQuery();
             while (resultSetReservation.next()) {
-                Integer queryReservationID = resultSetReservation.getInt("reservationid");
-                Integer queryMediaId = resultSetReservation.getInt("mediaid");
-                Integer queryUserId = resultSetReservation.getInt("userid");
-                Integer queryQueueNumber = resultSetReservation.getInt("queuenumber");
-                Date queryReservationDate = resultSetReservation.getDate("reservationdate");
-                reservationModelObservableList.add(new ReservationModel(queryReservationID,
-                                                                        queryMediaId,
-                                                                        queryUserId,
-                                                                        queryQueueNumber,
-                                                                        queryReservationDate
+                Integer reservationid = resultSetReservation.getInt("reservationid");
+                Integer mediaid = resultSetReservation.getInt("mediaid");
+                Integer userid = resultSetReservation.getInt("userid");
+                Integer queuenumber = resultSetReservation.getInt("queuenumber");
+                Date reservationdate = resultSetReservation.getDate("reservationdate");
+                reservationModelObservableList.add(new ReservationModel(reservationid,
+                                                                        mediaid,
+                                                                        userid,
+                                                                        queuenumber,
+                                                                        reservationdate
                                                                         ));
                 resResIdColumn.setCellValueFactory((new PropertyValueFactory<>("reservationid")));
                 resMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
@@ -312,40 +358,36 @@ public class LoanController implements Initializable {
     private void loan() {
         Connection connection = null;
         PreparedStatement psFetchLoans = null;
-        ResultSet resultSetLoan = null;
+        ResultSet resultSet = null;
         try {
             connection = DBUtils.getDBLink();
-            psFetchLoans = connection.prepareStatement("SELECT loanid, mediaid, userid, loandate, returndate FROM loan WHERE userid = ?;");
+            psFetchLoans = connection.prepareStatement("SELECT * FROM loan WHERE userid = ?;");
             psFetchLoans.setInt(1, userid);
-            resultSetLoan = psFetchLoans.executeQuery();
-            while (resultSetLoan.next()) {
-                Integer queryLoanID = resultSetLoan.getInt("loanid");
-                Integer queryMediaId = resultSetLoan.getInt("mediaid");
-                Integer queryUserId = resultSetLoan.getInt("userid");
-                Date queryLoanDate = resultSetLoan.getDate("loandate");
-                Date queryReturnDate = resultSetLoan.getDate("returndate");
+            resultSet = psFetchLoans.executeQuery();
+            while (resultSet.next()) {
+                Integer loanid = resultSet.getInt("loanid");
+                Integer mediaid = resultSet.getInt("mediaid");
+                Integer userid = resultSet.getInt("userid");
+                Date loandate = resultSet.getDate("loandate");
+                Date returndate = resultSet.getDate("returndate");
+                Integer returned = resultSet.getInt("returned");
 //              populates the observable list
-                loanModelObservableList.add(new LoanModel(  queryLoanID,
-                                                            queryMediaId,
-                                                            queryUserId,
-                                                            queryLoanDate,
-                                                            queryReturnDate
+                loanModelObservableList.add(new LoanModel(  loanid,
+                                                            mediaid,
+                                                            userid,
+                                                            loandate,
+                                                            returndate,
+                                                            returned
                                                             ));
-                loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
-                loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
-                loanUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
-                loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
-                loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
-
                 loanTableView.setItems((loanModelObservableList));
             }
         } catch (SQLException el) {
             el.printStackTrace();
             el.getCause();
         } finally {
-            if (resultSetLoan != null) {
+            if (resultSet != null) {
                 try {
-                    resultSetLoan.close();
+                    resultSet.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

@@ -241,7 +241,7 @@ public class InventoryController implements Initializable {
     }
 
     public void setUserInformation(String username) {
-        this.userid = DBUtils.getUserId(username);
+        //this.userid = DBUtils.getUserId(username);
         nameLabel.setText(username);
     }
 }

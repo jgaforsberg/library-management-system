@@ -30,14 +30,14 @@ public class DBUtils {
 
     public static Connection getDBLink() throws SQLException {
         try{
-        Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             DBLink = DriverManager.getConnection(URL,USER,PWD);
         }catch(ClassNotFoundException e)    {
             e.printStackTrace();
         }
         return DBLink;
     }
-    // TODO changeScene methods for each unique scene change that utilizies username
+    // TODO changeScene methods for each unique scene change that utilizes username
     // TODO username can be used as unique identifier since its value is unique
 
     //  login change scene
@@ -87,7 +87,7 @@ public class DBUtils {
         }else{
             try {
                 root = FXMLLoader.load(DBUtils.class.getResource(fxmlfile));
-                System.out.println("Kunde ej initiera användarnamn! ");
+                System.out.println("Kunde ej initiera lånevy! ");
             }catch (IOException e)  {
                 e.printStackTrace();
                 e.getCause();
@@ -112,47 +112,51 @@ public class DBUtils {
         stage.setScene((new Scene(root)));
         stage.show();
     }
-    public static Integer getUserId(String username)    {
+ /*   public static Integer getUserId(String username)    {
         Integer userid = null;
-        Connection connection = null;
-        PreparedStatement psFetchUserId = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DBUtils.getDBLink();
-            psFetchUserId = connection.prepareStatement("SELECT id FROM users WHERE username = ?;");
-            psFetchUserId.setString(1, username);
-            resultSet = psFetchUserId.executeQuery();
-            while(resultSet.next()) {
-                userid = resultSet.getInt("id");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            if(psFetchUserId != null)  {
-                try{
-                    psFetchUserId.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+        if(!username.isEmpty()) {
+            Connection connection = null;
+            PreparedStatement psFetchUserId = null;
+            ResultSet resultSet = null;
+            try {
+                connection = DBUtils.getDBLink();
+                psFetchUserId = connection.prepareStatement("SELECT id FROM users WHERE username = ?;");
+                psFetchUserId.setString(1, username);
+                resultSet = psFetchUserId.executeQuery();
+                while (resultSet.next()) {
+                    userid = resultSet.getInt("id");
+                }
+                return userid;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                e.getCause();
+            } finally {
+                if (psFetchUserId != null) {
+                    try {
+                        psFetchUserId.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (resultSet != null) {
+                    try {
+                        resultSet.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            if(resultSet != null){
-                try{
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(connection != null){
-                try{
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        }else return null;
+        System.out.println(userid);
         return userid;
-    }
+    }  */
 //  method for adding new users to DB
     public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype) {
         Connection connection = null;

@@ -98,7 +98,7 @@ public class AccountController implements Initializable {
         });
     }
     public void setUserInformation(String username){
-        this.userid = DBUtils.getUserId(username);
+        //this.userid = DBUtils.getUserId(username);
         usernameLabel.setText(username);
     }
 }

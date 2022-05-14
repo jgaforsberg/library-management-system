@@ -1,35 +1,38 @@
 package com.lms.librarymanagementsystem.models;
 
+import javafx.beans.property.SimpleIntegerProperty;
+
 import java.util.Date;
 
 //  #011B3E blue
 //  #F0F0F0 light gray
 public class LoanModel {
 
-    private Integer loanid, mediaid, userid;
+    private SimpleIntegerProperty loanid, mediaid, userid, returned;
     private Date loandate, returndate;
 
-    public LoanModel(Integer loanid, Integer mediaid, Integer userid, Date loandate, Date returndate) {
-        this.loanid = loanid;
-        this.mediaid = mediaid;
-        this.userid = userid;
+    public LoanModel(Integer loanid, Integer mediaid, Integer userid, Date loandate, Date returndate, Integer returned) {
+        this.loanid = new SimpleIntegerProperty(loanid);
+        this.mediaid = new SimpleIntegerProperty(mediaid);
+        this.userid = new SimpleIntegerProperty(userid);
         this.loandate = loandate;
         this.returndate = returndate;
+        this.returned = new SimpleIntegerProperty(returned);
     }
-
-
     @SuppressWarnings("unused")
-    public Integer getLoanid() {return loanid;}
+    public SimpleIntegerProperty loanidProperty() {return loanid;}
     @SuppressWarnings("unused")
-    public void setLoanid(Integer loanid) {this.loanid = loanid;}
+    public SimpleIntegerProperty mediaidProperty() {return mediaid;}
     @SuppressWarnings("unused")
-    public Integer getMediaid() {return mediaid;}
+    public SimpleIntegerProperty useridProperty() {return userid;}
     @SuppressWarnings("unused")
-    public void setMediaid(Integer mediaid) {this.mediaid = mediaid;}
+    public SimpleIntegerProperty returnedProperty() {return returned;}
     @SuppressWarnings("unused")
-    public Integer getUserid() {return userid;}
+    public void setLoanid(SimpleIntegerProperty loanid) {this.loanid = loanid;}
     @SuppressWarnings("unused")
-    public void setUserid(Integer userid) {this.userid = userid;}
+    public void setMediaid(SimpleIntegerProperty mediaid) {this.mediaid = mediaid;}
+    @SuppressWarnings("unused")
+    public void setUserid(SimpleIntegerProperty userid) {this.userid = userid;}
     @SuppressWarnings("unused")
     public Date getLoandate() {return loandate;}
     @SuppressWarnings("unused")
