@@ -1,5 +1,6 @@
 package com.lms.librarymanagementsystem;
 
+import com.lms.librarymanagementsystem.controllers.AccountController;
 import com.lms.librarymanagementsystem.controllers.InventoryController;
 import com.lms.librarymanagementsystem.controllers.LoanController;
 import com.lms.librarymanagementsystem.controllers.LoginController;
@@ -78,7 +79,7 @@ public class DBUtils {
                 root = loader.load();
                 LoanController loanController = loader.getController();
                 loanController.setUserInformation(username);
-                System.out.println("Användarnamn initierat! ");
+                System.out.println("Sök- och lånevy initierad! ");
             }catch (IOException e)  {
                 e.printStackTrace();
                 e.getCause();
@@ -283,7 +284,7 @@ public class DBUtils {
                 root = loader.load();
                 InventoryController inventoryController = loader.getController();
                 inventoryController.setUserInformation(username);
-                System.out.println("Användarnamn initierat! ");
+                System.out.println("Artikelhanteringsvy initierad! ");
             }catch (IOException e)  {
                 e.printStackTrace();
                 e.getCause();
@@ -291,7 +292,34 @@ public class DBUtils {
         }else{
             try {
                 root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
-                System.out.println("Kunde ej initiera användarnamn! ");
+                System.out.println("Kunde ej initiera artikelhanteringsvy! ");
+            }catch (IOException e)  {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }
+        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+        stage.setTitle(title);
+        stage.setScene((new Scene(root)));
+        stage.show();
+    }
+    public static void changeSceneAccount(ActionEvent event, String fxmlFile, String title, String username)    {
+        Parent root = null;
+        if(username != null)    {
+            try{
+                FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
+                root = loader.load();
+                AccountController accountController = loader.getController();
+                accountController.setUserInformation(username);
+                System.out.println("Kontovy initierad! ");
+            }catch (IOException e)  {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }else{
+            try{
+                root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
+                System.out.println("Kunde ej initiera kontovy! ");
             }catch (IOException e)  {
                 e.printStackTrace();
                 e.getCause();
@@ -325,6 +353,7 @@ public class DBUtils {
                     String retrievePassword = resultSet.getString("password");
                     if (retrievePassword.equals(password)) {
                         changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
+                        System.out.println("Inloggad vy initierad! ");
                     } else {
                         System.out.println("Lösenord matchar ej användare! ");
                         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -365,6 +394,7 @@ public class DBUtils {
                                 String available)   {
         Connection connection = null;
         PreparedStatement psInsert = null;
+//      may be unnecessary variable
         PreparedStatement psCheckMediaDuplicate = null;
         ResultSet resultSet = null;
         try{

@@ -35,6 +35,7 @@ public class AccountController implements Initializable {
     private ListView<ReservationModel> reservationListView;
     @FXML
     private Button returnLoanButton, endReservationButton, returnButton;
+    private Integer userid;
 
     public void initData(UserModel userModel) {
         accountUser = userModel;
@@ -95,5 +96,9 @@ public class AccountController implements Initializable {
                 DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, usernameLabel.getText());
             }
         });
+    }
+    public void setUserInformation(String username){
+        this.userid = DBUtils.getUserId(username);
+        usernameLabel.setText(username);
     }
 }

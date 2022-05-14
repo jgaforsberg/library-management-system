@@ -24,18 +24,18 @@ public class LoginController implements Initializable {
     private Label welcomeLabel, nameLabel;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        logoutButton.setOnAction(new EventHandler<ActionEvent>()    {
-//          changes scenes through DBUtils at press of logoutButton
-            @Override
-            public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
-            }
-        });
         searchButton.setOnAction(new EventHandler<ActionEvent>()    {
             @Override
             public void handle(ActionEvent event) {
                 //information();
                 DBUtils.changeSceneLoan(event, Constants.LOAN, Constants.LOAN_TITLE, nameLabel.getText());
+            }
+        });
+        accountButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //information();
+                DBUtils.changeSceneAccount(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
             }
         });
         inventoryButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -45,11 +45,11 @@ public class LoginController implements Initializable {
                 DBUtils.validateUser(event, nameLabel.getText());
             }
         });
-        accountButton.setOnAction(new EventHandler<ActionEvent>() {
+        logoutButton.setOnAction(new EventHandler<ActionEvent>()    {
+            //          changes scenes through DBUtils at press of logoutButton
             @Override
             public void handle(ActionEvent event) {
-                //information();
-                DBUtils.changeSceneLogin(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
+                DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
 
