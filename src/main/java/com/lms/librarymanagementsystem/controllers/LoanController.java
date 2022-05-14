@@ -361,7 +361,7 @@ public class LoanController implements Initializable {
         ResultSet resultSet = null;
         try {
             connection = DBUtils.getDBLink();
-            psFetchLoans = connection.prepareStatement("SELECT * FROM loan WHERE userid = ?;");
+            psFetchLoans = connection.prepareStatement("SELECT loanid, mediaid, userid, loandate, returndate, returned FROM loan WHERE userid = ?;");
             psFetchLoans.setInt(1, userid);
             resultSet = psFetchLoans.executeQuery();
             while (resultSet.next()) {
@@ -379,11 +379,11 @@ public class LoanController implements Initializable {
                                                             returndate,
                                                             returned
                                                             ));
-                loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("reservationid")));
+                loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
                 loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
                 loanUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
-                loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("queuenumber")));
-                loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("reservationdate")));
+                loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
+                loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
                 loanReturnedColumn.setCellValueFactory((new PropertyValueFactory<>("returned")));
                 loanTableView.setItems((loanModelObservableList));
             }
