@@ -40,40 +40,41 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <TableView fx:id="loanTableView" layoutX="225.0" layoutY="540.0" prefHeight="200.0" prefWidth="400.0" style="-fx-cursor: hand;">
+      <TableView fx:id="loanTableView" layoutX="225.0" layoutY="540.0" prefHeight="200.0" prefWidth="480.0" style="-fx-cursor: hand;">
         <columns>
-          <TableColumn fx:id="loanTableloanidColumn" maxWidth="80.0" minWidth="80.0" text="Lån ID" />
-          <TableColumn fx:id="loanTablemediaidColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
-            <TableColumn fx:id="loanTableuseridColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
-            <TableColumn fx:id="loanTableloandateColumn" maxWidth="80.0" minWidth="80.0" text="Låndatum" />
-            <TableColumn fx:id="loanTablereturndateColumn" maxWidth="80.0" minWidth="80.0" text="Returdatum" />
+          <TableColumn fx:id="loanLoanIdColumn" maxWidth="80.0" minWidth="80.0" text="Lån ID" />
+          <TableColumn fx:id="loanMediaIdColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
+            <TableColumn fx:id="loanUserIdColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
+            <TableColumn fx:id="loanLoanDateColumn" maxWidth="80.0" minWidth="80.0" text="Låndatum" />
+            <TableColumn fx:id="loanReturnDateColumn" maxWidth="80.0" minWidth="80.0" text="Returdatum" />
+            <TableColumn fx:id="loanReturnedColumn" prefWidth="75.0" text="Återlämnad" />
         </columns>
       </TableView>
-      <TableView fx:id="reserveTableView" layoutX="650.0" layoutY="540.0" prefHeight="200.0" prefWidth="400.0" style="-fx-cursor: hand;">
+      <TableView fx:id="reserveTableView" layoutX="740.0" layoutY="540.0" prefHeight="200.0" prefWidth="400.0" style="-fx-cursor: hand;">
         <columns>
-          <TableColumn fx:id="resTableresidColumn" maxWidth="80.0" minWidth="80.0" text="Res.ID" />
-          <TableColumn fx:id="resTablemediaidColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
-            <TableColumn fx:id="resTableuseridColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
-            <TableColumn fx:id="resTablequeueColumn" maxWidth="80.0" minWidth="80.0" text="Könummer" />
-            <TableColumn fx:id="resTableresdateColumn" maxWidth="80.0" minWidth="80.0" text="Res.Datum" />
+          <TableColumn fx:id="resResIdColumn" maxWidth="80.0" minWidth="80.0" text="Res.ID" />
+          <TableColumn fx:id="resMediaIdColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
+            <TableColumn fx:id="resUserIdColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
+            <TableColumn fx:id="resQueueColumn" maxWidth="80.0" minWidth="80.0" text="Könummer" />
+            <TableColumn fx:id="resResDateColumn" maxWidth="80.0" minWidth="80.0" text="Res.Datum" />
         </columns>
       </TableView>
-      <Button fx:id="loanButton" layoutX="313.0" layoutY="750.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Låna" textFill="#011b3e">
+      <Button fx:id="loanButton" layoutX="353.0" layoutY="750.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Låna" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <Button fx:id="reserveButton" layoutX="738.0" layoutY="750.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Reservera" textFill="#011b3e">
+      <Button fx:id="reserveButton" layoutX="828.0" layoutY="750.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Reservera" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <Label alignment="CENTER" layoutX="225.0" layoutY="510.0" prefHeight="35.0" prefWidth="400.0" text="Lån" textFill="#f0f0f0">
+      <Label alignment="CENTER" layoutX="225.0" layoutY="510.0" prefHeight="35.0" prefWidth="480.0" text="Lån" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="650.0" layoutY="510.0" prefHeight="35.0" prefWidth="400.0" text="Reservationer" textFill="#f0f0f0">
+      <Label alignment="CENTER" layoutX="740.0" layoutY="510.0" prefHeight="35.0" prefWidth="400.0" text="Reservationer" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
@@ -83,12 +84,12 @@
             <Image url="@media/ltu_logga.jpg" />
          </image>
       </ImageView>
-      <Button fx:id="finishButton" alignment="CENTER" layoutX="1160.0" layoutY="670.0" mnemonicParsing="false" prefHeight="115.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
+      <Button fx:id="finishButton" alignment="CENTER" layoutX="1250.0" layoutY="670.0" mnemonicParsing="false" prefHeight="115.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <TextArea layoutX="1161.0" layoutY="535.0" prefHeight="125.0" prefWidth="225.0" style="-fx-background-color: #011B3E;" text="1. Sök de artiklar du vill ha&#10;2. För att låna, välj artikel och tryck sedan på 'Låna'&#10;3. För att reservera, välj artikel och tryck sedan på 'Reservera'&#10;4. För att återgå, tryck på 'Klar'" wrapText="true">
+      <TextArea layoutX="1250.0" layoutY="535.0" prefHeight="125.0" prefWidth="225.0" style="-fx-background-color: #011B3E;" text="1. Sök de artiklar du vill ha&#10;2. För att låna, välj artikel och tryck sedan på 'Låna'&#10;3. För att reservera, välj artikel och tryck sedan på 'Reservera'&#10;4. För att återgå, tryck på 'Klar'" wrapText="true">
          <font>
             <Font size="13.0" />
          </font>
