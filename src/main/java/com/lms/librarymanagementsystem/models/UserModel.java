@@ -17,7 +17,8 @@ public class UserModel {
     public UserModel(String username)   {this.username = username;}
 
     public UserModel(Integer userid, String username, String firstname, String lastname, String usertype) {
-
+    }
+    public UserModel()  {
     }
     @SuppressWarnings("unused")
     public Integer getUserid() {return userid;}

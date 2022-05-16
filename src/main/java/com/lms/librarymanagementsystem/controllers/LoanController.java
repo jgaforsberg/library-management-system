@@ -137,13 +137,40 @@ public class LoanController implements Initializable {
 
     }
     public void setUserInformation(String username){
-        activeUser = DBUtils.getUserInformation(username);
+        setUserModelInformation(username);
         nameLabel.setText(username);
         userid = activeUser.getUserid();
         System.out.println(userid);
         System.out.println(activeUser.getUserid());
     }
-    public void setUserId()    {
+    public void setUserModelInformation(String username) {
+        activeUser = new UserModel();
+        Integer userid = null;
+        String firstname = "", lastname = "", usertype = "";
+        Connection connection = null;
+        PreparedStatement psFetchUser = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DBUtils.getDBLink();
+            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype FROM users WHERE username = ?;");
+            psFetchUser.setString(1, username);
+            resultSet = psFetchUser.executeQuery();
+            while (resultSet.next())    {
+                activeUser.setUserid(userid = resultSet.getInt("id"));
+                activeUser.setFirstname(firstname = resultSet.getString("firstname"));
+                activeUser.setLastname(lastname = resultSet.getString("lastname"));
+                activeUser.setUsertype(usertype = resultSet.getString("usertype"));
+                System.out.println(userid+username+firstname+lastname+usertype);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            DBUtils.closeDBLink(connection, psFetchUser, null, null, resultSet);
+        }
+        System.out.println(userid+username+firstname+lastname+usertype);
+    }
+   /* public void setUserId()    {
         String username = nameLabel.getText();
         if(!username.isEmpty()) {
             Connection connection = null;
@@ -186,6 +213,8 @@ public class LoanController implements Initializable {
         }
         System.out.println(userid);
     }
+
+    */
     public String getUsername(){return nameLabel.getText();}
     private void refreshLoan() {
         loanModelObservableList.clear();

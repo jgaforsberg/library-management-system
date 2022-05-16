@@ -329,33 +329,6 @@ public class DBUtils {
         stage.setScene((new Scene(root)));
         stage.show();
     }
-    public static UserModel getUserInformation(String username) {
-        UserModel userModel = new UserModel();
-
-        Integer userid = null;
-        String firstname = "", lastname = "", usertype = "";
-        Connection connection = null;
-        PreparedStatement psFetchUser = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype FROM users WHERE username = ?;");
-            psFetchUser.setString(1, username);
-            resultSet = psFetchUser.executeQuery();
-            while (resultSet.next())    {
-                userModel.setUserid(userid = resultSet.getInt("id"));
-                userModel.setFirstname(firstname = resultSet.getString("firstname"));
-                lastname = resultSet.getString("lastname");
-                usertype = resultSet.getString("usertype");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psFetchUser, null, null, resultSet);
-        }
-        return new UserModel(setUserid(userid), username, firstname, lastname, usertype);
-    }
     //  method logging in user from main screen
     public static void logInUser(ActionEvent event, String username, String password) {
         Connection connection = null;
@@ -418,26 +391,31 @@ public class DBUtils {
                     case "allmän" -> {
                         System.out.println("allmän");
                         maxLoans = 3;
+                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "anställd" -> {
                         System.out.println("anställd");
                         maxLoans = 5;
+                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "student" -> {
                         System.out.println("student");
                         maxLoans = 5;
+                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "forskare" -> {
                         System.out.println("forskare");
                         maxLoans = 10;
+                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "admin" -> {
                         System.out.println("admin");
                         maxLoans = 100;
+                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     default -> {
@@ -454,6 +432,7 @@ public class DBUtils {
         }finally {
             closeDBLink(connection, psCheckUser, null, null, resultSet);
         }
+        System.out.println(maxLoans);
         return maxLoans;
     }
     public static Integer remainingLoans(Integer maxLoans, Integer userid) {
@@ -467,7 +446,10 @@ public class DBUtils {
             psCheckUser.setInt(1, userid);
             resultSet = psCheckUser.executeQuery();
             while (resultSet.next())    {
-                remainingLoans = resultSet.getInt("COUNT(*)") - maxLoans;
+                remainingLoans = maxLoans - resultSet.getInt("COUNT(*)");
+                System.out.println();
+                System.out.println(maxLoans);
+                System.out.println(remainingLoans);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -578,7 +560,7 @@ public class DBUtils {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 28 day ) , 0);");
                     psInsert.setInt(1, mediaid);
                     psInsert.setInt(2, userid);
-                    psInsert.executeQuery();
+                    psInsert.executeUpdate();
                     setUnavailable(mediaid);
                     System.out.println("Lån skapat! ");
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -588,7 +570,7 @@ public class DBUtils {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 14 day ) , 0);");
                     psInsert.setInt(1, mediaid);
                     psInsert.setInt(2, userid);
-                    psInsert.executeQuery();
+                    psInsert.executeUpdate();
                     setUnavailable(mediaid);
                     System.out.println("Lån skapat! ");
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
