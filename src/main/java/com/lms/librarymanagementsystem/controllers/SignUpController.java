@@ -25,7 +25,7 @@ public class SignUpController implements Initializable {
     @FXML
     private ChoiceBox<String> usertypeChoiceBox;
 
-    private final ObservableList<String> userTypes = FXCollections.observableArrayList("admin", "bibliotekarie", "forskare", "student", "plebej");
+    private final ObservableList<String> userTypes = FXCollections.observableArrayList("admin", "bibliotekarie", "anställd" ,"forskare", "student", "plebej");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

@@ -8,6 +8,7 @@ import com.lms.librarymanagementsystem.models.MediaModel;
 import com.lms.librarymanagementsystem.models.ReservationModel;
 import com.lms.librarymanagementsystem.models.UserModel;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -85,6 +86,7 @@ public class LoanController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 // TODO retrieve information from search tableview and create loan object/DB record
+                extractArticle();
                 refreshSearch();
                 search();
                 if(loanModelObservableList != null) {
@@ -111,6 +113,26 @@ public class LoanController implements Initializable {
                 DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, nameLabel.getText());
             }
         });
+    }
+
+    private void extractArticle() {
+
+       /* searchTableView.getSelectionModel().setCellSelectionEnabled(true);
+        ObservableList selectedCells = searchTableView.getSelectionModel().getSelectedCells();
+
+        selectedCells.addListener(new ListChangeListener() {
+            @Override
+            public void onChanged(Change c) {
+                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                Object val = tablePosition.getTableColumn().getCellData(tablePosition.getRow());
+                System.out.println("Selected Value" + val);
+
+            }
+        });  */
+//      TODO extract necessary information and pass on to loan object / reservation object
+        MediaModel mediaModel = searchTableView.getSelectionModel().getSelectedItem();
+        System.out.println(mediaModel.titleProperty().toString());
+
     }
     public void setUserInformation(String username){
         nameLabel.setText(username);
@@ -302,18 +324,18 @@ public class LoanController implements Initializable {
     private void reservation() {
         Connection connection = null;
         PreparedStatement psFetchReservations = null;
-        ResultSet resultSetReservation = null;
+        ResultSet resultSet = null;
         try{
             connection = DBUtils.getDBLink();
             psFetchReservations = connection.prepareStatement("SELECT reservationid, mediaid, userid, queuenumber, reservationdate FROM reservation WHERE userid = ?;");
             psFetchReservations.setInt(1, userid);
-            resultSetReservation = psFetchReservations.executeQuery();
-            while (resultSetReservation.next()) {
-                Integer reservationid = resultSetReservation.getInt("reservationid");
-                Integer mediaid = resultSetReservation.getInt("mediaid");
-                Integer userid = resultSetReservation.getInt("userid");
-                Integer queuenumber = resultSetReservation.getInt("queuenumber");
-                Date reservationdate = resultSetReservation.getDate("reservationdate");
+            resultSet = psFetchReservations.executeQuery();
+            while (resultSet.next()) {
+                Integer reservationid = resultSet.getInt("reservationid");
+                Integer mediaid = resultSet.getInt("mediaid");
+                Integer userid = resultSet.getInt("userid");
+                Integer queuenumber = resultSet.getInt("queuenumber");
+                Date reservationdate = resultSet.getDate("reservationdate");
                 reservationModelObservableList.add(new ReservationModel(reservationid,
                                                                         mediaid,
                                                                         userid,
@@ -332,9 +354,9 @@ public class LoanController implements Initializable {
             e.printStackTrace();
             e.getCause();
         }finally {
-            if (resultSetReservation != null) {
+            if (resultSet != null) {
                 try {
-                    resultSetReservation.close();
+                    resultSet.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
