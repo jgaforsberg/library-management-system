@@ -61,6 +61,7 @@ public class LoanController implements Initializable {
 
     private UserModel activeUser;
     private LoanModel activeLoan;
+    private MediaModel mediaModel;
     private ReservationModel activeReservation;
 
     private final String fetchLoan = "";
@@ -90,6 +91,7 @@ public class LoanController implements Initializable {
                 refreshSearch();
                 search();
                 if(loanModelObservableList != null) {
+                    DBUtils.addLoan(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshLoan();
                     loan();
                 }
@@ -130,13 +132,16 @@ public class LoanController implements Initializable {
             }
         });  */
 //      TODO extract necessary information and pass on to loan object / reservation object
-        MediaModel mediaModel = searchTableView.getSelectionModel().getSelectedItem();
+        mediaModel = searchTableView.getSelectionModel().getSelectedItem();
         System.out.println(mediaModel.titleProperty().toString());
 
     }
     public void setUserInformation(String username){
+        activeUser = DBUtils.getUserInformation(username);
         nameLabel.setText(username);
-        setUserId();
+        userid = activeUser.getUserid();
+        System.out.println(userid);
+        System.out.println(activeUser.getUserid());
     }
     public void setUserId()    {
         String username = nameLabel.getText();

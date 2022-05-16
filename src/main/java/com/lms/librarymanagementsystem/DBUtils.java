@@ -4,6 +4,7 @@ import com.lms.librarymanagementsystem.controllers.AccountController;
 import com.lms.librarymanagementsystem.controllers.InventoryController;
 import com.lms.librarymanagementsystem.controllers.LoanController;
 import com.lms.librarymanagementsystem.controllers.LoginController;
+import com.lms.librarymanagementsystem.models.UserModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -15,6 +16,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 //  #011B3E blue
 //  #F0F0F0 light gray
@@ -36,6 +40,44 @@ public class DBUtils {
             e.printStackTrace();
         }
         return DBLink;
+    }
+    public static void closeDBLink(Connection connection, PreparedStatement ps1, PreparedStatement ps2, PreparedStatement ps3, ResultSet resultSet) {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps1 != null) {
+            try {
+                ps1.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps2!= null) {
+            try {
+                ps2.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (ps3 != null) {
+            try {
+                ps3.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }
     }
     // TODO changeScene methods for each unique scene change that utilizes username
     // TODO username can be used as unique identifier since its value is unique
@@ -192,7 +234,7 @@ public class DBUtils {
                 psInsert.setString(5, usertype);
                 psInsert.executeUpdate();
 //                      change scenes to logged in scene
-                changeSceneLogin(event, "login.fxml", "D0024E Bibliotekssystem - Inloggad ", username);
+                changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -200,34 +242,7 @@ public class DBUtils {
 //          done to prevent e.g., memory leakage and to free DB resources
 //          connection is closed last
         } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psInsert != null) {
-                try {
-                    psInsert.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psCheckUserExists != null) {
-                try {
-                    psCheckUserExists.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeDBLink(connection, psInsert, psCheckUserExists, null, resultSet);
         }
     }
     public static void validateUser(ActionEvent event, String username) {
@@ -257,27 +272,7 @@ public class DBUtils {
             e.printStackTrace();
             e.getCause();
         }finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psCheckUserType != null) {
-                try {
-                    psCheckUserType.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeDBLink(connection, psCheckUserType, null, null, resultSet);
         }
     }
     public static void changeSceneInventory(ActionEvent event, String fxmlFile, String title, String username)   {
@@ -334,6 +329,33 @@ public class DBUtils {
         stage.setScene((new Scene(root)));
         stage.show();
     }
+    public static UserModel getUserInformation(String username) {
+        UserModel userModel = new UserModel();
+
+        Integer userid = null;
+        String firstname = "", lastname = "", usertype = "";
+        Connection connection = null;
+        PreparedStatement psFetchUser = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype FROM users WHERE username = ?;");
+            psFetchUser.setString(1, username);
+            resultSet = psFetchUser.executeQuery();
+            while (resultSet.next())    {
+                userModel.setUserid(userid = resultSet.getInt("id"));
+                userModel.setFirstname(firstname = resultSet.getString("firstname"));
+                lastname = resultSet.getString("lastname");
+                usertype = resultSet.getString("usertype");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psFetchUser, null, null, resultSet);
+        }
+        return new UserModel(setUserid(userid), username, firstname, lastname, usertype);
+    }
     //  method logging in user from main screen
     public static void logInUser(ActionEvent event, String username, String password) {
         Connection connection = null;
@@ -369,29 +391,225 @@ public class DBUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            closeDBLink(connection, psCheckLogin, null, null, resultSet);
+        }
+    }
+    private static String date(int d){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, d);
+        String date = dateFormat.format(cal.getTime());
+        return date;
+    }
+    // TODO Use this for AccountController too
+    public static Integer maxLoans(Integer userid)  {
+        Integer maxLoans = null;
+        Connection connection = null;
+        PreparedStatement  psCheckUser = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckUser = connection.prepareStatement("SELECT usertype FROM users WHERE id = ?;");
+            psCheckUser.setInt(1, userid);
+            resultSet = psCheckUser.executeQuery();
+            while (resultSet.next()) {
+                String queryUsertype = resultSet.getString("usertype");
+                switch (queryUsertype.toLowerCase()) {
+                    case "allmän" -> {
+                        System.out.println("allmän");
+                        maxLoans = 3;
+                        return maxLoans;
+                    }
+                    case "anställd" -> {
+                        System.out.println("anställd");
+                        maxLoans = 5;
+                        return maxLoans;
+                    }
+                    case "student" -> {
+                        System.out.println("student");
+                        maxLoans = 5;
+                        return maxLoans;
+                    }
+                    case "forskare" -> {
+                        System.out.println("forskare");
+                        maxLoans = 10;
+                        return maxLoans;
+                    }
+                    case "admin" -> {
+                        System.out.println("admin");
+                        maxLoans = 100;
+                        return maxLoans;
+                    }
+                    default -> {
+                        System.out.println("Kan ej läsa användartyp! ");
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Fel i användarverifiering. ");
+                        alert.show();
+                    }
                 }
             }
-            if (psCheckLogin != null) {
-                try {
-                    psCheckLogin.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+        }catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckUser, null, null, resultSet);
+        }
+        return maxLoans;
+    }
+    public static Integer remainingLoans(Integer maxLoans, Integer userid) {
+        Integer remainingLoans = null;
+        Connection connection = null;
+        PreparedStatement  psCheckUser = null;
+        ResultSet resultSet = null;
+        try{
+            connection = getDBLink();
+            psCheckUser = connection.prepareStatement("SELECT COUNT(*)FROM loan WHERE userid = ?;");
+            psCheckUser.setInt(1, userid);
+            resultSet = psCheckUser.executeQuery();
+            while (resultSet.next())    {
+                remainingLoans = resultSet.getInt("COUNT(*)") - maxLoans;
             }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckUser, null, null, resultSet);
+        }
+        return remainingLoans;
+    }
+    private static String checkAvailable(Integer mediaid) {
+        String queryAvailable = "";
+        Connection connection = null;
+        PreparedStatement psCheckAvailable = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckAvailable = connection.prepareStatement("SELECT * FROM media WHERE mediaid = ?;");
+            psCheckAvailable.setInt(1, mediaid);
+            resultSet = psCheckAvailable.executeQuery();
+            while (resultSet.next())    {
+                queryAvailable = resultSet.getString("available");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckAvailable, null, null, resultSet);
+        }
+        return queryAvailable;
+    }
+    private static String checkFormat(Integer mediaid)   {
+        String queryFormat = "";
+        Connection connection = null;
+        PreparedStatement psCheckFormat = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckFormat = connection.prepareStatement("SELECT * FROM media WHERE mediaid = ?;");
+            psCheckFormat.setInt(1, mediaid);
+            resultSet = psCheckFormat.executeQuery();
+            while (resultSet.next())    {
+                queryFormat = resultSet.getString("format");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckFormat, null, null, resultSet);
+        }
+        return queryFormat;
+    }
+    private static void setUnavailable(Integer mediaid) {
+        Connection connection = null;
+        PreparedStatement psUpdate = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psUpdate = connection.prepareStatement("UPDATE media SET available = 'Utlånad' WHERE mediaid = ?");
+            psUpdate.setInt(1, mediaid);
+            psUpdate.executeUpdate();
+            System.out.println("Mediatillgänglighet för mediaartikel "+mediaid+" satt till status utlånad! ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            closeDBLink(connection, psUpdate, null, null, resultSet);
+        }
+    }
+    private static void setAvailable(Integer mediaid)   {
+        Connection connection = null;
+        PreparedStatement psUpdate = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psUpdate = connection.prepareStatement("UPDATE media SET available = 'Ledig' WHERE mediaid = ?");
+            psUpdate.setInt(1, mediaid);
+            psUpdate.executeUpdate();
+            System.out.println("Mediatillgänglighet för mediaartikel "+mediaid+" satt till status ledig! ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            closeDBLink(connection, psUpdate, null, null, resultSet);
+        }
+    }
+    public static void addLoan(Integer mediaid, Integer userid) {
+        Integer maxLoans = maxLoans(userid);
+        Integer remainingLoans = remainingLoans(maxLoans, userid);
+        if(remainingLoans <= 0) {
+            System.out.println("Användaren har inga tillgängliga lånetillfällen! ");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Du har nått din maxgräns för aktiva lån. ");
+            alert.show();
+        }
+        String mediaAvailable = checkAvailable(mediaid);
+        if(mediaAvailable.equalsIgnoreCase("referens") || mediaAvailable.equalsIgnoreCase("utlånad"))   {
+            System.out.println("Artikeln är otillgänglig för utlåning! ");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
+            alert.show();
+        }
+        String mediaFormat = checkFormat(mediaid);
+        if(remainingLoans > 0 && (!mediaAvailable.equalsIgnoreCase("referens") && !mediaAvailable.equalsIgnoreCase("utlånad")))   {
+            Connection connection = null;
+            PreparedStatement  psInsert = null;
+            ResultSet resultSet = null;
+            try{
+                connection = getDBLink();
+                if (mediaFormat.equalsIgnoreCase("bok")) {
+                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 28 day ) , 0);");
+                    psInsert.setInt(1, mediaid);
+                    psInsert.setInt(2, userid);
+                    psInsert.executeQuery();
+                    setUnavailable(mediaid);
+                    System.out.println("Lån skapat! ");
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setContentText("Lån skapat. ");
+                    alert.show();
+                }else if(mediaFormat.equalsIgnoreCase("film"))  {
+                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 14 day ) , 0);");
+                    psInsert.setInt(1, mediaid);
+                    psInsert.setInt(2, userid);
+                    psInsert.executeQuery();
+                    setUnavailable(mediaid);
+                    System.out.println("Lån skapat! ");
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setContentText("Lån skapat. ");
+                    alert.show();
+                }else   {
+                    System.out.println("Lån kunde ej skapas, mediaformat ej tillgängligt för utlåning! ");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Lån misslyckades. ");
+                    alert.show();
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                e.getCause();
+            }finally {
+                closeDBLink(connection, psInsert, null, null, resultSet);
             }
         }
     }
+
+
     public static void addMedia(String title, String format, String category, String description,
                                 String publisher, String edition, String author, String isbn,
                                 String director, String actor, String country, String rating,
@@ -428,28 +646,7 @@ public class DBUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psInsert != null) {
-                try {
-                    psInsert.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    e.getCause();
-                }
-            }
+            closeDBLink(connection, psInsert, null, null, resultSet);
         }
     }
     public static void updateMedia(Integer mediaid, String title, String format, String category, String description,
@@ -496,34 +693,7 @@ public class DBUtils {
             e.printStackTrace();
             e.getCause();
         }finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psUpdate != null) {
-                try {
-                    psUpdate.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psCheckMediaExists != null) {
-                try {
-                    psCheckMediaExists.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeDBLink(connection, psUpdate, psCheckMediaExists, null, resultSet);
         }
     }
     public static void removeMedia(Integer mediaid)    {
@@ -551,34 +721,7 @@ public class DBUtils {
             e.printStackTrace();
             e.getCause();
         }finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psRemove != null) {
-                try {
-                    psRemove.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psCheckMediaExists != null) {
-                try {
-                    psCheckMediaExists.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeDBLink(connection, psRemove, psCheckMediaExists, null, resultSet);
         }
     }
     // TODO delegate search function to DBUtils
@@ -609,27 +752,7 @@ public class DBUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }finally    {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchArticles != null) {
-                try {
-                    psFetchArticles.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            closeDBLink(connection, psFetchArticles, null, null, resultSet);
         }
     }
 }
