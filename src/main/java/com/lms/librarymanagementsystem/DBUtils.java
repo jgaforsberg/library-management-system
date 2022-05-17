@@ -406,33 +406,23 @@ public class DBUtils {
                 String queryUsertype = resultSet.getString("usertype");
                 switch (queryUsertype.toLowerCase()) {
                     case "allmän" -> {
-                        System.out.println("allmän");
                         maxLoans = 3;
-                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "anställd" -> {
-                        System.out.println("anställd");
                         maxLoans = 5;
-                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "student" -> {
-                        System.out.println("student");
                         maxLoans = 5;
-                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "forskare" -> {
-                        System.out.println("forskare");
                         maxLoans = 10;
-                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     case "admin" -> {
-                        System.out.println("admin");
                         maxLoans = 100;
-                        System.out.println(maxLoans);
                         return maxLoans;
                     }
                     default -> {
@@ -493,27 +483,7 @@ public class DBUtils {
         }
         return remainingLoans;
     }
-    private static Integer getQueuenumber(Integer mediaid)  {
-        Integer queueNumber = null;
-        Connection connection = null;
-        PreparedStatement psCheckQueue = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckQueue = connection.prepareStatement("SELECT COUNT(*) FROM reservation WHERE mediaid = ?;");
-            psCheckQueue.setInt(1, mediaid);
-            resultSet = psCheckQueue.executeQuery();
-            while (resultSet.next())    {
-                queueNumber = resultSet.getInt("COUNT(*)");
-            }
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckQueue, null, null, resultSet);
-        }
-        return queueNumber;
-    }
+
     private static String checkAvailable(Integer mediaid) {
         String queryAvailable = "";
         Connection connection = null;
@@ -556,6 +526,31 @@ public class DBUtils {
         }
         return queryFormat;
     }
+    private static boolean checkReservation(Integer mediaid, Integer userid) {
+        Integer queryUserid = 0;
+        Connection connection = null;
+        PreparedStatement psCheckReservation = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE mediaid = ? AND queuenumber = 1;");
+            psCheckReservation.setInt(1, mediaid);
+            resultSet = psCheckReservation.executeQuery();
+            while(resultSet.next()) {
+                queryUserid = resultSet.getInt("userid");
+                updateQueuenumber(mediaid);
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckReservation, null, null, resultSet);
+        }
+        System.out.println("After finally block");
+        System.out.println(queryUserid);
+        System.out.println(userid);
+        return queryUserid.equals(userid);
+    }
     private static void setUnavailable(Integer mediaid) {
         Connection connection = null;
         PreparedStatement psUpdate = null;
@@ -575,6 +570,8 @@ public class DBUtils {
     public static void addLoan(Integer mediaid, Integer userid) {
         Integer maxLoans = maxLoans(userid);
         Integer remainingLoans = remainingLoans(maxLoans, userid);
+        boolean reserved = checkReservation(mediaid, userid);
+        System.out.println("addLoan(reserved) = "+reserved);
         if(remainingLoans <= 0) {
             System.out.println("Användaren har inga tillgängliga lånetillfällen! ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -582,14 +579,20 @@ public class DBUtils {
             alert.show();
         }
         String mediaAvailable = checkAvailable(mediaid);
-        if(mediaAvailable.equalsIgnoreCase("referens") || mediaAvailable.equalsIgnoreCase("utlånad"))   {
+        if(!mediaAvailable.equalsIgnoreCase("ledig"))   {
             System.out.println("Artikeln är otillgänglig för utlåning! ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
             alert.show();
         }
+        if(!reserved)   {
+            System.out.println("En annan användare står före i reservationskön för denna mediaartikel. ");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("En annan användare står före i reservationskön för denna mediaartikel. ");
+            alert.show();
+        }
         String mediaFormat = checkFormat(mediaid);
-        if(remainingLoans > 0 && (!mediaAvailable.equalsIgnoreCase("referens") && !mediaAvailable.equalsIgnoreCase("utlånad")))   {
+        if(remainingLoans > 0 && mediaAvailable.equalsIgnoreCase("ledig") && reserved)   {
             Connection connection = null;
             PreparedStatement  psInsert = null;
             try{
@@ -600,6 +603,7 @@ public class DBUtils {
                     psInsert.setInt(2, userid);
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
+
                     System.out.println("Lån skapat! ");
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setContentText("Lån skapat. ");
@@ -620,6 +624,7 @@ public class DBUtils {
                     alert.setContentText("Lån misslyckades. ");
                     alert.show();
                 }
+                updateQueuenumber(mediaid);
             } catch (SQLException e) {
                 e.printStackTrace();
                 e.getCause();
@@ -662,6 +667,56 @@ public class DBUtils {
             e.getCause();
         }finally {
             closeDBLink(connection, psUpdate, null, null, null);
+        }
+    }
+    private static Integer getQueuenumber(Integer mediaid)  {
+        Integer queueNumber = null;
+        Connection connection = null;
+        PreparedStatement psCheckQueue = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckQueue = connection.prepareStatement("SELECT COUNT(*) FROM reservation WHERE mediaid = ?;");
+            psCheckQueue.setInt(1, mediaid);
+            resultSet = psCheckQueue.executeQuery();
+            while (resultSet.next())    {
+                queueNumber = resultSet.getInt("COUNT(*)");
+                if(queueNumber == null)  {
+                    queueNumber = 0;
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckQueue, null, null, resultSet);
+        }
+        return queueNumber;
+    }
+    private static void updateQueuenumber(Integer mediaid) {
+        System.out.println("updateQueuenumber(mediaid) ");
+        Connection connection = null;
+        PreparedStatement psUpdate = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+//          Check if any reservations of a media exists
+            psUpdate = connection.prepareStatement("SELECT * FROM reservation WHERE mediaid = ?;");
+            psUpdate.setInt(1, mediaid);
+            resultSet = psUpdate.executeQuery();
+//          If reservations exist, all entries are decreased by 1
+            if(!resultSet.isBeforeFirst())  {
+                while (resultSet.next())    {
+                    psUpdate = connection.prepareStatement("UPDATE reservation SET queuenumber = queuenumber - 1 WHERE mediaid = ?;");
+                    psUpdate.setInt(1, mediaid);
+                    psUpdate.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psUpdate, null, null, resultSet);
         }
     }
     public static void returnLoan(Integer loanid, Integer mediaid)   {
@@ -708,7 +763,10 @@ public class DBUtils {
             alert.setContentText("Du kan bara reservera utlånade mediaartiklar. ");
             alert.show();
         }else   {
-            Integer queueNumber = getQueuenumber(mediaid);
+        System.out.println("addReservation() before calling getQueuenumber() ");
+            Integer queueNumber = (getQueuenumber(mediaid)+1);
+//          TODO Set check for reservations of available and unreserved media articles
+            System.out.println(queueNumber+" returned from getQueuenumber() ");
             Connection connection = null;
             PreparedStatement psInsert = null;
             try {

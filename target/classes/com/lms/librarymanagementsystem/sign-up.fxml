@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.SignUpController">
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.SignUpController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="225.0" style="-fx-background-color: #011B3E;">
          <children>
@@ -24,58 +24,63 @@
       </AnchorPane>
       <AnchorPane prefHeight="500.0" prefWidth="379.0" style="-fx-background-color: #F0F0F0;">
          <children>
-            <Label layoutX="15.0" layoutY="105.0" text="Användarnamn">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="15.0" layoutY="135.0" text="Lösenord">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="15.0" layoutY="165.0" text="Förnamn">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="15.0" layoutY="195.0" text="Efternamn">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label layoutX="15.0" layoutY="225.0" text="Användartyp">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <TextField fx:id="usernameTextField" layoutX="129.0" layoutY="100.0" prefHeight="30.0" prefWidth="225.0" promptText="Användarnamn" style="-fx-cursor: text;">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <PasswordField fx:id="passwordPasswordField" layoutX="129.0" layoutY="130.0" prefHeight="30.0" prefWidth="225.0" promptText="Lösenord" style="-fx-cursor: text;">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </PasswordField>
-            <TextField fx:id="firstnameTextField" layoutX="129.0" layoutY="160.0" prefHeight="30.0" prefWidth="225.0" promptText="Förnamn" style="-fx-cursor: text;">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <TextField fx:id="lastnameTextField" layoutX="129.0" layoutY="190.0" prefHeight="30.0" prefWidth="225.0" promptText="Efternamn" style="-fx-cursor: text;">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
-            <ChoiceBox fx:id="usertypeChoiceBox" layoutX="129.0" layoutY="220.0" prefHeight="30.0" prefWidth="225.0" style="-fx-cursor: hand;" />
             <Label alignment="CENTER" layoutY="14.0" prefHeight="31.0" prefWidth="379.0" text="Registrera konto" textFill="#011b3e">
                <font>
                   <Font name="System Bold" size="21.0" />
                </font>
             </Label>
-            <Button fx:id="signupButton" layoutX="79.0" layoutY="270.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Registrera" textFill="#f0f0f0">
+            <Label layoutX="15.0" layoutY="105.0" text="Användarnamn :" textFill="#011b3e">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="135.0" text="Lösenord :" textFill="#011b3e">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="165.0" text="Förnamn :" textFill="#011b3e">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="195.0" text="Efternamn :" textFill="#011b3e">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="225.0" text="Användartyp :" textFill="#011b3e">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="usernameTextField" layoutX="130.0" layoutY="100.0" prefHeight="30.0" prefWidth="225.0" promptText="Användarnamn" style="-fx-cursor: text;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <PasswordField fx:id="passwordPasswordField" layoutX="130.0" layoutY="130.0" prefHeight="30.0" prefWidth="225.0" promptText="Lösenord" style="-fx-cursor: text;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </PasswordField>
+            <TextField fx:id="firstnameTextField" layoutX="130.0" layoutY="160.0" prefHeight="30.0" prefWidth="225.0" promptText="Förnamn" style="-fx-cursor: text;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <TextField fx:id="lastnameTextField" layoutX="130.0" layoutY="190.0" prefHeight="30.0" prefWidth="225.0" promptText="Efternamn" style="-fx-cursor: text;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <ChoiceBox fx:id="usertypeChoiceBox" layoutX="129.0" layoutY="220.0" prefHeight="30.0" prefWidth="225.0" style="-fx-cursor: hand;" />
+            <TextField fx:id="emailTextField" layoutX="130.0" layoutY="250.0" prefHeight="30.0" prefWidth="225.0" promptText="Email" style="-fx-cursor: text;">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+            <Button fx:id="signupButton" layoutX="79.0" layoutY="309.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="225.0" style="-fx-background-color: #011B3E; -fx-cursor: hand;" text="Registrera" textFill="#f0f0f0">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
@@ -85,7 +90,12 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Label alignment="CENTER" layoutY="400.0" prefWidth="379.0" text="Redan medlem?">
+            <Label alignment="CENTER" layoutY="400.0" prefWidth="379.0" text="Redan medlem?" textFill="#011b3e">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="255.0" text="Email :" textFill="#011b3e">
                <font>
                   <Font size="14.0" />
                </font>
