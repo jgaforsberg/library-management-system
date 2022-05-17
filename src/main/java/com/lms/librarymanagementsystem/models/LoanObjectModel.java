@@ -1,8 +1,5 @@
 package com.lms.librarymanagementsystem.models;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-
 import java.sql.Date;
 @SuppressWarnings("unused")
 public class LoanObjectModel {

@@ -604,7 +604,7 @@ public class DBUtils {
                     alert.setContentText("Lån skapat. ");
                     alert.show();
                 }else if(mediaFormat.equalsIgnoreCase("film"))  {
-                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 14 day ) , 0);");
+                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 14 DAY ) , 0);");
                     psInsert.setInt(1, mediaid);
                     psInsert.setInt(2, userid);
                     psInsert.executeUpdate();
@@ -664,23 +664,31 @@ public class DBUtils {
         }
     }
     public static void returnLoan(Integer loanid, Integer mediaid)   {
+        String mediaTitle = "";
         Connection connection = null;
         PreparedStatement psRemove = null;
+        ResultSet resultSet = null;
         try {
             connection = getDBLink();
             psRemove = connection.prepareStatement("DELETE FROM loan WHERE loanid = ?;");
             psRemove.setInt(1, loanid);
             psRemove.executeUpdate();
+            psRemove = connection.prepareStatement("SELECT title FROM media WHERE mediaid = ?;");
+            psRemove.setInt(1, mediaid);
+            resultSet = psRemove.executeQuery();
+            while (resultSet.next())    {
+                mediaTitle = resultSet.getString("title");
+            }
             System.out.println("Lån med lånid: "+loanid+ " terminerat! ");
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
-            closeDBLink(connection, psRemove, null, null, null);
+            closeDBLink(connection, psRemove, null, null, resultSet);
         }
         setAvailable(mediaid);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Ditt lån: "+loanid+" är avslutat. ");
+        alert.setContentText("Ditt lån av: "+mediaTitle+" är avslutat. ");
         alert.show();
     }
     public static void addReservation(Integer mediaid, Integer userid)  {
@@ -721,7 +729,7 @@ public class DBUtils {
             }
         }
     }
-    public static void returnReservation(Integer reservationid) {
+    public static void returnReservation(Integer reservationid, String mediaTitle) {
         Connection connection = null;
         PreparedStatement psRemove = null;
         try {
@@ -737,8 +745,40 @@ public class DBUtils {
             closeDBLink(connection, psRemove, null, null, null);
         }
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Din reservation: "+reservationid+" är avslutad. ");
+        alert.setContentText("Din reservation av: "+mediaTitle+" är avslutad. ");
         alert.show();
+    }
+    /*
+        TODO Implement reminder function for overdue loans
+     */
+    private void checkOverdue() {
+        Connection connection = null;
+        PreparedStatement psCheckOverdue = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckOverdue = connection.prepareStatement("SELECT * FROM loan WHERE returndate <= CURDATE() + INTERVAL 1 DAY;");
+            resultSet = psCheckOverdue.executeQuery();
+            if(!resultSet.isBeforeFirst()) {
+                while(resultSet.next()) {
+                    Integer userid = resultSet.getInt("userid");
+                    psCheckOverdue = connection.prepareStatement("SELECT email FROM users WHERE id = ?;");
+                    psCheckOverdue.setInt(1, userid);
+                    while (resultSet.next()) {
+                        String queryEmail = resultSet.getString("email");
+                    /*
+                        TODO Send reminder emails to overdue users
+                        TODO sendReminder();
+                     */
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckOverdue, null, null, resultSet);
+        }
     }
     public static void addMedia(String title, String format, String category, String description,
                                 String publisher, String edition, String author, String isbn,

@@ -26,6 +26,9 @@ VALUES
                                 (
 								'ltustudent1', 'abc', 'Lena', 'PH', 'student'
 								);
+ALTER TABLE `javafxtest`.`users`
+CHANGE COLUMN `email` `email` VARCHAR(255) NULL COMMENT 'user email for user interaction - unique = one account per existing email' ;
+
 
 CREATE TABLE `javafxtest`.`media` (
   `mediaid` INT NOT NULL AUTO_INCREMENT,

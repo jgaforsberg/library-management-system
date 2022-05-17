@@ -78,7 +78,7 @@ public class AccountController implements Initializable {
                 alert.show();
             }
                 if(reservationObservableList != null)   {
-                    DBUtils.returnReservation(reservationObject.getReservationid());
+                    DBUtils.returnReservation(reservationObject.getReservationid(), reservationObject.getTitle());
                     refreshReservation();
                     reservation();
                 }
@@ -149,8 +149,8 @@ public class AccountController implements Initializable {
             while (resultSet.next())    {
                 Integer loanid = resultSet.getInt("loanid");
                 psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loanid, loan.returndate FROM media " +
-                                                                "JOIN loan ON media.mediaid = loan.mediaid WHERE loan.loanid = ?;");
-                psFetchLoans.setInt(1, loanid);
+                                                                "JOIN loan ON media.mediaid = loan.mediaid WHERE loan.userid = ?;");
+                psFetchLoans.setInt(1, activeUser.getUserid());
                 resultSet = psFetchLoans.executeQuery();
                 while (resultSet.next())    {
                     Integer queryMediaid = resultSet.getInt("mediaid");
@@ -188,8 +188,8 @@ public class AccountController implements Initializable {
             while (resultSet.next())    {
                 Integer reservationid = resultSet.getInt("reservationid");
                 psFetchReservations = connection.prepareStatement(  "SELECT media.mediaid, media.title, reservation.reservationid, reservation.queuenumber FROM media " +
-                                                                        "JOIN reservation ON media.mediaid = reservation.mediaID WHERE reservation.reservationid = ?;");
-                psFetchReservations.setInt(1, reservationid);
+                                                                        "JOIN reservation ON media.mediaid = reservation.mediaID WHERE reservation.userid = ?;");
+                psFetchReservations.setInt(1, activeUser.getUserid());
                 resultSet = psFetchReservations.executeQuery();
                 while (resultSet.next())    {
                     Integer queryMediaid = resultSet.getInt("mediaid");
