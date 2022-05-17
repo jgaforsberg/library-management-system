@@ -85,7 +85,8 @@ public class SearchController implements Initializable {
                                                             queryActor,
                                                             queryCountry,
                                                             queryRating,
-                                                            queryAvailable));
+                                                            queryAvailable
+                                                            ));
 //              PropertyValueFactory corresponds to the new BookSearchModel
 //              populate the tableview columns
                 mediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));

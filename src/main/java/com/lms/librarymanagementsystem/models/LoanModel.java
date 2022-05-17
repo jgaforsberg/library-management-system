@@ -22,12 +22,15 @@ public class LoanModel {
     public SimpleIntegerProperty loanidProperty() {return loanid;}
     public SimpleIntegerProperty mediaidProperty() {return mediaid;}
     public SimpleIntegerProperty useridProperty() {return userid;}
-    public SimpleIntegerProperty returnedProperty() {return returned;}
     public Date getLoandate() {return loandate;}
     public Date getReturndate() {return returndate;}
+    public SimpleIntegerProperty returnedProperty() {return returned;}
     public void setLoanid(SimpleIntegerProperty loanid) {this.loanid = loanid;}
     public void setMediaid(SimpleIntegerProperty mediaid) {this.mediaid = mediaid;}
     public void setUserid(SimpleIntegerProperty userid) {this.userid = userid;}
     public void setLoandate(Date loandate) {this.loandate = loandate;}
     public void setReturndate(Date returndate) {this.returndate = returndate;}
+    public void setReturned(SimpleIntegerProperty returned) {
+        this.returned = returned;
+    }
 }

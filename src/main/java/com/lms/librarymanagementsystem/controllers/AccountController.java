@@ -51,7 +51,14 @@ public class AccountController implements Initializable {
        returnLoanButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                extractLoan();
+                try{
+                    extractLoan();
+                }catch (NullPointerException e) {
+                    e.getCause();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Välj ett objekt i listan. ");
+                    alert.show();
+                }
                 if(loanObservableList != null)  {
                     DBUtils.returnLoan(loanObject.getLoanid(), loanObject.getMediaid());
                     refreshLoan();
@@ -62,7 +69,14 @@ public class AccountController implements Initializable {
         endReservationButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            extractReservation();
+            try {
+                extractReservation();
+            }catch (NullPointerException e) {
+                e.getCause();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Välj ett objekt i listan. ");
+                alert.show();
+            }
                 if(reservationObservableList != null)   {
                     DBUtils.returnReservation(reservationObject.getReservationid());
                     refreshReservation();
@@ -86,12 +100,11 @@ public class AccountController implements Initializable {
     public void setUserInformation(String username){
         activeUser = new UserModel();
         setUserModelInformation(username);
-        System.out.println(username);
-        System.out.println("\n"+activeUser.getUserid());
         idLabel.setText(activeUser.getUserid().toString());
         usernameLabel.setText(activeUser.getUsername());
         firstnameLabel.setText(activeUser.getFirstname());
         lastnameLabel.setText(activeUser.getLastname());
+        usertypeLabel.setText(activeUser.getUsertype());
         maxLoanLabel.setText(DBUtils.maxLoans(activeUser.getUserid()).toString());
         remainingLoanLabel.setText(DBUtils.remainingLoans(Integer.valueOf(maxLoanLabel.getText()), activeUser.getUserid()).toString());
         loan();
@@ -135,7 +148,7 @@ public class AccountController implements Initializable {
             resultSet = psFetchLoans.executeQuery();
             while (resultSet.next())    {
                 Integer loanid = resultSet.getInt("loanid");
-                psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loanid, loan.loandate  FROM media " +
+                psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loanid, loan.returndate FROM media " +
                                                                 "JOIN loan ON media.mediaid = loan.mediaid WHERE loan.loanid = ?;");
                 psFetchLoans.setInt(1, loanid);
                 resultSet = psFetchLoans.executeQuery();

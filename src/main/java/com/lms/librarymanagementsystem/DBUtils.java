@@ -504,7 +504,6 @@ public class DBUtils {
             resultSet = psCheckQueue.executeQuery();
             while (resultSet.next())    {
                 queueNumber = resultSet.getInt("COUNT(*)");
-                System.out.println("COUNT()* = "+queueNumber);
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -705,7 +704,7 @@ public class DBUtils {
             PreparedStatement psInsert = null;
             try {
                 connection = getDBLink();
-                psInsert = connection.prepareStatement("INSERT INTO reservation(mediaid, userid, reservationdate, queuenumber) VALUES (?,?,?,CURDATE());");
+                psInsert = connection.prepareStatement("INSERT INTO reservation(mediaid, userid, queuenumber,reservationdate) VALUES (?,?,?,CURDATE());");
                 psInsert.setInt(1, mediaid);
                 psInsert.setInt(2, userid);
                 psInsert.setInt(3, queueNumber);

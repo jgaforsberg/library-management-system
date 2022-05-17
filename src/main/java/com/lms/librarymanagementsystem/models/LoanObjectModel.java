@@ -19,7 +19,7 @@ public class LoanObjectModel {
     public Integer getMediaid() {
         return mediaid;
     }
-    public String titleProperty() {
+    public String getTitle() {
         return title;
     }
     public Integer getLoanid() {
