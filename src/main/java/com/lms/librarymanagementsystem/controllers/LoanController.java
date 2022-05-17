@@ -8,7 +8,6 @@ import com.lms.librarymanagementsystem.models.MediaModel;
 import com.lms.librarymanagementsystem.models.ReservationModel;
 import com.lms.librarymanagementsystem.models.UserModel;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -54,46 +53,32 @@ public class LoanController implements Initializable {
     private Label nameLabel;
 
     private ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
-    @SuppressWarnings("unused")
     private ObservableList<LoanModel> loanModelObservableList = FXCollections.observableArrayList();
-    @SuppressWarnings("unused")
     private ObservableList<ReservationModel> reservationModelObservableList = FXCollections.observableArrayList();
 
     private UserModel activeUser;
-    private LoanModel activeLoan;
     private MediaModel mediaModel;
+//  TODO What to do with these models?
+    private LoanModel activeLoan;
     private ReservationModel activeReservation;
-
-    private final String fetchLoan = "";
-//  since both loan() and reservation() needs userid for their PreparedStatements, userid is declared as a Class variable
-    private Integer userid, loanid, reservationid;
-
-//  accepts a person to initialize the view
-/*
-        public void initData(UserModel user, LoanModel loan, ReservationModel reservation)    {
-        activeUser = user;
-        userid = String.valueOf(user.getUserid());
-        activeLoan = loan;
-        loanid = String.valueOf(loan.getLoanid());
-        activeReservation = reservation;
-        reservationid = String.valueOf(reservation.getReservationid());
-
-    }
-*/
+    /*
+ TODO receipt print with information about: TITLE, MEDIAID, LOANDATE, RETURNDATE
+ TODO Send reminder email to users to return overdue loans
+ TODO Course literature to have 14 DAY loan period, Films 7 day loan period
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         search();
         loanButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // TODO retrieve information from search tableview and create loan object/DB record
                 extractArticle();
-                refreshSearch();
-                search();
                 if(loanModelObservableList != null) {
                     DBUtils.addLoan(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshLoan();
                     loan();
+                    refreshSearch();
+                    search();
                 }
             }
         });
@@ -101,52 +86,33 @@ public class LoanController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 // TODO retrieve information from search tableview and create reservation object/DB record
-                refreshSearch();
-                search();
+
+                extractArticle();
                 if(reservationModelObservableList != null) {
+                    DBUtils.addReservation(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshReservation();
                     reservation();
+                    refreshSearch();
+                    search();
                }else System.out.println("Reservationer ej laddade.");
             }
         });
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, nameLabel.getText());
+                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
     }
-
     private void extractArticle() {
-
-       /* searchTableView.getSelectionModel().setCellSelectionEnabled(true);
-        ObservableList selectedCells = searchTableView.getSelectionModel().getSelectedCells();
-
-        selectedCells.addListener(new ListChangeListener() {
-            @Override
-            public void onChanged(Change c) {
-                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-                Object val = tablePosition.getTableColumn().getCellData(tablePosition.getRow());
-                System.out.println("Selected Value" + val);
-
-            }
-        });  */
-//      TODO extract necessary information and pass on to loan object / reservation object
         mediaModel = searchTableView.getSelectionModel().getSelectedItem();
-        System.out.println(mediaModel.titleProperty().toString());
-
     }
     public void setUserInformation(String username){
-        setUserModelInformation(username);
-        nameLabel.setText(username);
-        userid = activeUser.getUserid();
-        System.out.println(userid);
-        System.out.println(activeUser.getUserid());
-    }
-    public void setUserModelInformation(String username) {
         activeUser = new UserModel();
-        Integer userid = null;
-        String firstname = "", lastname = "", usertype = "";
+        setUserModelInformation(username);
+        nameLabel.setText(activeUser.getUsername());
+    }
+    private void setUserModelInformation(String username) {
         Connection connection = null;
         PreparedStatement psFetchUser = null;
         ResultSet resultSet = null;
@@ -156,66 +122,19 @@ public class LoanController implements Initializable {
             psFetchUser.setString(1, username);
             resultSet = psFetchUser.executeQuery();
             while (resultSet.next())    {
-                activeUser.setUserid(userid = resultSet.getInt("id"));
-                activeUser.setFirstname(firstname = resultSet.getString("firstname"));
-                activeUser.setLastname(lastname = resultSet.getString("lastname"));
-                activeUser.setUsertype(usertype = resultSet.getString("usertype"));
-                System.out.println(userid+username+firstname+lastname+usertype);
+                activeUser.setUserid(resultSet.getInt("id"));
+                activeUser.setFirstname(resultSet.getString("firstname"));
+                activeUser.setLastname(resultSet.getString("lastname"));
+                activeUser.setUsertype(resultSet.getString("usertype"));
             }
+            activeUser.setUsername(username);
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
             DBUtils.closeDBLink(connection, psFetchUser, null, null, resultSet);
         }
-        System.out.println(userid+username+firstname+lastname+usertype);
     }
-   /* public void setUserId()    {
-        String username = nameLabel.getText();
-        if(!username.isEmpty()) {
-            Connection connection = null;
-            PreparedStatement psFetchUserId = null;
-            ResultSet resultSet = null;
-            try {
-                connection = DBUtils.getDBLink();
-                psFetchUserId = connection.prepareStatement("SELECT id FROM users WHERE username = ?;");
-                psFetchUserId.setString(1, username);
-                resultSet = psFetchUserId.executeQuery();
-                while (resultSet.next()) {
-                    userid = resultSet.getInt("id");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                e.getCause();
-            } finally {
-                if (psFetchUserId != null) {
-                    try {
-                        psFetchUserId.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (resultSet != null) {
-                    try {
-                        resultSet.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (connection != null) {
-                    try {
-                        connection.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        System.out.println(userid);
-    }
-
-    */
-    public String getUsername(){return nameLabel.getText();}
     private void refreshLoan() {
         loanModelObservableList.clear();
     }
@@ -249,7 +168,6 @@ public class LoanController implements Initializable {
                 String queryCountry = resultSet.getString("country");
                 String queryRating = resultSet.getString("rating");
                 String queryAvailable = resultSet.getString("available");
-//              populates the observable list
                 mediaModelObservableList.add(new MediaModel(queryMediaId,
                                                             queryTitle,
                                                             queryFormat,
@@ -280,19 +198,12 @@ public class LoanController implements Initializable {
                 availableColumn.setCellValueFactory((new PropertyValueFactory<>("available")));
 
                 searchTableView.setItems(mediaModelObservableList);
-//              initialize filtered list for interactive search
                 FilteredList<MediaModel> filteredData = new FilteredList<>(mediaModelObservableList, b -> true);
                 searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     filteredData.setPredicate(mediaModel -> {
-//                  if no search value is present, all records, or all current records will be displayed
-                        if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
-                            return true;
-                        }
+                        if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {return true;}
                         String searchKeyWord = newValue.toLowerCase();
-//                      an index > 0 means a match has been found
-//                      to return Integer type, use toString() method
                         if (mediaModel.titleProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
-//                      match in book title etc.
                             return true;
                         }else if (mediaModel.formatProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
@@ -320,39 +231,16 @@ public class LoanController implements Initializable {
                             return true;
                         }else
                             return false;
-//                      return false = no match found in database
                     });
                 });
-//              bind sorted result with table view
                 SortedList<MediaModel> sortedData = new SortedList<>(filteredData);
                 sortedData.comparatorProperty().bind(searchTableView.comparatorProperty());
-//              apply filtered and sorted data to the table view
                 searchTableView.setItems(sortedData);
             }
         }catch (SQLException e) {
             e.printStackTrace();
         }finally    {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchArticles != null) {
-                try {
-                    psFetchArticles.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            DBUtils.closeDBLink(connection, psFetchArticles, null, null, resultSet);
         }
     }
     private void reservation() {
@@ -362,7 +250,7 @@ public class LoanController implements Initializable {
         try{
             connection = DBUtils.getDBLink();
             psFetchReservations = connection.prepareStatement("SELECT reservationid, mediaid, userid, queuenumber, reservationdate FROM reservation WHERE userid = ?;");
-            psFetchReservations.setInt(1, userid);
+            psFetchReservations.setInt(1, activeUser.getUserid());
             resultSet = psFetchReservations.executeQuery();
             while (resultSet.next()) {
                 Integer reservationid = resultSet.getInt("reservationid");
@@ -381,34 +269,13 @@ public class LoanController implements Initializable {
                 resUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
                 resQueueColumn.setCellValueFactory((new PropertyValueFactory<>("queuenumber")));
                 resResDateColumn.setCellValueFactory((new PropertyValueFactory<>("reservationdate")));
-                reserveTableView.setItems((reservationModelObservableList));
+                reserveTableView.setItems(reservationModelObservableList);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchReservations != null) {
-                try {
-                    psFetchReservations.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(connection != null)  {
-                try {
-                    connection.close();
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            DBUtils.closeDBLink(connection, psFetchReservations, null, null, resultSet);
         }
     }
     private void loan() {
@@ -418,7 +285,7 @@ public class LoanController implements Initializable {
         try {
             connection = DBUtils.getDBLink();
             psFetchLoans = connection.prepareStatement("SELECT loanid, mediaid, userid, loandate, returndate, returned FROM loan WHERE userid = ?;");
-            psFetchLoans.setInt(1, userid);
+            psFetchLoans.setInt(1, activeUser.getUserid());
             resultSet = psFetchLoans.executeQuery();
             while (resultSet.next()) {
                 Integer loanid = resultSet.getInt("loanid");
@@ -427,7 +294,6 @@ public class LoanController implements Initializable {
                 Date loandate = resultSet.getDate("loandate");
                 Date returndate = resultSet.getDate("returndate");
                 Integer returned = resultSet.getInt("returned");
-//              populates the observable list
                 loanModelObservableList.add(new LoanModel(  loanid,
                                                             mediaid,
                                                             userid,
@@ -447,27 +313,7 @@ public class LoanController implements Initializable {
             el.printStackTrace();
             el.getCause();
         } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchLoans != null) {
-                try {
-                    psFetchLoans.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(connection != null)  {
-                try {
-                    connection.close();
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            DBUtils.closeDBLink(connection, psFetchLoans, null, null, resultSet);
         }
     }
 }

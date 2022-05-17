@@ -39,13 +39,11 @@ public class SearchController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         search();
-
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            // TODO change scene method name
+                // TODO change scene method name
                 DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
@@ -74,20 +72,20 @@ public class SearchController implements Initializable {
                 String queryRating = resultSet.getString("rating");
                 String queryAvailable =  resultSet.getString("available");
 //              populates the observable list
-                mediaModelObservableList.add(new MediaModel(    queryMediaId,
-                                                                queryTitle,
-                                                                queryFormat,
-                                                                queryCategory,
-                                                                queryDescription,
-                                                                queryPublisher,
-                                                                queryEdition,
-                                                                queryAuthor,
-                                                                queryIsbn,
-                                                                queryDirector,
-                                                                queryActor,
-                                                                queryCountry,
-                                                                queryRating,
-                                                                queryAvailable));
+                mediaModelObservableList.add(new MediaModel(queryMediaId,
+                                                            queryTitle,
+                                                            queryFormat,
+                                                            queryCategory,
+                                                            queryDescription,
+                                                            queryPublisher,
+                                                            queryEdition,
+                                                            queryAuthor,
+                                                            queryIsbn,
+                                                            queryDirector,
+                                                            queryActor,
+                                                            queryCountry,
+                                                            queryRating,
+                                                            queryAvailable));
 //              PropertyValueFactory corresponds to the new BookSearchModel
 //              populate the tableview columns
                 mediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
@@ -111,9 +109,7 @@ public class SearchController implements Initializable {
                 searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     filteredData.setPredicate(mediaModel -> {
 //                  if no search value is present, all records, or all current records will be displayed
-                        if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
-                            return true;
-                        }
+                        if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {return true;}
                         String searchKeyWord = newValue.toLowerCase();
 //                      an index > 0 means a match has been found
 //                      to return Integer type, use toString() method
@@ -157,28 +153,8 @@ public class SearchController implements Initializable {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally    {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchArticles != null) {
-                try {
-                    psFetchArticles.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+        }finally {
+            DBUtils.closeDBLink(connection, psFetchArticles, null, null, resultSet);
         }
     }
 }

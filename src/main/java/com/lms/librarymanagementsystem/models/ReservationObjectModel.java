@@ -2,24 +2,26 @@ package com.lms.librarymanagementsystem.models;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-
+@SuppressWarnings("unused")
 public class ReservationObjectModel{
 
-    private SimpleStringProperty title;
-    private SimpleIntegerProperty mediaid, queuenumber;
+    private String title;
+    private Integer mediaid, reservationid, queuenumber;
 
-    public ReservationObjectModel(Integer mediaid, String title, Integer queuenumber)   {
-        this.mediaid = new SimpleIntegerProperty(mediaid);
-        this.title = new SimpleStringProperty(title);
-        this.queuenumber = new SimpleIntegerProperty(queuenumber);
+    public ReservationObjectModel(Integer mediaid, String title, Integer reservationid, Integer queuenumber)   {
+        this.mediaid = mediaid;
+        this.title = title;
+        this.reservationid = reservationid;
+        this.queuenumber = queuenumber;
     }
-    public SimpleIntegerProperty mediaidProperty() {
+    public Integer getMediaid() {
         return mediaid;
     }
-    public SimpleStringProperty titleProperty() {
+    public String getTitle() {
         return title;
     }
-    public SimpleIntegerProperty queuenumberProperty() {
+    public Integer getReservationid(){return reservationid;}
+    public Integer getQueuenumber() {
         return queuenumber;
     }
 }

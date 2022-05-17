@@ -4,9 +4,8 @@ package com.lms.librarymanagementsystem.models;
 import javafx.beans.property.SimpleIntegerProperty;
 
 import java.util.Date;
-
+@SuppressWarnings("unused")
 public class ReservationModel {
-
     private SimpleIntegerProperty reservationid, mediaid, userid, queuenumber;
     private Date reservationdate;
 
@@ -17,24 +16,14 @@ public class ReservationModel {
         this.queuenumber = new SimpleIntegerProperty(queuenumber);
         this.reservationdate = reservationdate;
     }
-    @SuppressWarnings("unused")
     public SimpleIntegerProperty reservationidProperty() {return reservationid;}
-    @SuppressWarnings("unused")
     public SimpleIntegerProperty mediaidProperty() {return mediaid;}
-    @SuppressWarnings("unused")
     public SimpleIntegerProperty useridProperty() {return userid;}
-    @SuppressWarnings("unused")
     public SimpleIntegerProperty queuenumberProperty() {return queuenumber;}
-    @SuppressWarnings("unused")
     public Date getReservationdate() {return reservationdate;}
-    @SuppressWarnings("unused")
     public void setReservationid(SimpleIntegerProperty reservationid) {this.reservationid = reservationid;}
-    @SuppressWarnings("unused")
     public void setMediaid(SimpleIntegerProperty mediaid) {this.mediaid = mediaid;}
-    @SuppressWarnings("unused")
     public void setUserid(SimpleIntegerProperty userid) {this.userid = userid;}
-    @SuppressWarnings("unused")
     public void setQueuenumber(SimpleIntegerProperty queuenumber) {this.queuenumber = queuenumber;}
-    @SuppressWarnings("unused")
     public void setReservationdate(Date reservationdate) {this.reservationdate = reservationdate;}
 }

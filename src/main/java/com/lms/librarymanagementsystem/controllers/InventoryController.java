@@ -64,7 +64,6 @@ public class InventoryController implements Initializable {
         formatChoiceBox.getItems().addAll(format);
         availableChoiceBox.getItems().addAll(available);
         search();
-
         addMediaButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -111,7 +110,6 @@ public class InventoryController implements Initializable {
         Connection connection = null;
         PreparedStatement psFetchArticles = null;
         ResultSet resultSet = null;
-
         try {
             connection = DBUtils.getDBLink();
             psFetchArticles = connection.prepareStatement(  "SELECT mediaid, title, format, category, description, " +
@@ -133,7 +131,6 @@ public class InventoryController implements Initializable {
                 String queryCountry = resultSet.getString("country");
                 String queryRating = resultSet.getString("rating");
                 String queryAvailable = resultSet.getString("available");
-//              populates the observable list
                 mediaModelObservableList.add(new MediaModel(queryMediaId,
                                                             queryTitle,
                                                             queryFormat,
@@ -164,19 +161,12 @@ public class InventoryController implements Initializable {
                 availableColumn.setCellValueFactory((new PropertyValueFactory<>("available")));
 
                 searchTableView.setItems(mediaModelObservableList);
-//              initialize filtered list for interactive search
                 FilteredList<MediaModel> filteredData = new FilteredList<>(mediaModelObservableList, b -> true);
                 searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     filteredData.setPredicate(mediaModel -> {
-//                  if no search value is present, all records, or all current records will be displayed
-                        if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {
-                            return true;
-                        }
+                        if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {return true;}
                         String searchKeyWord = newValue.toLowerCase();
-//                      an index > 0 means a match has been found
-//                      to return Integer type, use toString() method
                         if (mediaModel.titleProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
-//                      match in book title etc.
                             return true;
                         }else if (mediaModel.formatProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
@@ -204,42 +194,18 @@ public class InventoryController implements Initializable {
                             return true;
                         }else
                             return false;
-//                      return false = no match found in database
                     });
                 });
-//              bind sorted result with table view
                 SortedList<MediaModel> sortedData = new SortedList<>(filteredData);
                 sortedData.comparatorProperty().bind(searchTableView.comparatorProperty());
-//              apply filtered and sorted data to the table view
                 searchTableView.setItems(sortedData);
             }
         }catch (SQLException e) {
             e.printStackTrace();
         }finally    {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchArticles != null) {
-                try {
-                    psFetchArticles.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            DBUtils.closeDBLink(connection, psFetchArticles, null, null, resultSet);
         }
     }
-
     public void setUserInformation(String username) {
         //this.userid = DBUtils.getUserId(username);
         nameLabel.setText(username);

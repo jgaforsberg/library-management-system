@@ -13,20 +13,15 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ResourceBundle;
 
 public class AccountController implements Initializable {
-
-    private UserModel accountUser;
-
     @FXML
-    private Label idLabel, usernameLabel, firstnameLabel, lastnameLabel, usertypeLabel, maxLoanLabel, maxReservationLabel;
+    private Label idLabel, usernameLabel, firstnameLabel, lastnameLabel, usertypeLabel, maxLoanLabel, remainingLoanLabel;
     @FXML
     private TableView<LoanObjectModel> loanTableView;
     @FXML
@@ -34,7 +29,9 @@ public class AccountController implements Initializable {
     @FXML
     private TableColumn<String, String> loanTitleColumn;
     @FXML
-    private TableColumn<String, Integer> resMediaIdColumn, resQueueColumn;
+    private TableColumn<Date, Date> loanReturndateColumn;
+    @FXML
+    private TableColumn<String, Integer> resMediaIdColumn, resResidColumn, resQueueColumn;
     @FXML
     private TableColumn<String, String> resTitleColumn;
     @FXML
@@ -42,194 +39,167 @@ public class AccountController implements Initializable {
     @FXML
     private Button returnLoanButton, endReservationButton, returnButton;
     @FXML
-    private ObservableList<String> loanObservableList = FXCollections.observableArrayList();
+    private ObservableList<LoanObjectModel> loanObservableList = FXCollections.observableArrayList();
     @FXML
-    private ObservableList<String> reservationObservableList = FXCollections.observableArrayList();
+    private ObservableList<ReservationObjectModel> reservationObservableList = FXCollections.observableArrayList();
 
+    private UserModel activeUser;
+    private LoanObjectModel loanObject;
+    private ReservationObjectModel reservationObject;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        returnLoanButton.setOnAction(new EventHandler<ActionEvent>() {
+       returnLoanButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+                extractLoan();
+                if(loanObservableList != null)  {
+                    DBUtils.returnLoan(loanObject.getLoanid(), loanObject.getMediaid());
+                    refreshLoan();
+                    loan();
+                }
             }
         });
         endReservationButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
+            extractReservation();
+                if(reservationObservableList != null)   {
+                    DBUtils.returnReservation(reservationObject.getReservationid());
+                    refreshReservation();
+                    reservation();
+                }
             }
         });
         returnButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, usernameLabel.getText());
+                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
     }
-    public void setUserInformation(String username){
-        usernameLabel.setText(username);
-        getUserInformation();
-        getUserLoans();
-        getUserReservations();
+    private void extractLoan() {
+        loanObject = loanTableView.getSelectionModel().getSelectedItem();
     }
-    // set number of loans
-    private void getUserInformation()    {
-        System.out.println("getUserInformation()");
-        //  Integer userid;
-        String username = usernameLabel.getText();
-        String usertype, firstname, lastname;
-        Integer userid, maxloan, maxreservation;
+    private  void extractReservation()  {
+        reservationObject = reservationTableView.getSelectionModel().getSelectedItem();
+    }
+    public void setUserInformation(String username){
+        activeUser = new UserModel();
+        setUserModelInformation(username);
+        System.out.println(username);
+        System.out.println("\n"+activeUser.getUserid());
+        idLabel.setText(activeUser.getUserid().toString());
+        usernameLabel.setText(activeUser.getUsername());
+        firstnameLabel.setText(activeUser.getFirstname());
+        lastnameLabel.setText(activeUser.getLastname());
+        maxLoanLabel.setText(DBUtils.maxLoans(activeUser.getUserid()).toString());
+        remainingLoanLabel.setText(DBUtils.remainingLoans(Integer.valueOf(maxLoanLabel.getText()), activeUser.getUserid()).toString());
+        loan();
+        reservation();
+    }
+    private void setUserModelInformation(String username) {
         Connection connection = null;
-        PreparedStatement psFetchUserInfo = null;
+        PreparedStatement psFetchUser = null;
         ResultSet resultSet = null;
-        try{
-            System.out.println("try block");
+        try {
             connection = DBUtils.getDBLink();
-            psFetchUserInfo = connection.prepareStatement("SELECT * FROM users WHERE username = ?;");
-            System.out.println(username);
-            psFetchUserInfo.setString(1, username);
-            resultSet = psFetchUserInfo.executeQuery();
-            while (resultSet.next()) {
-                userid = resultSet.getInt("id");
-                firstname = resultSet.getString("firstname");
-                lastname = resultSet.getString("lastname");
-                usertype = resultSet.getString("usertype");
-
-                idLabel.setText(userid.toString());
-                System.out.println(userid);
-                firstnameLabel.setText(firstname);
-                System.out.println(firstname);
-                lastnameLabel.setText(lastname);
-                System.out.println(lastname);
-                usertypeLabel.setText(usertype);
-                switch (usertype.toLowerCase()) {
-                    case "plebej" -> {
-                        System.out.println("plebej");
-                        maxloan = 3;
-                        maxreservation = 1;
-                        maxLoanLabel.setText(maxloan.toString());
-                        maxReservationLabel.setText(maxreservation.toString());
-                    }
-                    case "anställd" -> {
-                        System.out.println("anställd");
-                        maxloan = 5;
-                        maxreservation = 3;
-                        maxLoanLabel.setText(maxloan.toString());
-                        maxReservationLabel.setText(maxreservation.toString());
-                    }
-                    case "student" -> {
-                        System.out.println("student");
-                        maxloan = 5;
-                        maxreservation = 3;
-                        maxLoanLabel.setText(maxloan.toString());
-                        maxReservationLabel.setText(maxreservation.toString());
-                    }
-                    case "forskare" -> {
-                        System.out.println("forskare");
-                        maxloan = 10;
-                        maxreservation = 5;
-                        maxLoanLabel.setText(maxloan.toString());
-                        maxReservationLabel.setText(maxreservation.toString());
-                    }
-                    case "admin" -> {
-                        System.out.println("admin");
-                        maxloan = 100;
-                        maxreservation = 100;
-                        maxLoanLabel.setText(maxloan.toString());
-                        maxReservationLabel.setText(maxreservation.toString());
-                    }
-                    default -> {
-                        System.out.println("Kan ej läsa användartyp! ");
-                    }
-                }
+            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype FROM users WHERE username = ?;");
+            psFetchUser.setString(1, username);
+            resultSet = psFetchUser.executeQuery();
+            while (resultSet.next())    {
+                activeUser.setUserid(resultSet.getInt("id"));
+                activeUser.setFirstname(resultSet.getString("firstname"));
+                activeUser.setLastname(resultSet.getString("lastname"));
+                activeUser.setUsertype(resultSet.getString("usertype"));
             }
-        }catch (SQLException e) {
+            activeUser.setUsername(username);
+        } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (psFetchUserInfo != null) {
-                try {
-                    psFetchUserInfo.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(connection != null)  {
-                try {
-                    connection.close();
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
+            DBUtils.closeDBLink(connection, psFetchUser, null, null, resultSet);
         }
     }
-    private void getUserLoans() {
+    private void refreshLoan() {
+        loanObservableList.clear();
+    }
+    private void refreshReservation(){reservationObservableList.clear();}
+    private void loan() {
         Connection connection = null;
         PreparedStatement psFetchLoans = null;
         ResultSet resultSet = null;
-        Integer loanid;
         try {
             connection = DBUtils.getDBLink();
             psFetchLoans = connection.prepareStatement("SELECT loan.loanid, loan.returndate FROM loan where userid = ?;");
-            psFetchLoans.setInt(1, Integer.parseInt(idLabel.getText()));
+            psFetchLoans.setInt(1, activeUser.getUserid());
             resultSet = psFetchLoans.executeQuery();
             while (resultSet.next())    {
-                loanid = resultSet.getInt("loanid");
-                psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loanid, loan.loandate  FROM media JOIN loan ON media.mediaid = loan.mediaid WHERE loan.loanid = ?;");
+                Integer loanid = resultSet.getInt("loanid");
+                psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loanid, loan.loandate  FROM media " +
+                                                                "JOIN loan ON media.mediaid = loan.mediaid WHERE loan.loanid = ?;");
                 psFetchLoans.setInt(1, loanid);
                 resultSet = psFetchLoans.executeQuery();
                 while (resultSet.next())    {
-                    Integer querymedia = resultSet.getInt("mediaid");
-                    String querytitle = resultSet.getString("title");
-                    Integer queryloanid = resultSet.getInt("loanid");
-                    //loanObservableList.add(querymedia,querytitle, queryloanid);
-                    //loanListView.getItems().addAll(loanObservableList);
-                    System.out.println(querymedia);
+                    Integer queryMediaid = resultSet.getInt("mediaid");
+                    String queryTitle = resultSet.getString("title");
+                    Integer queryLoanid = resultSet.getInt("loanid");
+                    Date queryReturndate = resultSet.getDate("returndate");
+                    loanObservableList.add(new LoanObjectModel( queryMediaid,
+                                                                queryTitle,
+                                                                queryLoanid,
+                                                                queryReturndate
+                                                                ));
+                    loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
+                    loanTitleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
+                    loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
+                    loanReturndateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
+                    loanTableView.setItems(loanObservableList);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
-            if (resultSet != null)  {
-                try {
-                    resultSet.close();
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                    e.getCause();
-                }
-            }
-            if (psFetchLoans != null)  {
-                try {
-                    psFetchLoans.close();
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                    e.getCause();
-                }
-            }
-            if (connection != null)  {
-                try {
-                    connection.close();
-                }catch (SQLException e) {
-                    e.printStackTrace();
-                    e.getCause();
-                }
-            }
+            DBUtils.closeDBLink(connection, psFetchLoans, null, null, resultSet);
         }
     }
-    private void getUserReservations()  {
+    private void reservation()  {
         Connection connection = null;
-        PreparedStatement psFetchLoans = null;
+        PreparedStatement psFetchReservations = null;
         ResultSet resultSet = null;
-        Integer loanid;
+        try {
+            connection = DBUtils.getDBLink();
+            psFetchReservations = connection.prepareStatement("SELECT reservation.reservationid, reservation.queuenumber FROM reservation where userid = ?;");
+            psFetchReservations.setInt(1, activeUser.getUserid());
+            resultSet = psFetchReservations.executeQuery();
+            while (resultSet.next())    {
+                Integer reservationid = resultSet.getInt("reservationid");
+                psFetchReservations = connection.prepareStatement(  "SELECT media.mediaid, media.title, reservation.reservationid, reservation.queuenumber FROM media " +
+                                                                        "JOIN reservation ON media.mediaid = reservation.mediaID WHERE reservation.reservationid = ?;");
+                psFetchReservations.setInt(1, reservationid);
+                resultSet = psFetchReservations.executeQuery();
+                while (resultSet.next())    {
+                    Integer queryMediaid = resultSet.getInt("mediaid");
+                    String queryTitle = resultSet.getString("title");
+                    Integer queryReservationid = resultSet.getInt("reservationid");
+                    Integer queryQueuenumber = resultSet.getInt("queuenumber");
+                    reservationObservableList.add(new ReservationObjectModel(   queryMediaid,
+                                                                                queryTitle,
+                                                                                queryReservationid,
+                                                                                queryQueuenumber
+                                                                                ));
+                    resMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
+                    resTitleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
+                    resResidColumn.setCellValueFactory((new PropertyValueFactory<>("reservationid")));
+                    resQueueColumn.setCellValueFactory((new PropertyValueFactory<>("queuenumber")));
+                    reservationTableView.setItems(reservationObservableList);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            DBUtils.closeDBLink(connection, psFetchReservations, null, null, resultSet);
+        }
     }
 }

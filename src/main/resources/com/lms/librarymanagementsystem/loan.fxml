@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoanController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoanController">
    <children>
       <TableView fx:id="searchTableView" layoutX="25.0" layoutY="100.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">
          <columns>
@@ -69,12 +69,12 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <Label alignment="CENTER" layoutX="225.0" layoutY="510.0" prefHeight="35.0" prefWidth="480.0" text="Lån" textFill="#f0f0f0">
+      <Label alignment="CENTER" layoutX="225.0" layoutY="510.0" prefHeight="35.0" prefWidth="480.0" text="Utförda lån:" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="740.0" layoutY="510.0" prefHeight="35.0" prefWidth="400.0" text="Reservationer" textFill="#f0f0f0">
+      <Label alignment="CENTER" layoutX="740.0" layoutY="510.0" prefHeight="35.0" prefWidth="400.0" text="Utförda reservationer:" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
@@ -84,12 +84,12 @@
             <Image url="@media/ltu_logga.jpg" />
          </image>
       </ImageView>
-      <Button fx:id="finishButton" alignment="CENTER" layoutX="1250.0" layoutY="670.0" mnemonicParsing="false" prefHeight="115.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
+      <Button fx:id="finishButton" alignment="CENTER" layoutX="1250.0" layoutY="750.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <TextArea layoutX="1250.0" layoutY="535.0" prefHeight="125.0" prefWidth="225.0" style="-fx-background-color: #011B3E;" text="1. Sök de artiklar du vill ha&#10;2. För att låna, välj artikel och tryck sedan på 'Låna'&#10;3. För att reservera, välj artikel och tryck sedan på 'Reservera'&#10;4. För att återgå, tryck på 'Klar'" wrapText="true">
+      <TextArea layoutX="1250.0" layoutY="535.0" prefHeight="200.0" prefWidth="225.0" style="-fx-background-color: #011B3E;" text="1. Sök de artiklar du vill ha&#10;2. För att låna, välj artikel och tryck sedan på 'Låna'&#10;3. För att reservera, välj artikel och tryck sedan på 'Reservera'&#10;4. För att återgå, tryck på 'Tillbaka'&#10;&#10;För att se dina lån och reservationer, gå till 'Mitt konto' från huvudmenyn" wrapText="true">
          <font>
             <Font size="13.0" />
          </font>

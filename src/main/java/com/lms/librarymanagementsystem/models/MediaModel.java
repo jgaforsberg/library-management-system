@@ -1,9 +1,9 @@
 package com.lms.librarymanagementsystem.models;
 
 import javafx.beans.property.SimpleStringProperty;
-
 //  #011B3E blue
 //  #F0F0F0 light gray
+@SuppressWarnings("unused")
 public class MediaModel {
     Integer mediaid;
     SimpleStringProperty    title, format, category, description,
@@ -30,7 +30,6 @@ public class MediaModel {
         this.rating = new SimpleStringProperty(rating);
         this.available = new SimpleStringProperty(available);
     }
-    @SuppressWarnings("unused")
     public Integer getMediaid() {
         return mediaid;
     }
@@ -71,57 +70,43 @@ public class MediaModel {
     public SimpleStringProperty availableProperty() {
         return available;
     }
-    @SuppressWarnings("unused")
     public void setMediaid(Integer mediaid) {
         this.mediaid = mediaid;
     }
-    @SuppressWarnings("unused")
     public void setTitle(SimpleStringProperty title) {
         this.title = title;
     }
-    @SuppressWarnings("unused")
     public void setFormat(SimpleStringProperty format) {
         this.format = format;
     }
-    @SuppressWarnings("unused")
     public void setCategory(SimpleStringProperty category) {
         this.category = category;
     }
-    @SuppressWarnings("unused")
     public void setDescription(SimpleStringProperty description) {
         this.description = description;
     }
-    @SuppressWarnings("unused")
     public void setPublisher(SimpleStringProperty publisher) {
         this.publisher = publisher;
     }
-    @SuppressWarnings("unused")
     public void setEdition(SimpleStringProperty edition){this.edition=edition;}
-    @SuppressWarnings("unused")
     public void setAuthor(SimpleStringProperty author) {
         this.author = author;
     }
-    @SuppressWarnings("unused")
     public void setIsbn(SimpleStringProperty isbn) {
         this.isbn = isbn;
     }
-    @SuppressWarnings("unused")
     public void setDirector(SimpleStringProperty director) {
         this.director = director;
     }
-    @SuppressWarnings("unused")
     public void setActor(SimpleStringProperty actor) {
         this.actor = actor;
     }
-    @SuppressWarnings("unused")
     public void setCountry(SimpleStringProperty country) {
         this.country = country;
     }
-    @SuppressWarnings("unused")
     public void setRating(SimpleStringProperty rating) {
         this.rating = rating;
     }
-    @SuppressWarnings("unused")
     public void setAvailable(SimpleStringProperty available) {
         this.available = available;
     }

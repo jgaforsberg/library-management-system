@@ -4,25 +4,25 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.sql.Date;
-
+@SuppressWarnings("unused")
 public class LoanObjectModel {
-    private SimpleStringProperty title;
-    private SimpleIntegerProperty mediaid, loanid;
+    private String title;
+    private Integer mediaid, loanid;
     private Date returndate;
 
     public LoanObjectModel(Integer mediaid, String title, Integer loanid, Date returndate)   {
-        this.mediaid = new SimpleIntegerProperty(mediaid);
-        this.title = new SimpleStringProperty(title);
-        this.loanid = new SimpleIntegerProperty(loanid);
+        this.mediaid = mediaid;
+        this.title = title;
+        this.loanid = loanid;
         this.returndate = returndate;
     }
-    public SimpleIntegerProperty mediaidProperty() {
+    public Integer getMediaid() {
         return mediaid;
     }
-    public SimpleStringProperty titleProperty() {
+    public String titleProperty() {
         return title;
     }
-    public SimpleIntegerProperty queuenumberProperty() {
+    public Integer getLoanid() {
         return loanid;
     }
     public Date getReturndate() {return returndate;}
