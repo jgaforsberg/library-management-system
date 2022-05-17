@@ -5,8 +5,8 @@ import javafx.beans.property.SimpleStringProperty;
 //  #F0F0F0 light gray
 @SuppressWarnings("unused")
 public class MediaModel {
-    Integer mediaid;
-    SimpleStringProperty    title, format, category, description,
+    private Integer mediaid;
+    private SimpleStringProperty    title, format, category, description,
                             publisher, edition, author, isbn,
                             director, actor, country, rating,
                             available;

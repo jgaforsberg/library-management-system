@@ -19,7 +19,7 @@ public class SignUpController implements Initializable {
     @FXML
     private Button signupButton, loginButton;
     @FXML
-    private TextField usernameTextField, firstnameTextField, lastnameTextField;
+    private TextField usernameTextField, firstnameTextField, lastnameTextField, emailTextField;
     @FXML
     private PasswordField passwordPasswordField;
     @FXML
@@ -35,7 +35,7 @@ public class SignUpController implements Initializable {
             public void handle(ActionEvent event) {
                 String boxChoice = usertypeChoiceBox.getValue();
                 if(!usernameTextField.getText().trim().isEmpty() && !passwordPasswordField.getText().trim().isEmpty())  {
-                    DBUtils.signUpUser(event, usernameTextField.getText(), passwordPasswordField.getText(), firstnameTextField.getText(), lastnameTextField.getText(), boxChoice);
+                    DBUtils.signUpUser(event, usernameTextField.getText(), passwordPasswordField.getText(), firstnameTextField.getText(), lastnameTextField.getText(), boxChoice, emailTextField.getText());
                 }else   {
                     System.out.println("All information krävs! ");
                     Alert alert = new Alert(Alert.AlertType.ERROR);

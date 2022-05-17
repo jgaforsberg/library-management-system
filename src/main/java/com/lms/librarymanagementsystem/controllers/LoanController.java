@@ -118,7 +118,7 @@ public class LoanController implements Initializable {
         ResultSet resultSet = null;
         try {
             connection = DBUtils.getDBLink();
-            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype FROM users WHERE username = ?;");
+            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype, email FROM users WHERE username = ?;");
             psFetchUser.setString(1, username);
             resultSet = psFetchUser.executeQuery();
             while (resultSet.next())    {
@@ -126,6 +126,7 @@ public class LoanController implements Initializable {
                 activeUser.setFirstname(resultSet.getString("firstname"));
                 activeUser.setLastname(resultSet.getString("lastname"));
                 activeUser.setUsertype(resultSet.getString("usertype"));
+                activeUser.setEmail(resultSet.getString("email"));
             }
             activeUser.setUsername(username);
         } catch (SQLException e) {

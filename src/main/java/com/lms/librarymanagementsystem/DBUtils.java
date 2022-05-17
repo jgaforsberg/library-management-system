@@ -158,7 +158,7 @@ public class DBUtils {
         stage.show();
     }
 //  method for adding new users to DB
-    public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype) {
+    public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype, String email) {
         Connection connection = null;
 //      prepared statements are used to query the database
         PreparedStatement psInsert = null;
@@ -184,12 +184,13 @@ public class DBUtils {
                 alert.show();
 //                  user doesn't exist, psInsert queries database with new user transaction
             } else {
-                psInsert = connection.prepareStatement("INSERT INTO users (username, password, firstname, lastname, usertype) VALUES (?, ?, ?, ?, ?)");
+                psInsert = connection.prepareStatement("INSERT INTO users (username, password, firstname, lastname, usertype, email) VALUES (?, ?, ?, ?, ?, ?)");
                 psInsert.setString(1, username);
                 psInsert.setString(2, password);
                 psInsert.setString(3, firstname);
                 psInsert.setString(4, lastname);
                 psInsert.setString(5, usertype);
+                psInsert.setString(6, email);
                 psInsert.executeUpdate();
 //                      change scenes to logged in scene
                 changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);

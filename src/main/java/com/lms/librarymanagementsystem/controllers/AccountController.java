@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 public class AccountController implements Initializable {
     @FXML
-    private Label idLabel, usernameLabel, firstnameLabel, lastnameLabel, usertypeLabel, maxLoanLabel, remainingLoanLabel;
+    private Label idLabel, usernameLabel, firstnameLabel, lastnameLabel, usertypeLabel, emailLabel, maxLoanLabel, remainingLoanLabel;
     @FXML
     private TableView<LoanObjectModel> loanTableView;
     @FXML
@@ -105,6 +105,7 @@ public class AccountController implements Initializable {
         firstnameLabel.setText(activeUser.getFirstname());
         lastnameLabel.setText(activeUser.getLastname());
         usertypeLabel.setText(activeUser.getUsertype());
+        emailLabel.setText(activeUser.getEmail());
         maxLoanLabel.setText(DBUtils.maxLoans(activeUser.getUserid()).toString());
         remainingLoanLabel.setText(DBUtils.remainingLoans(Integer.valueOf(maxLoanLabel.getText()), activeUser.getUserid()).toString());
         loan();
@@ -116,7 +117,7 @@ public class AccountController implements Initializable {
         ResultSet resultSet = null;
         try {
             connection = DBUtils.getDBLink();
-            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype FROM users WHERE username = ?;");
+            psFetchUser = connection.prepareStatement("SELECT id, firstname, lastname, usertype, email FROM users WHERE username = ?;");
             psFetchUser.setString(1, username);
             resultSet = psFetchUser.executeQuery();
             while (resultSet.next())    {
@@ -124,6 +125,7 @@ public class AccountController implements Initializable {
                 activeUser.setFirstname(resultSet.getString("firstname"));
                 activeUser.setLastname(resultSet.getString("lastname"));
                 activeUser.setUsertype(resultSet.getString("usertype"));
+                activeUser.setEmail(resultSet.getString("email"));
             }
             activeUser.setUsername(username);
         } catch (SQLException e) {
