@@ -3,10 +3,7 @@ package com.lms.librarymanagementsystem.controllers;
 //  #F0F0F0 light gray
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
-import com.lms.librarymanagementsystem.models.LoanModel;
-import com.lms.librarymanagementsystem.models.MediaModel;
-import com.lms.librarymanagementsystem.models.ReservationModel;
-import com.lms.librarymanagementsystem.models.UserModel;
+import com.lms.librarymanagementsystem.models.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -15,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Popup;
@@ -58,7 +56,10 @@ public class LoanController implements Initializable {
     private ObservableList<LoanModel> loanModelObservableList = FXCollections.observableArrayList();
     private ObservableList<ReservationModel> reservationModelObservableList = FXCollections.observableArrayList();
 
+    private ObservableList<LoanObjectModel> receiptList = FXCollections.observableArrayList();
+
     private Popup receiptPopup = new Popup();
+
     private UserModel activeUser;
     private MediaModel mediaModel;
 //  TODO What to do with these models?
@@ -67,7 +68,6 @@ public class LoanController implements Initializable {
     /*
  TODO receipt print with information about: TITLE, MEDIAID, LOANDATE, RETURNDATE
  TODO Send reminder email to users to return overdue loans
- TODO Course literature to have 14 DAY loan period, Films 7 day loan period
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -77,6 +77,17 @@ public class LoanController implements Initializable {
             public void handle(ActionEvent event) {
                 extractArticle();
                 if(loanModelObservableList != null) {
+
+
+                    receiptList.add(new LoanObjectModel(loanid,
+                                                        mediaid,
+                                                        loandate,
+                                                        returndate,
+                                                        returned
+                                                        ));
+
+                    receiptPopup.getContent().add((Node) receiptList);
+
                     DBUtils.addLoan(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshLoan();
                     loan();
@@ -102,8 +113,9 @@ public class LoanController implements Initializable {
             @Override
             public void handle(ActionEvent event) {
                 receiptPopup.getContent().add(nameLabel);
-                Stage stage = new Stage();
-                if (!receiptPopup.isShowing())  receiptPopup.show(stage);
+                if (!receiptPopup.isShowing())  {
+                    receiptPopup.show();
+                }
                 else receiptPopup.hide();
                 DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
