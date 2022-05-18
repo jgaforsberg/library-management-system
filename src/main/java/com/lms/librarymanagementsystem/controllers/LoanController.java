@@ -13,8 +13,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.TilePane;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
@@ -59,6 +61,12 @@ public class LoanController implements Initializable {
     private ObservableList<LoanObjectModel> receiptList = FXCollections.observableArrayList();
 
     private Popup receiptPopup = new Popup();
+    private Stage receiptStage = new Stage();
+    private Button receiptButton = new Button("button");
+    private TilePane tilePane = new TilePane();
+    private Label receiptLabel = new Label("Det här är dina lån: ");
+    private Scene receiptScene = new Scene(tilePane, 200, 200);
+
 
     private UserModel activeUser;
     private MediaModel mediaModel;
@@ -79,7 +87,7 @@ public class LoanController implements Initializable {
                 if(loanModelObservableList != null) {
 
 
-                    receiptList.add(new LoanObjectModel(loanid,
+                 /*   receiptList.add(new LoanObjectModel(loanid,
                                                         mediaid,
                                                         loandate,
                                                         returndate,
@@ -87,7 +95,7 @@ public class LoanController implements Initializable {
                                                         ));
 
                     receiptPopup.getContent().add((Node) receiptList);
-
+                 */
                     DBUtils.addLoan(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshLoan();
                     loan();
@@ -112,14 +120,24 @@ public class LoanController implements Initializable {
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                printReceipt();
                 receiptPopup.getContent().add(nameLabel);
                 if (!receiptPopup.isShowing())  {
-                    receiptPopup.show();
+                    receiptPopup.show(receiptStage);
                 }
                 else receiptPopup.hide();
                 DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
+    }
+    private void printReceipt() {
+        receiptStage.setTitle("Lånekvitto ");
+        receiptLabel.setStyle(" -fx-background-color: #f0f0f0");
+        receiptPopup.getContent().add(receiptLabel);
+        receiptLabel.setMinWidth(80);
+        receiptLabel.setMinHeight(50);
+        receiptStage.setScene(receiptScene);
+        receiptStage.show();
     }
     private void extractArticle() {
         mediaModel = searchTableView.getSelectionModel().getSelectedItem();
