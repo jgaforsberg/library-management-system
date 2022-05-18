@@ -17,6 +17,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.*;
@@ -56,6 +58,7 @@ public class LoanController implements Initializable {
     private ObservableList<LoanModel> loanModelObservableList = FXCollections.observableArrayList();
     private ObservableList<ReservationModel> reservationModelObservableList = FXCollections.observableArrayList();
 
+    private Popup receiptPopup = new Popup();
     private UserModel activeUser;
     private MediaModel mediaModel;
 //  TODO What to do with these models?
@@ -85,8 +88,6 @@ public class LoanController implements Initializable {
         reserveButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // TODO retrieve information from search tableview and create reservation object/DB record
-
                 extractArticle();
                 if(reservationModelObservableList != null) {
                     DBUtils.addReservation(mediaModel.getMediaid(), activeUser.getUserid());
@@ -100,6 +101,10 @@ public class LoanController implements Initializable {
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                receiptPopup.getContent().add(nameLabel);
+                Stage stage = new Stage();
+                if (!receiptPopup.isShowing())  receiptPopup.show(stage);
+                else receiptPopup.hide();
                 DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
@@ -316,5 +321,11 @@ public class LoanController implements Initializable {
         } finally {
             DBUtils.closeDBLink(connection, psFetchLoans, null, null, resultSet);
         }
+    }
+    private void receipt()  {
+        String title = "", mediaid = "", loandate = "", returndate = "";
+
+        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
+        receipt.setContentText( activeUser.getUsername()+"\nDu har lånat: \t"+mediaModel.titleProperty());
     }
 }

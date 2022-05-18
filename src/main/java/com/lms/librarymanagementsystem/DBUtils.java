@@ -532,13 +532,23 @@ public class DBUtils {
         PreparedStatement psCheckReservation = null;
         ResultSet resultSet = null;
         try {
+            System.out.println("try block checkReservation()");
             connection = getDBLink();
             psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE mediaid = ? AND queuenumber = 1;");
             psCheckReservation.setInt(1, mediaid);
             resultSet = psCheckReservation.executeQuery();
-            while(resultSet.next()) {
-                queryUserid = resultSet.getInt("userid");
-                updateQueuenumber(mediaid);
+            if(!resultSet.isBeforeFirst()) {
+                System.out.println("!resultSet.isBeforeFirst()");
+                return true;
+            }else {
+                System.out.println("else resultSet.next()");
+                while (resultSet.next()) {
+                    System.out.println("while resultSet.next()");
+                    queryUserid = resultSet.getInt("userid");
+                    System.out.println("while queryUserid = "+queryUserid);
+                    updateQueuenumber(mediaid);
+                    System.out.println("while queryUserid & userid = "+queryUserid+" "+userid);
+                }
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -585,6 +595,7 @@ public class DBUtils {
             alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
             alert.show();
         }
+//      TODO boolean reserved blocks all loans where the user does not have queuenumber = 1
         if(!reserved)   {
             System.out.println("En annan användare står före i reservationskön för denna mediaartikel. ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -603,7 +614,6 @@ public class DBUtils {
                     psInsert.setInt(2, userid);
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
-
                     System.out.println("Lån skapat! ");
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setContentText("Lån skapat. ");
@@ -681,9 +691,7 @@ public class DBUtils {
             resultSet = psCheckQueue.executeQuery();
             while (resultSet.next())    {
                 queueNumber = resultSet.getInt("COUNT(*)");
-                if(queueNumber == null)  {
-                    queueNumber = 0;
-                }
+                System.out.println("getQueuenumber() while loop queueNumber = "+queueNumber);
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -691,6 +699,7 @@ public class DBUtils {
         }finally {
             closeDBLink(connection, psCheckQueue, null, null, resultSet);
         }
+        System.out.println("getQueuenumber() after finally block queueNumber = "+queueNumber);
         return queueNumber;
     }
     private static void updateQueuenumber(Integer mediaid) {
@@ -699,19 +708,21 @@ public class DBUtils {
         PreparedStatement psUpdate = null;
         ResultSet resultSet = null;
         try {
+            System.out.println("updateQueuenumber try block ");
             connection = getDBLink();
 //          Check if any reservations of a media exists
             psUpdate = connection.prepareStatement("SELECT * FROM reservation WHERE mediaid = ?;");
             psUpdate.setInt(1, mediaid);
             resultSet = psUpdate.executeQuery();
-//          If reservations exist, all entries are decreased by 1
-            if(!resultSet.isBeforeFirst())  {
                 while (resultSet.next())    {
+                    System.out.println("updateQueuenumber while loop");
+                    psUpdate = connection.prepareStatement("DELETE FROM reservation WHERE queuenumber = 1 AND mediaid = ?;");
+                    psUpdate.setInt(1, mediaid);
+                    psUpdate.executeUpdate();
                     psUpdate = connection.prepareStatement("UPDATE reservation SET queuenumber = queuenumber - 1 WHERE mediaid = ?;");
                     psUpdate.setInt(1, mediaid);
                     psUpdate.executeUpdate();
                 }
-            }
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
@@ -766,7 +777,7 @@ public class DBUtils {
         System.out.println("addReservation() before calling getQueuenumber() ");
             Integer queueNumber = (getQueuenumber(mediaid)+1);
 //          TODO Set check for reservations of available and unreserved media articles
-            System.out.println(queueNumber+" returned from getQueuenumber() ");
+            System.out.println(queueNumber+" returned from getQueuenumber() +1 ");
             Connection connection = null;
             PreparedStatement psInsert = null;
             try {
