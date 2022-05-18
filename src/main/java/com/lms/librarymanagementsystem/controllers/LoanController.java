@@ -59,6 +59,7 @@ public class LoanController implements Initializable {
     private ObservableList<ReservationModel> reservationModelObservableList = FXCollections.observableArrayList();
 
     private ObservableList<LoanObjectModel> receiptList = FXCollections.observableArrayList();
+    private ListView<LoanObjectModel> receiptListView;
 
     private Popup receiptPopup = new Popup();
     private Stage receiptStage = new Stage();
@@ -120,22 +121,64 @@ public class LoanController implements Initializable {
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                printReceipt();
-                receiptPopup.getContent().add(nameLabel);
-                if (!receiptPopup.isShowing())  {
-                    receiptPopup.show(receiptStage);
-                }
-                else receiptPopup.hide();
+                //printReceipt();
+                alertReceipt(activeUser.getUserid(), DBUtils.date(0));
+
                 DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
     }
-    private void printReceipt() {
+    private void alertReceipt(Integer userid, Date currentDate)  {
+        LoanObjectModel loanObjectModel;
+        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
+        Connection connection = null;
+        PreparedStatement psFetchLoan = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DBUtils.getDBLink();
+            psFetchLoan = connection.prepareStatement(  "SELECT media.mediaid, media.title, loan.loandate, loan.returndate FROM media " +
+                    "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = ?;");
+            psFetchLoan.setInt(1, userid);
+            psFetchLoan.setDate(2, currentDate);
+            resultSet = psFetchLoan.executeQuery();
+            while(resultSet.next()) {
+                Integer mediaid = resultSet.getInt("mediaid");
+                String mediatitle = resultSet.getString("title");
+                Date loandate = resultSet.getDate("loandate");
+                Date returndate = resultSet.getDate("returndate");
+                receiptList.add(loanObjectModel = new LoanObjectModel(mediaid,
+                        mediatitle,
+                        loandate,
+                        returndate
+                ));
+                // receiptListView.setItems(receiptList);
+
+                receipt.setContentText( "Lån: \n"+
+                        "\nMediaID: " +loanObjectModel.getMediaid() +
+                        "\nTitel" + loanObjectModel.getTitle() +
+                        "\nLåndatum" + loanObjectModel.getLoandate() +
+                        "\nReturdatum" + loanObjectModel.getReturndate());
+            }
+            /*
+
+             */
+            receipt.setTitle("Lånekvitto för: "+activeUser.getUsername()+" "+currentDate);
+            receipt.setHeaderText("Du har lånat: ");
+            receipt.show();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private void popupReceipt() {
         receiptStage.setTitle("Lånekvitto ");
-        receiptLabel.setStyle(" -fx-background-color: #f0f0f0");
+        receiptLabel.setStyle(" -fx-background-color: #f0f0f0; -fx-text-color: red");
         receiptPopup.getContent().add(receiptLabel);
         receiptLabel.setMinWidth(80);
         receiptLabel.setMinHeight(50);
+        receiptLabel.setLayoutX(0);
+        receiptLabel.setLayoutY(25);
+        tilePane.getChildren().add(receiptLabel);
         receiptStage.setScene(receiptScene);
         receiptStage.show();
     }

@@ -19,6 +19,8 @@ public class LoanObjectModel {
         this.loandate = loandate;
         this.returndate = returndate;
     }
+    public LoanObjectModel()    {
+    }
     public Integer getMediaid() {
         return mediaid;
     }
@@ -46,3 +48,4 @@ public class LoanObjectModel {
         this.returndate = returndate;
     }
 }
+

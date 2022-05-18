@@ -339,12 +339,11 @@ public class DBUtils {
         }
     }
     // TODO CHECK IF NECESSARY
-    private static String date(int d){
+    public static Date date(int d){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, d);
-        String date = dateFormat.format(cal.getTime());
-        return date;
+        return Date.valueOf(dateFormat.format(cal.getTime()));
     }
     // Defines the max allowed reservations of a certain user type
     public static Integer maxReservations(Integer userid)   {
