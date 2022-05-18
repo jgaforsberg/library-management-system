@@ -155,82 +155,6 @@ public class DBUtils {
         stage.setScene((new Scene(root)));
         stage.show();
     }
-    //  Creating a new user and inserting the user into the database. Comments of this method is universal through all changeScene methods
-    public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype, String email) {
-        Connection connection = null;
-//      prepared statements are used to query the database
-        PreparedStatement psInsert = null;
-        PreparedStatement psCheckUserExists = null;
-//      resultset is query result
-        ResultSet resultSet = null;
-        try {
-//              change parameters depending on dbms
-            connection = getDBLink();
-//              question mark is the user input from sign-up form
-            psCheckUserExists = connection.prepareStatement("SELECT * FROM users WHERE username = ?");
-//              parameter index 1 is the first ? from above prepared statement, a second ? above would entail another method call with parameter index 2
-//              in this case, username is checked so second parameter is the username passed by the user through the sign-up form
-            psCheckUserExists.setString(1, username);
-//              if resultSet is empty, no equal username exists -> sign-up completes
-            resultSet = psCheckUserExists.executeQuery();
-//              isBeforeFirst() checks if returned username query is empty, if returned true the username is taken
-            if (resultSet.isBeforeFirst()) {
-                System.out.println("Användare finns redan! ");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                  for alert, a generic error message is shown for security reasons, i.e., user is not told the name already exists in the database
-                alert.setContentText("Felaktigt användarnamn, försök med ett annat. ");
-                alert.show();
-//                  user doesn't exist, psInsert queries database with new user transaction
-            } else {
-                psInsert = connection.prepareStatement("INSERT INTO users (username, password, firstname, lastname, usertype, email) VALUES (?, ?, ?, ?, ?, ?)");
-                psInsert.setString(1, username);
-                psInsert.setString(2, password);
-                psInsert.setString(3, firstname);
-                psInsert.setString(4, lastname);
-                psInsert.setString(5, usertype);
-                psInsert.setString(6, email);
-                psInsert.executeUpdate();
-//                      change scenes to logged in scene
-                changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-//          close connection to DB with finally block - executed no matter what happens before
-        } finally {
-            closeDBLink(connection, psInsert, psCheckUserExists, null, resultSet);
-        }
-    }
-    // Used to validate the user type of a user trying to access the InventoryController
-    public static void validateUser(ActionEvent event, String username) {
-        String authorizedLibrarian = "bibliotekarie";
-        String authorizedAdmin = "admin";
-        Connection connection = null;
-        PreparedStatement psCheckUserType = null;
-        ResultSet resultSet = null;
-        try{
-            connection = getDBLink();
-            psCheckUserType = connection.prepareStatement("SELECT usertype FROM users WHERE username = ?;");
-            psCheckUserType.setString(1, username);
-            resultSet = psCheckUserType.executeQuery();
-            while (resultSet.next())    {
-                String actualUsertype = resultSet.getString("usertype");
-                if(actualUsertype.equalsIgnoreCase(authorizedLibrarian) || actualUsertype.equalsIgnoreCase(authorizedAdmin)) {
-                    changeSceneInventory(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, username);
-                    System.out.println("Användare validerad! ");
-                }else {
-                    System.out.println();
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Du har inte behörighet för denna funktion. ");
-                    alert.show();
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckUserType, null, null, resultSet);
-        }
-    }
     // Loads the user account scene and sets user information in that scene through the AccountController object
     public static void changeSceneInventory(ActionEvent event, String fxmlFile, String title, String username)   {
         Parent root = null;
@@ -288,6 +212,93 @@ public class DBUtils {
         stage.setTitle(title);
         stage.setScene((new Scene(root)));
         stage.show();
+    }
+    //  Creating a new user and inserting the user into the database. Comments of this method is universal through all changeScene methods
+    public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype, String email) {
+        Connection connection = null;
+//      prepared statements are used to query the database
+        PreparedStatement psInsert = null;
+        PreparedStatement psCheckUserExists = null;
+//      resultset is query result
+        ResultSet resultSet = null;
+        try {
+//              change parameters depending on dbms
+            connection = getDBLink();
+//              question mark is the user input from sign-up form
+            psCheckUserExists = connection.prepareStatement("SELECT * FROM users WHERE username = ?");
+//              parameter index 1 is the first ? from above prepared statement, a second ? above would entail another method call with parameter index 2
+//              in this case, username is checked so second parameter is the username passed by the user through the sign-up form
+            psCheckUserExists.setString(1, username);
+//              if resultSet is empty, no equal username exists -> sign-up completes
+            resultSet = psCheckUserExists.executeQuery();
+//              isBeforeFirst() checks if returned username query is empty, if returned true the username is taken
+            if (resultSet.isBeforeFirst()) {
+                System.out.println("Användare finns redan! ");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+//              For alert, a generic error message is shown for security reasons, i.e., user is not told the name already exists in the database
+                alert.setContentText("Felaktigt användarnamn, försök med ett annat. ");
+                alert.show();
+//              User doesn't exist, psInsert queries database with new user transaction
+            }else {
+                psCheckUserExists = connection.prepareStatement("SELECT * FROM users WHERE email = ?");
+                psCheckUserExists.setString(1, email);
+                resultSet = psCheckUserExists.executeQuery();
+                if (resultSet.isBeforeFirst()){
+                    System.out.println("Email används redan! ");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Felaktig email, försök med en annan. ");
+                    alert.show();
+                }else {
+                    psInsert = connection.prepareStatement("INSERT INTO users (username, password, firstname, lastname, usertype, email) VALUES (?, ?, ?, ?, ?, ?)");
+                    psInsert.setString(1, username);
+                    psInsert.setString(2, password);
+                    psInsert.setString(3, firstname);
+                    psInsert.setString(4, lastname);
+                    psInsert.setString(5, usertype);
+                    psInsert.setString(6, email);
+                    psInsert.executeUpdate();
+//                  Change scenes to logged in scene
+                    changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+//      Close connection to DB with finally block - executed no matter what happens before
+        } finally {
+            closeDBLink(connection, psInsert, psCheckUserExists, null, resultSet);
+        }
+    }
+    // Used to validate the user type of a user trying to access the InventoryController
+    public static void validateUser(ActionEvent event, String username) {
+        String authorizedLibrarian = "bibliotekarie";
+        String authorizedAdmin = "admin";
+        Connection connection = null;
+        PreparedStatement psCheckUserType = null;
+        ResultSet resultSet = null;
+        try{
+            connection = getDBLink();
+            psCheckUserType = connection.prepareStatement("SELECT usertype FROM users WHERE username = ?;");
+            psCheckUserType.setString(1, username);
+            resultSet = psCheckUserType.executeQuery();
+            while (resultSet.next())    {
+                String actualUsertype = resultSet.getString("usertype");
+                if(actualUsertype.equalsIgnoreCase(authorizedLibrarian) || actualUsertype.equalsIgnoreCase(authorizedAdmin)) {
+                    changeSceneInventory(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, username);
+                    System.out.println("Användare validerad! ");
+                }else {
+                    System.out.println();
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Du har inte behörighet för denna funktion. ");
+                    alert.show();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckUserType, null, null, resultSet);
+        }
     }
     //  Logs in the user if credentials exist and match
     public static void logInUser(ActionEvent event, String username, String password) {
@@ -524,27 +535,28 @@ public class DBUtils {
     }
     //  Checks whether the parameter userid matches the userid of the media reservation where queue number = 1 for addLoan()
     private static boolean checkReservation(Integer mediaid, Integer userid) {
+        System.out.println("checkReservation() ");
         Integer queryUserid = 0;
         Connection connection = null;
         PreparedStatement psCheckReservation = null;
         ResultSet resultSet = null;
         try {
-            System.out.println("try block checkReservation()");
+            System.out.println("checkReservation() try block checkReservation()");
             connection = getDBLink();
             psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE mediaid = ? AND queuenumber = 1;");
             psCheckReservation.setInt(1, mediaid);
             resultSet = psCheckReservation.executeQuery();
             if(!resultSet.isBeforeFirst()) {
-                System.out.println("!resultSet.isBeforeFirst()");
+                System.out.println("checkReservation() !resultSet.isBeforeFirst()");
                 return true;
             }else {
-                System.out.println("else resultSet.next()");
+                System.out.println("checkReservation() else resultSet.next()");
                 while (resultSet.next()) {
-                    System.out.println("while resultSet.next()");
+                    System.out.println("checkReservation() while resultSet.next()");
                     queryUserid = resultSet.getInt("userid");
-                    System.out.println("while queryUserid = "+queryUserid);
+                    System.out.println("checkReservation() while queryUserid = "+queryUserid);
                     updateQueuenumber(mediaid);
-                    System.out.println("while queryUserid & userid = "+queryUserid+" "+userid);
+                    System.out.println("checkReservation() while queryUserid & userid = "+queryUserid+" "+userid);
                 }
             }
         }catch (SQLException e) {
@@ -553,7 +565,7 @@ public class DBUtils {
         }finally {
             closeDBLink(connection, psCheckReservation, null, null, resultSet);
         }
-        System.out.println("After finally block");
+        System.out.println("checkReservation() After finally block");
         System.out.println(queryUserid);
         System.out.println(userid);
         return queryUserid.equals(userid);
@@ -594,7 +606,6 @@ public class DBUtils {
             alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
             alert.show();
         }
-//      TODO boolean reserved blocks all loans where the user does not have queuenumber = 1
         if(!reserved)   {
             System.out.println("En annan användare står före i reservationskön för denna mediaartikel. ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -605,8 +616,22 @@ public class DBUtils {
         if(remainingLoans > 0 && mediaAvailable.equalsIgnoreCase("ledig") && reserved)   {
             Connection connection = null;
             PreparedStatement  psInsert = null;
+            ResultSet resultSet = null;
             try{
+                String mediatitle = "";
+                Integer reservationid = null;
                 connection = getDBLink();
+                psInsert = connection.prepareStatement("SELECT media.title, reservation.reservationid FROM media " +
+                                                           "INNER JOIN reservation ON media.mediaid = reservation.mediaid " +
+                                                           "WHERE reservation.mediaid = ?;");
+                psInsert.setInt(1, mediaid);
+                resultSet = psInsert.executeQuery();
+                while (resultSet.next())    {
+                    mediatitle = resultSet.getString("title");
+                    reservationid = resultSet.getInt("reservationid");
+                    System.out.println("addLoan() while loop\tresid = "+reservationid+", title = "+mediatitle);
+
+                }
                 if (mediaFormat.equalsIgnoreCase("bok")) {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 28 day ) , 0);");
                     psInsert.setInt(1, mediaid);
@@ -633,12 +658,18 @@ public class DBUtils {
                     alert.setContentText("Lån misslyckades. ");
                     alert.show();
                 }
-                updateQueuenumber(mediaid);
+                // End the active users reservation and update all queue numbers of the media id
+                System.out.println("addLoan() ");
+                System.out.println("resid = "+reservationid+", title = "+mediatitle);
+                //returnReservation(reservationid, mediatitle);
+                System.out.println("addLoan() ");
+                //updateQueuenumber(mediaid);
+                System.out.println("addLoan() ");
             } catch (SQLException e) {
                 e.printStackTrace();
                 e.getCause();
             }finally {
-                closeDBLink(connection, psInsert, null, null, null);
+                closeDBLink(connection, psInsert, null, null, resultSet);
             }
         }
     }
@@ -705,12 +736,13 @@ public class DBUtils {
     }
     //  Updates all queuenumbers of a certain media article, used when ending reservations or when userid with queuenumber 1 adds new loan
     private static void updateQueuenumber(Integer mediaid) {
-        System.out.println("updateQueuenumber(mediaid) ");
+        System.out.println("updateQueuenumber() ");
+        Integer userid = null;
         Connection connection = null;
         PreparedStatement psUpdate = null;
         ResultSet resultSet = null;
         try {
-            System.out.println("updateQueuenumber try block ");
+            System.out.println("updateQueuenumber try block userid = "+userid);
             connection = getDBLink();
 //          Check if any reservations of a media exists
             psUpdate = connection.prepareStatement("SELECT * FROM reservation WHERE mediaid = ?;");
@@ -718,13 +750,19 @@ public class DBUtils {
             resultSet = psUpdate.executeQuery();
             while (resultSet.next())    {
                 System.out.println("updateQueuenumber while loop");
-                psUpdate = connection.prepareStatement("DELETE FROM reservation WHERE queuenumber = 1 AND mediaid = ?;");
-                psUpdate.setInt(1, mediaid);
-                psUpdate.executeUpdate();
-                psUpdate = connection.prepareStatement("UPDATE reservation SET queuenumber = queuenumber - 1 WHERE mediaid = ?;");
-                psUpdate.setInt(1, mediaid);
-                psUpdate.executeUpdate();
+                userid = resultSet.getInt("userid");
+                System.out.println("updateQueuenumber while loop userid = "+userid);
             }
+            System.out.println("updateQueuenumber after while loop userid = "+userid);
+            //Delete active user's reservation of media article
+            psUpdate = connection.prepareStatement("DELETE FROM reservation WHERE queuenumber = 1 AND mediaid = ? AND userid = ?;");
+            psUpdate.setInt(1, mediaid);
+            psUpdate.setInt(2, userid);
+            psUpdate.executeUpdate();
+            // Update queue numbers of all reservations of media article
+            psUpdate = connection.prepareStatement("UPDATE reservation SET queuenumber = queuenumber - 1 WHERE mediaid = ?;");
+            psUpdate.setInt(1, mediaid);
+            psUpdate.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
@@ -750,16 +788,17 @@ public class DBUtils {
                 mediaTitle = resultSet.getString("title");
             }
             System.out.println("Lån med lånid: "+loanid+ " terminerat! ");
+            // Sets returned item as "Ledig"
+            setAvailable(mediaid);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("Ditt lån av: "+mediaTitle+" är avslutat. ");
+            alert.show();
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
             closeDBLink(connection, psRemove, null, null, resultSet);
         }
-        setAvailable(mediaid);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Ditt lån av: "+mediaTitle+" är avslutat. ");
-        alert.show();
     }
     //  Adds new reservation
     public static void addReservation(Integer mediaid, Integer userid)  {
@@ -814,6 +853,7 @@ public class DBUtils {
     }
     //  Returns reservation
     public static void returnReservation(Integer reservationid, String mediaTitle) {
+        System.out.println("returnReservation() ");
         Connection connection = null;
         PreparedStatement psRemove = null;
         try {
