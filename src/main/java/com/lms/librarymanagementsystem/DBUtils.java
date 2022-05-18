@@ -617,19 +617,19 @@ public class DBUtils {
             Connection connection = null;
             PreparedStatement  psInsert = null;
             ResultSet resultSet = null;
-            try{
+            try {
                 String mediatitle = "";
                 Integer reservationid = null;
                 connection = getDBLink();
                 psInsert = connection.prepareStatement("SELECT media.title, reservation.reservationid FROM media " +
-                                                           "INNER JOIN reservation ON media.mediaid = reservation.mediaid " +
-                                                           "WHERE reservation.mediaid = ?;");
+                        "INNER JOIN reservation ON media.mediaid = reservation.mediaid " +
+                        "WHERE reservation.mediaid = ?;");
                 psInsert.setInt(1, mediaid);
                 resultSet = psInsert.executeQuery();
-                while (resultSet.next())    {
+                while (resultSet.next()) {
                     mediatitle = resultSet.getString("title");
                     reservationid = resultSet.getInt("reservationid");
-                    System.out.println("addLoan() while loop\tresid = "+reservationid+", title = "+mediatitle);
+                    System.out.println("addLoan() while loop\tresid = " + reservationid + ", title = " + mediatitle);
 
                 }
                 if (mediaFormat.equalsIgnoreCase("bok")) {
@@ -642,12 +642,23 @@ public class DBUtils {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setContentText("Lån skapat. ");
                     alert.show();
-                }else if(mediaFormat.equalsIgnoreCase("film"))  {
+                } else if (mediaFormat.equalsIgnoreCase("film")) {
+                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY ) , 0);");
+                    psInsert.setInt(1, mediaid);
+                    psInsert.setInt(2, userid);
+                    psInsert.executeUpdate();
+                    setUnavailable(mediaid);
+                    System.out.println("Lån skapat! ");
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setContentText("Lån skapat. ");
+                    alert.show();
+                }else if(mediaFormat.equalsIgnoreCase("kurslitteratur"))  {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 14 DAY ) , 0);");
                     psInsert.setInt(1, mediaid);
                     psInsert.setInt(2, userid);
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
+
                     System.out.println("Lån skapat! ");
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setContentText("Lån skapat. ");
