@@ -24,7 +24,7 @@
             <Image url="@media/ltu_logga.jpg" />
          </image>
       </ImageView>
-      <GridPane layoutX="14.0" layoutY="86.0" prefWidth="395.0">
+      <GridPane layoutX="14.0" layoutY="86.0" prefWidth="360.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="193.0" minWidth="10.0" prefWidth="114.0" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.0" minWidth="10.0" prefWidth="281.0" />
@@ -122,7 +122,7 @@
             </Label>
          </children>
       </GridPane>
-      <Label layoutX="415.0" layoutY="67.0" prefWidth="200.0" text="Dina lån :" textFill="#f0f0f0">
+      <Label layoutX="385.0" layoutY="67.0" prefWidth="200.0" text="Dina lån :" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
@@ -157,8 +157,9 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <TableView fx:id="loanTableView" layoutX="415.0" layoutY="85.0" prefHeight="200.0" prefWidth="300.0">
+      <TableView fx:id="loanTableView" layoutX="385.0" layoutY="85.0" prefHeight="200.0" prefWidth="337.0">
         <columns>
+            <TableColumn fx:id="loanLoanidColumn" maxWidth="50.0" minWidth="15.0" prefWidth="37.0" text="LånID" />
           <TableColumn fx:id="loanMediaIdColumn" maxWidth="56.0" minWidth="20.0" prefWidth="56.0" text="Media ID" />
           <TableColumn fx:id="loanTitleColumn" maxWidth="150.0" minWidth="20.0" prefWidth="90.0" text="Titel" />
             <TableColumn fx:id="loanLoanDateColumn" maxWidth="83.0" minWidth="20.0" prefWidth="72.0" text="Låndatum" />

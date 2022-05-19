@@ -533,186 +533,28 @@ public class DBUtils {
         }
         return queryFormat;
     }
-    //  Checks whether the parameter userid matches the userid of the media reservation where queue number = 1 for addLoan()
-    private static boolean checkReservation(Integer mediaid, Integer userid) {
-        System.out.println("checkReservation() ");
-        Integer queryUserid = 0;
+    // Checks whether a user has an active reservation of the media for addReservation
+    private static boolean checkReservation(Integer mediaid, Integer userid)    {
+        Integer queryUserid = -1;
         Connection connection = null;
         PreparedStatement psCheckReservation = null;
         ResultSet resultSet = null;
-        try {
-            System.out.println("checkReservation() try block checkReservation()");
+        try{
             connection = getDBLink();
-            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE mediaid = ? AND queuenumber = 1;");
+            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE mediaid = ?;");
             psCheckReservation.setInt(1, mediaid);
             resultSet = psCheckReservation.executeQuery();
-            if(!resultSet.isBeforeFirst()) {
-                System.out.println("checkReservation() !resultSet.isBeforeFirst()");
-                return true;
-            }else {
-                System.out.println("checkReservation() else resultSet.next()");
-                while (resultSet.next()) {
-                    System.out.println("checkReservation() while resultSet.next()");
+                if(resultSet.next())    {
                     queryUserid = resultSet.getInt("userid");
-                    System.out.println("checkReservation() while queryUserid = "+queryUserid);
-                    updateQueuenumber(mediaid);
-                    System.out.println("checkReservation() while queryUserid & userid = "+queryUserid+" "+userid);
                 }
-            }
+
         }catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
             closeDBLink(connection, psCheckReservation, null, null, resultSet);
         }
-        System.out.println("checkReservation() After finally block");
-        System.out.println(queryUserid);
-        System.out.println(userid);
         return queryUserid.equals(userid);
-    }
-    //  Sets a media article as unavailable ("Utlånad") when a new loan is created
-    private static void setUnavailable(Integer mediaid) {
-        Connection connection = null;
-        PreparedStatement psUpdate = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psUpdate = connection.prepareStatement("UPDATE media SET available = 'Utlånad' WHERE mediaid = ?");
-            psUpdate.setInt(1, mediaid);
-            psUpdate.executeUpdate();
-            System.out.println("Mediatillgänglighet för mediaartikel "+mediaid+" satt till status utlånad! ");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
-            closeDBLink(connection, psUpdate, null, null, resultSet);
-        }
-    }
-    //  Add a loan and tie it to the user id and media id
-    public static void addLoan(Integer mediaid, Integer userid) {
-        Integer maxLoans = maxLoans(userid);
-        Integer remainingLoans = remainingLoans(maxLoans, userid);
-        boolean reserved = checkReservation(mediaid, userid);
-        System.out.println("addLoan(reserved) = "+reserved);
-        if(remainingLoans <= 0) {
-            System.out.println("Användaren har inga tillgängliga lånetillfällen! ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Du har nått din maxgräns för aktiva lån. ");
-            alert.show();
-        }
-        String mediaAvailable = checkAvailable(mediaid);
-        if(!mediaAvailable.equalsIgnoreCase("ledig"))   {
-            System.out.println("Artikeln är otillgänglig för utlåning! ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
-            alert.show();
-        }
-        if(!reserved)   {
-            System.out.println("En annan användare står före i reservationskön för denna mediaartikel. ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("En annan användare står före i reservationskön för denna mediaartikel. ");
-            alert.show();
-        }
-        String mediaFormat = checkFormat(mediaid);
-        if(remainingLoans > 0 && mediaAvailable.equalsIgnoreCase("ledig") && reserved)   {
-            Connection connection = null;
-            PreparedStatement  psInsert = null;
-            ResultSet resultSet = null;
-            try {
-                String mediatitle = "";
-                Integer reservationid = null;
-                connection = getDBLink();
-                psInsert = connection.prepareStatement("SELECT media.title, reservation.reservationid FROM media " +
-                        "INNER JOIN reservation ON media.mediaid = reservation.mediaid " +
-                        "WHERE reservation.mediaid = ?;");
-                psInsert.setInt(1, mediaid);
-                resultSet = psInsert.executeQuery();
-                while (resultSet.next()) {
-                    mediatitle = resultSet.getString("title");
-                    reservationid = resultSet.getInt("reservationid");
-                    System.out.println("addLoan() while loop\tresid = " + reservationid + ", title = " + mediatitle);
-
-                }
-                if (mediaFormat.equalsIgnoreCase("bok")) {
-                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 28 day ) , 0);");
-                    psInsert.setInt(1, mediaid);
-                    psInsert.setInt(2, userid);
-                    psInsert.executeUpdate();
-                    setUnavailable(mediaid);
-                    System.out.println("Lån skapat! ");
-                    printReceipt(userid);
-                } else if (mediaFormat.equalsIgnoreCase("film")) {
-                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY ) , 0);");
-                    psInsert.setInt(1, mediaid);
-                    psInsert.setInt(2, userid);
-                    psInsert.executeUpdate();
-                    setUnavailable(mediaid);
-                    System.out.println("Lån skapat! ");
-                    printReceipt(userid);
-                }else if(mediaFormat.equalsIgnoreCase("kurslitteratur"))  {
-                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 14 DAY ) , 0);");
-                    psInsert.setInt(1, mediaid);
-                    psInsert.setInt(2, userid);
-                    psInsert.executeUpdate();
-                    setUnavailable(mediaid);
-
-                    System.out.println("Lån skapat! ");
-                    printReceipt(userid);
-                }else   {
-                    System.out.println("Lån kunde ej skapas, mediaformat ej tillgängligt för utlåning! ");
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Lån misslyckades. ");
-                    alert.show();
-                }
-                // End the active users reservation and update all queue numbers of the media id
-                System.out.println("addLoan() ");
-                System.out.println("resid = "+reservationid+", title = "+mediatitle);
-                //returnReservation(reservationid, mediatitle);
-                System.out.println("addLoan() ");
-                //updateQueuenumber(mediaid);
-                System.out.println("addLoan() ");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                e.getCause();
-            }finally {
-                closeDBLink(connection, psInsert, null, null, resultSet);
-            }
-        }
-    }
-//  Prints the receipt of the user's latest loan to an Alert
-    private static void printReceipt(Integer userid)    {
-        LoanObjectModel loanObjectModel;
-        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
-        Connection connection = null;
-        PreparedStatement psFetchLoan = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psFetchLoan = connection.prepareStatement("SELECT media.mediaid, media.title, loan.loanid, loan.loandate, loan.returndate FROM media " +
-                                                          "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = CURDATE() " +
-                                                          "ORDER BY loan.userid DESC LIMIT 1;");
-            psFetchLoan.setInt(1, userid);
-            resultSet = psFetchLoan.executeQuery();
-            while (resultSet.next())    {
-                Integer mediaid = resultSet.getInt("mediaid");
-                String mediatitle = resultSet.getString("title");
-                Integer loanid = resultSet.getInt("loanid");
-                Date loandate = resultSet.getDate("loandate");
-                Date returndate = resultSet.getDate("returndate");
-                loanObjectModel = new LoanObjectModel(mediaid,mediatitle,loandate,returndate);
-                receipt.setContentText( "MediaID:\t" +loanObjectModel.getMediaid() +
-                                        "\nTitel:\t" + loanObjectModel.getTitle() +
-                                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
-                                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
-                receipt.setTitle("Lånekvitto för lån nummer: "+loanid+" "+loandate);
-                receipt.setHeaderText("Du har lånat: ");
-                receipt.show();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psFetchLoan, null, null, resultSet);
-        }
     }
     //  Extends an active loan with a chosen interval
     public static void extendLoan(Integer loanid)   {
@@ -735,6 +577,7 @@ public class DBUtils {
         alert.setContentText("Ditt lån med lånid: "+loanid+" är förlängt med 7 dagar. ");
         alert.show();
     }
+    // Sets a returned media to available "Ledig" status when a loan is returned
     private static void setAvailable(Integer mediaid)   {
         Connection connection = null;
         PreparedStatement psUpdate = null;
@@ -751,6 +594,23 @@ public class DBUtils {
             closeDBLink(connection, psUpdate, null, null, null);
         }
     }
+    //  Sets a media article as unavailable ("Utlånad") when a new loan is created
+    private static void setUnavailable(Integer mediaid) {
+        Connection connection = null;
+        PreparedStatement psUpdate = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psUpdate = connection.prepareStatement("UPDATE media SET available = 'Utlånad' WHERE mediaid = ?");
+            psUpdate.setInt(1, mediaid);
+            psUpdate.executeUpdate();
+            System.out.println("Mediatillgänglighet för mediaartikel "+mediaid+" satt till status utlånad! ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            closeDBLink(connection, psUpdate, null, null, resultSet);
+        }
+    }
     //  Returns the queuenumber for a reserved media article, used for updating queuenumber and adding loans
     private static Integer getQueuenumber(Integer mediaid)  {
         Integer queueNumber = null;
@@ -759,12 +619,12 @@ public class DBUtils {
         ResultSet resultSet = null;
         try {
             connection = getDBLink();
-            psCheckQueue = connection.prepareStatement("SELECT COUNT(*) FROM reservation WHERE mediaid = ?;");
+            psCheckQueue = connection.prepareStatement("SELECT COUNT(*) AS rowcount FROM reservation WHERE mediaid = ?;");
             psCheckQueue.setInt(1, mediaid);
             resultSet = psCheckQueue.executeQuery();
-            while (resultSet.next())    {
-                queueNumber = resultSet.getInt("COUNT(*)");
-                System.out.println("getQueuenumber() while loop queueNumber = "+queueNumber);
+  //          System.out.println("getQueuenumber() after executeQuery() queueNumber = "+queueNumber);
+            if (resultSet.next())    {
+                queueNumber = resultSet.getInt("rowcount")+1;
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -772,10 +632,31 @@ public class DBUtils {
         }finally {
             closeDBLink(connection, psCheckQueue, null, null, resultSet);
         }
-        System.out.println("getQueuenumber() after finally block queueNumber = "+queueNumber);
         return queueNumber;
     }
-    //  Updates all queuenumbers of a certain media article, used when ending reservations or when userid with queuenumber 1 adds new loan
+    //  Checks whether the parameter userid matches the userid of the media reservation where queue number = min value for addLoan()
+    private static boolean checkQueue(Integer mediaid, Integer userid) {
+        Integer queryUserid = 0;
+        Connection connection = null;
+        PreparedStatement psCheckReservation = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE queuenumber =(SELECT MIN(queuenumber) FROM reservation) AND mediaid = ?;;");
+            psCheckReservation.setInt(1, mediaid);
+            resultSet = psCheckReservation.executeQuery();
+            while (resultSet.next()) {
+                queryUserid = resultSet.getInt("userid");
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psCheckReservation, null, null, resultSet);
+        }
+        return queryUserid.equals(userid);
+    }
+    //  Updates all queue numbers of a certain media article, used when ending reservations
     private static void updateQueuenumber(Integer mediaid) {
         System.out.println("updateQueuenumber() ");
         Integer userid = null;
@@ -783,23 +664,7 @@ public class DBUtils {
         PreparedStatement psUpdate = null;
         ResultSet resultSet = null;
         try {
-            System.out.println("updateQueuenumber try block userid = "+userid);
             connection = getDBLink();
-//          Check if any reservations of a media exists
-            psUpdate = connection.prepareStatement("SELECT * FROM reservation WHERE mediaid = ?;");
-            psUpdate.setInt(1, mediaid);
-            resultSet = psUpdate.executeQuery();
-            while (resultSet.next())    {
-                System.out.println("updateQueuenumber while loop");
-                userid = resultSet.getInt("userid");
-                System.out.println("updateQueuenumber while loop userid = "+userid);
-            }
-            System.out.println("updateQueuenumber after while loop userid = "+userid);
-            //Delete active user's reservation of media article
-            psUpdate = connection.prepareStatement("DELETE FROM reservation WHERE queuenumber = 1 AND mediaid = ? AND userid = ?;");
-            psUpdate.setInt(1, mediaid);
-            psUpdate.setInt(2, userid);
-            psUpdate.executeUpdate();
             // Update queue numbers of all reservations of media article
             psUpdate = connection.prepareStatement("UPDATE reservation SET queuenumber = queuenumber - 1 WHERE mediaid = ?;");
             psUpdate.setInt(1, mediaid);
@@ -841,14 +706,121 @@ public class DBUtils {
             closeDBLink(connection, psRemove, null, null, resultSet);
         }
     }
+    //  Returns reservation from AccountController and through addLoan()
+    public static void returnReservation(Integer reservationid, Integer mediaid, String mediaTitle) {
+        Connection connection = null;
+        PreparedStatement psRemove = null;
+        try {
+            connection = getDBLink();
+            psRemove = connection.prepareStatement("DELETE FROM reservation WHERE reservationid = ? AND mediaid = ?;");
+            psRemove.setInt(1, reservationid);
+            psRemove.setInt(2, mediaid);
+            psRemove.executeUpdate();
+            System.out.println("Reservation med reservationid: "+reservationid+" terminerat! ");
+        }catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psRemove, null, null, null);
+        }
+        updateQueuenumber(mediaid);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setContentText("Din reservation av: "+mediaTitle+" är avslutad. ");
+        alert.show();
+    }
+    //  Add a loan and tie it to the user id and media id
+    public static void addLoan(Integer mediaid, Integer userid) {
+        Integer maxLoans = maxLoans(userid);
+        Integer remainingLoans = remainingLoans(maxLoans, userid);
+        Boolean reserved = checkQueue(mediaid, userid);
+        System.out.println("addLoan() reserved = "+reserved);
+        if(remainingLoans <= 0) {
+            System.out.println("Användaren har inga tillgängliga lånetillfällen! ");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Du har nått din maxgräns för aktiva lån. ");
+            alert.show();
+        }
+        String mediaAvailable = checkAvailable(mediaid);
+        if(!mediaAvailable.equalsIgnoreCase("ledig"))   {
+            System.out.println("Artikeln är otillgänglig för utlåning! ");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
+            alert.show();
+        }
+        if(!reserved)   {
+            System.out.println("En annan användare står före i reservationskön för denna mediaartikel. ");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("En annan användare står före i reservationskön för denna mediaartikel. ");
+            alert.show();
+        }
+        String mediaFormat = checkFormat(mediaid);
+        if(remainingLoans > 0 && mediaAvailable.equalsIgnoreCase("ledig") && reserved)   {
+            Connection connection = null;
+            PreparedStatement  psInsert = null;
+            ResultSet resultSet = null;
+            try {
+                String mediatitle = "";
+                Integer reservationid = null;
+                connection = getDBLink();
+             /*
+                psInsert = connection.prepareStatement("DELETE FROM reservation WHERE queuenumber =(SELECT MIN(queuenumber) FROM reservation) AND mediaid = ? AND userid = ?;");
+                psInsert.setInt(1, mediaid);
+                psInsert.setInt(2, userid);
+                psInsert.executeUpdate();
+             */
+                psInsert = connection.prepareStatement("SELECT media.title, reservation.reservationid FROM media " +
+                                                            "INNER JOIN reservation ON media.mediaid = reservation.mediaid " +
+                                                            "WHERE reservation.mediaid = ?;");
+                psInsert.setInt(1, mediaid);
+                resultSet = psInsert.executeQuery();
+                if (resultSet.next()) {
+                    mediatitle = resultSet.getString("title");
+                    reservationid = resultSet.getInt("reservationid");
+                }
+                if (mediaFormat.equalsIgnoreCase("bok")) {
+                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 28 day ) , 0);");
+                    psInsert.setInt(1, mediaid);
+                    psInsert.setInt(2, userid);
+                    psInsert.executeUpdate();
+                    setUnavailable(mediaid);
+                    System.out.println("Boklån skapat! ");
+                    printReceipt(userid);
+                } else if (mediaFormat.equalsIgnoreCase("film")) {
+                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY ) , 0);");
+                    psInsert.setInt(1, mediaid);
+                    psInsert.setInt(2, userid);
+                    psInsert.executeUpdate();
+                    setUnavailable(mediaid);
+                    System.out.println("Filmlån skapat! ");
+                    printReceipt(userid);
+                }else if(mediaFormat.equalsIgnoreCase("kurslitteratur"))  {
+                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 14 DAY ) , 0);");
+                    psInsert.setInt(1, mediaid);
+                    psInsert.setInt(2, userid);
+                    psInsert.executeUpdate();
+                    setUnavailable(mediaid);
+                    System.out.println("Kurslitteraturlån skapat! ");
+                    printReceipt(userid);
+                }else   {
+                    System.out.println("Lån kunde ej skapas, mediaformat ej tillgängligt för utlåning! ");
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Lån misslyckades. ");
+                    alert.show();
+                }
+                returnReservation(reservationid, mediaid, mediatitle);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                e.getCause();
+            }finally {
+                closeDBLink(connection, psInsert, null, null, resultSet);
+            }
+        }
+    }
     //  Adds new reservation
     public static void addReservation(Integer mediaid, Integer userid)  {
         Integer maxReservations = maxReservations(userid);
-        System.out.println("addReservation maxReservations = "+maxReservations);
         Integer remainingReservations = remainingReservations(maxReservations, userid);
-        System.out.println("addReservation remainingReservations = "+remainingReservations);
-        Boolean activeReservations = checkReservation(mediaid, userid);
-        System.out.println("addReservation activeReservations = "+activeReservations);
+        Boolean activeReservation = checkReservation(mediaid, userid);
         if(remainingReservations <= 0)  {
             System.out.println("Användaren har inga tillgängliga reservationstillfällen! ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -856,23 +828,23 @@ public class DBUtils {
             alert.show();
         }
         String queryAvailable = checkAvailable(mediaid);
-        if(!queryAvailable.equalsIgnoreCase("Utlånad") || !queryAvailable.equalsIgnoreCase("Ledig"))   {
-            System.out.println("addReservation() if block, mediaavailable != ledig or utlånad");
+        if(!queryAvailable.equalsIgnoreCase("Utlånad") && !queryAvailable.equalsIgnoreCase("Ledig"))   {
             System.out.println("Användaren har försökt reservera en ej utlånad eller ledig mediaartikel! ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Du kan bara reservera utlånade eller lediga mediaartiklar. ");
             alert.show();
         }
-        System.out.println("addReservation queryAvailable = "+queryAvailable);
-        if((queryAvailable.equalsIgnoreCase("Utlånad") || queryAvailable.equalsIgnoreCase("Ledig")) && remainingReservations >0)   {
-            System.out.println("addReservation() if block before calling getQueuenumber() ");
-            Integer queueNumber = (getQueuenumber(mediaid)+1);
-//          TODO Set check for reservations of available and unreserved media articles
-            System.out.println(queueNumber+" returned from getQueuenumber() +1 ");
+        if(activeReservation)  {
+            System.out.println("Användaren har redan reserverat denna artikel! ");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Du har redan en reservation för den här artikeln. ");
+            alert.show();
+        }
+        if((queryAvailable.equalsIgnoreCase("Utlånad") || queryAvailable.equalsIgnoreCase("Ledig")) && remainingReservations >0 && !activeReservation)   {
+            Integer queueNumber = getQueuenumber(mediaid);
             Connection connection = null;
             PreparedStatement psInsert = null;
             try {
-                System.out.println("addReservation() try block for new reservation");
                 connection = getDBLink();
                 psInsert = connection.prepareStatement("INSERT INTO reservation(mediaid, userid, queuenumber,reservationdate) VALUES (?,?,?,CURDATE());");
                 psInsert.setInt(1, mediaid);
@@ -890,69 +862,42 @@ public class DBUtils {
                 closeDBLink(connection, psInsert, null, null, null);
             }
         }
-        System.out.println("addReservation() after else block, end of method");
     }
-    //  Returns reservation
-    public static void returnReservation(Integer reservationid, String mediaTitle) {
-        System.out.println("returnReservation() ");
+    //  Prints the receipt of the user's latest loan to an Alert
+    private static void printReceipt(Integer userid)    {
+        LoanObjectModel loanObjectModel;
+        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
         Connection connection = null;
-        PreparedStatement psRemove = null;
-        try {
-            connection = getDBLink();
-            psRemove = connection.prepareStatement("DELETE FROM reservation WHERE reservationid = ?;");
-            psRemove.setInt(1, reservationid);
-            psRemove.executeUpdate();
-            System.out.println("Reservation med reservationid: "+reservationid+" terminerat! ");
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psRemove, null, null, null);
-        }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Din reservation av: "+mediaTitle+" är avslutad. ");
-        alert.show();
-    }
-//  Checks if there are any overdue loans
-    public static Boolean checkOverdue() {
-        Connection connection = null;
-        PreparedStatement psCheckOverdue = null;
+        PreparedStatement psFetchLoan = null;
         ResultSet resultSet = null;
         try {
             connection = getDBLink();
-            psCheckOverdue = connection.prepareStatement("SELECT * FROM loan WHERE returndate <= CURDATE();");
-            resultSet = psCheckOverdue.executeQuery();
-            if(resultSet.isBeforeFirst()) {
-                return true;
+            psFetchLoan = connection.prepareStatement("SELECT media.mediaid, media.title, loan.loanid, loan.loandate, loan.returndate FROM media " +
+                    "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = CURDATE() " +
+                    "ORDER BY loan.userid DESC LIMIT 1;");
+            psFetchLoan.setInt(1, userid);
+            resultSet = psFetchLoan.executeQuery();
+            while (resultSet.next())    {
+                Integer mediaid = resultSet.getInt("mediaid");
+                String mediatitle = resultSet.getString("title");
+                Integer loanid = resultSet.getInt("loanid");
+                Date loandate = resultSet.getDate("loandate");
+                Date returndate = resultSet.getDate("returndate");
+                loanObjectModel = new LoanObjectModel(mediaid,mediatitle,loandate,returndate);
+                receipt.setContentText( "MediaID:\t" +loanObjectModel.getMediaid() +
+                        "\nTitel:\t" + loanObjectModel.getTitle() +
+                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
+                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
+                receipt.setTitle("Lånekvitto för lån nummer: "+loanid+" "+loandate);
+                receipt.setHeaderText("Du har lånat: ");
+                receipt.show();
             }
         } catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
-            closeDBLink(connection, psCheckOverdue, null, null, resultSet);
+            closeDBLink(connection, psFetchLoan, null, null, resultSet);
         }
-        return false;
-    }
-//  Fetches the email of a user with overdue loans
-    public static String getOverdueUser()  {
-        String overdueUser = "";
-        Connection connection = null;
-        PreparedStatement psFetchUser = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psFetchUser = connection.prepareStatement("SELECT users.email FROM loan JOIN users ON users.id = loan.userid WHERE returndate <= CURDATE();");
-            resultSet = psFetchUser.executeQuery();
-            while (resultSet.next()) {
-                    overdueUser = resultSet.getString("email");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psFetchUser, null, null, resultSet);
-        }
-        return overdueUser;
     }
     //  Add new media to database
     public static void addMedia(String title, String format, String category, String description,

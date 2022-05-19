@@ -25,7 +25,7 @@ public class AccountController implements Initializable {
     @FXML
     private TableView<LoanObjectModel> loanTableView;
     @FXML
-    private TableColumn<String, Integer> loanMediaIdColumn;
+    private TableColumn<String, Integer> loanMediaIdColumn, loanLoanidColumn;
     @FXML
     private TableColumn<String, String> loanTitleColumn;
     @FXML
@@ -79,7 +79,7 @@ public class AccountController implements Initializable {
                 alert.show();
             }
                 if(reservationObservableList != null)   {
-                    DBUtils.returnReservation(reservationObject.getReservationid(), reservationObject.getTitle());
+                    DBUtils.returnReservation(reservationObject.getReservationid(), reservationObject.getMediaid(), reservationObject.getTitle());
                     refreshReservation();
                     reservation();
                 }
@@ -151,20 +151,23 @@ public class AccountController implements Initializable {
             resultSet = psFetchLoans.executeQuery();
             while (resultSet.next())    {
           //      Integer loanid = resultSet.getInt("loanid");
-                psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loandate, loan.returndate FROM media " +
+                psFetchLoans = connection.prepareStatement( "SELECT loan.loanid, media.mediaid, media.title, loan.loandate, loan.returndate FROM media " +
                                                                 "JOIN loan ON media.mediaid = loan.mediaid WHERE loan.userid = ?;");
                 psFetchLoans.setInt(1, activeUser.getUserid());
                 resultSet = psFetchLoans.executeQuery();
                 while (resultSet.next())    {
+                    Integer queryLoanid = resultSet.getInt("loanid");
                     Integer queryMediaid = resultSet.getInt("mediaid");
                     String queryTitle = resultSet.getString("title");
                     Date queryLoandate = resultSet.getDate("loandate");
                     Date queryReturndate = resultSet.getDate("returndate");
-                    loanObservableList.add(new LoanObjectModel( queryMediaid,
+                    loanObservableList.add(new LoanObjectModel( queryLoanid,
+                                                                queryMediaid,
                                                                 queryTitle,
                                                                 queryLoandate,
                                                                 queryReturndate
                                                                 ));
+                    loanLoanidColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
                     loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
                     loanTitleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
                     loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
