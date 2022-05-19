@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoanController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoanController">
    <children>
       <TableView fx:id="searchTableView" layoutX="25.0" layoutY="100.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">
          <columns>
@@ -69,12 +69,12 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <Label alignment="CENTER" layoutX="225.0" layoutY="510.0" prefHeight="35.0" prefWidth="480.0" text="Utförda lån:" textFill="#f0f0f0">
+      <Label alignment="CENTER" layoutX="225.0" layoutY="510.0" prefHeight="35.0" prefWidth="480.0" text="Dina lån:" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="740.0" layoutY="510.0" prefHeight="35.0" prefWidth="400.0" text="Utförda reservationer:" textFill="#f0f0f0">
+      <Label alignment="CENTER" layoutX="740.0" layoutY="510.0" prefHeight="35.0" prefWidth="400.0" text="Dina reservationer:" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>

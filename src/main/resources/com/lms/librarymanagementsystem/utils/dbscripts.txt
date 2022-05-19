@@ -6,91 +6,126 @@
 -- check data source configuration in intellij for troubleshooting
 -- for mysql intellij setup tutorial, visit: https://www.youtube.com/watch?v=e8g9eNnFpHQ
 
--- mysql database scripts
+-- create database
 
-create database javafxtest;
+CREATE SCHEMA `d0024e` ;
 
-create table javafxtest.users 	(
-								id INT NOT NULL AUTO_INCREMENT,
-								username VARCHAR(50) NOT NULL UNIQUE,
-                                password VARCHAR(50) NOT NULL,
-                                firstname VARCHAR(50) NOT NULL,
-                                lastname VARCHAR(50) NOT NULL,
-                                usertype VARCHAR(20) NOT NULL,
-                                PRIMARY KEY(id)
-                                );
+-- create tables
 
-insert into javafxtest.users	(username, password, firstname, lastname, usertype
-								)
-VALUES
-                                (
-								'ltustudent1', 'abc', 'Lena', 'PH', 'student'
-								);
-ALTER TABLE `javafxtest`.`users`
-ADD COLUMN `email` `email` VARCHAR(255) NULL COMMENT 'user email for user interaction - unique = one account per existing email' ;
+CREATE TABLE `d0024e`.`users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `firstname` VARCHAR(255) NOT NULL,
+  `lastname` VARCHAR(255) NOT NULL,
+  `usertype` VARCHAR(25) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE);
 
-
-CREATE TABLE `javafxtest`.`media` (
+CREATE TABLE `d0024e`.`media` (
   `mediaid` INT NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(245) NOT NULL,
-  `format` VARCHAR(25) NOT NULL COMMENT 'Bok, Film, Journal',
-  `category` VARCHAR(245) NOT NULL COMMENT 'cat1,cat2,cat3 etc. for keyword searches',
-  `description` VARCHAR(245) NULL COMMENT 'included in keyword search',
-  `publisher` VARCHAR(245) NULL,
-  `edition` VARCHAR(25) NULL COMMENT 'e.g., journal = 04/2022, bok = 6e, film = director\'s cut',
-  `author` VARCHAR(245) NULL COMMENT 'auth1,auth2,auth3 etc.',
-  `isbn` VARCHAR(25) NULL,
-  `director` VARCHAR(245) NULL COMMENT 'dir1,dir2,dir3, etc.',
-  `actor` VARCHAR(245) NULL COMMENT 'act1,act2,act3 etc.',
-  `country` VARCHAR(45) NULL,
-  `rating` VARCHAR(5) NULL COMMENT 'in integers, e.g., 3, 13, 18',
-  `available` VARCHAR(45) NOT NULL COMMENT 'ex:  referens, utlånad, reserverad, ledig',
-  PRIMARY KEY (`mediaid`),
-  UNIQUE INDEX `mediaid_UNIQUE` (`mediaid` ASC) VISIBLE)
-COMMENT = 'table for storing all media';
+  `title` VARCHAR(255) NOT NULL,
+  `format` VARCHAR(45) NOT NULL COMMENT 'Bok, Film, Journal, Kurslitteratur',
+  `category` VARCHAR(255) NOT NULL COMMENT 'E.g.,\" cat1,cat2,cat3\" \nDenormalized',
+  `description` VARCHAR(255) NOT NULL,
+  `publisher` VARCHAR(255) NULL,
+  `edition` VARCHAR(45) NULL COMMENT 'E.g., Journal = 04/2022, Bok = 6, Film = Director\'s cut',
+  `author` VARCHAR(255) NULL COMMENT 'E.g., \"auth1,auth2,auth3\"\nDenormalized',
+  `isbn` VARCHAR(45) NULL,
+  `director` VARCHAR(255) NULL COMMENT 'E.g., \"dir1,dir2,dir3\"\nDenormalized',
+  `actor` VARCHAR(255) NULL COMMENT 'E.g., \"act1,act2,act3\"\nDenormalized',
+  `country` VARCHAR(255) NULL,
+  `rating` VARCHAR(5) NULL COMMENT 'In age, e.g., 3, 15, 18',
+  `available` VARCHAR(45) NOT NULL COMMENT 'Referens, Utlånad, Ledig, Kasserad',
+  PRIMARY KEY (`mediaid`));
 
--- database values can't be NULL for the SearchController class to function, empty strings like '' must be used
+CREATE TABLE `d0024e`.`loan` (
+  `loanid` INT NOT NULL AUTO_INCREMENT,
+  `mediaid` INT NOT NULL,
+  `userid` INT NOT NULL,
+  `loandate` DATE NOT NULL,
+  `returndate` DATE NOT NULL,
+  `returned` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`loanid`),
+  INDEX `MediaLoan_idx` (`mediaid` ASC) VISIBLE,
+  INDEX `UserLoan_idx` (`userid` ASC) VISIBLE,
+  CONSTRAINT `MediaLoan`
+    FOREIGN KEY (`mediaid`)
+    REFERENCES `d0024e`.`media` (`mediaid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `UserLoan`
+    FOREIGN KEY (`userid`)
+    REFERENCES `d0024e`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
 
-INSERT INTO `javafxtest`.`media`
+CREATE TABLE `d0024e`.`reservation` (
+  `reservationid` INT NOT NULL AUTO_INCREMENT,
+  `mediaid` INT NOT NULL,
+  `userid` INT NOT NULL,
+  `queuenumber` INT NOT NULL,
+  `reservationdate` DATE NOT NULL,
+  PRIMARY KEY (`reservationid`),
+  INDEX `ReservationMedia_idx` (`mediaid` ASC) VISIBLE,
+  INDEX `ReservationUser_idx` (`userid` ASC) VISIBLE,
+  CONSTRAINT `ReservationMedia`
+    FOREIGN KEY (`mediaid`)
+    REFERENCES `d0024e`.`media` (`mediaid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `ReservationUser`
+    FOREIGN KEY (`userid`)
+    REFERENCES `d0024e`.`users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+-- table inserts
+
+-- media articles
+
+INSERT INTO `d0024e`.`media`
 (`title`, `format`, `category`, `description`,
 `publisher`, `edition`, `author`, `isbn`,
 `director`, `actor`, `country`, `rating`,
 `available`)
 VALUES
--- böcker
-('Database Systems: A Practical Approach To Design, Implementation, And Management', 'bok', 'It,Databas,Kurslitteratur', 'D0004N, D0005N, This book is ideal for a one- or two-term course in database management or database design in an undergraduate or graduate level course.',
+-- books
+('Database Systems: A Practical Approach To Design, Implementation, And Management', 'Kurslitteratur', 'It,Databas,Kurslitteratur', 'D0004N, D0005N, This book is ideal for a one- or two-term course in database management or database design in an undergraduate or graduate level course.',
 'Pearson', '6', 'Carolyn Begg,Thomas Connolly', '9781292061184',
 '', '', '', '',
 'Referens'),
-('Database Systems: A Practical Approach To Design, Implementation, And Management', 'bok', 'It,Databas,Kurslitteratur', 'D0004N, D0005N, This book is ideal for a one- or two-term course in database management or database design in an undergraduate or graduate level course.',
+('Database Systems: A Practical Approach To Design, Implementation, And Management', 'Kurslitteratur', 'It,Databas,Kurslitteratur', 'D0004N, D0005N, This book is ideal for a one- or two-term course in database management or database design in an undergraduate or graduate level course.',
 'Pearson', '6', 'Carolyn Begg,Thomas Connolly', '9781292061184',
 '', '', '', '',
 'Ledig'),
-('Java How to Program - Early Objects', 'bok', 'It,Java,Programmering,Kurslitteratur', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts.',
+('Java How to Program - Early Objects', 'Kurslitteratur', 'It,Java,Programmering,Kurslitteratur', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts.',
 'Pearson', '11', 'Paul Deitel,Harvey Deitel', '9781292223858',
 '', '', '', '',
 'Referens'),
-('Java How to Program - Early Objects', 'bok', 'It,Java,Programmering,Kurslitteratur', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts.',
+('Java How to Program - Early Objects', 'Kurslitteratur', 'It,Java,Programmering,Kurslitteratur', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts.',
 'Pearson', '11', 'Paul Deitel,Harvey Deitel', '9781292223858',
 '', '', '', '',
 'Ledig'),
-('Java How to Program - Early Objects', 'bok', 'It,Java,Programmering,Kurslitteratur', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts.',
+('Java How to Program - Early Objects', 'Kurslitteratur', 'It,Java,Programmering,Kurslitteratur', 'D0019N, D0024E, Unparalleled breadth and depth of object-oriented programming concepts.',
 'Pearson', '11', 'Paul Deitel,Harvey Deitel', '9781292223858',
 '', '', '', '',
 'Ledig'),
-('Praktisk Mjukvarutestning', 'bok', 'IT,Test,Mjukvarutest,Kurslitteratur', 'I0015N, I Praktisk mjukvarutestning behandlas ämnen som sammanhangets påverkan på test, testledning, att genomföra tester, testmiljöer, testdata, automatiserade tester.',
+('Praktisk Mjukvarutestning', 'Kurslitteratur', 'IT,Test,Mjukvarutest,Kurslitteratur', 'I0015N, I Praktisk mjukvarutestning behandlas ämnen som sammanhangets påverkan på test, testledning, att genomföra tester, testmiljöer, testdata, automatiserade tester.',
 'Studentlitteratur', '1', 'Eva Holmquist', '9789144117775',
 '', '', '', '',
 'Referens'),
-('Praktisk Mjukvarutestning', 'bok', 'IT,Test,Mjukvarutest,Kurslitteratur', 'I0015N, I Praktisk mjukvarutestning behandlas ämnen som sammanhangets påverkan på test, testledning, att genomföra tester, testmiljöer, testdata, automatiserade tester.',
+('Praktisk Mjukvarutestning', 'Kurslitteratur', 'IT,Test,Mjukvarutest,Kurslitteratur', 'I0015N, I Praktisk mjukvarutestning behandlas ämnen som sammanhangets påverkan på test, testledning, att genomföra tester, testmiljöer, testdata, automatiserade tester.',
 'Studentlitteratur', '1', 'Eva Holmquist', '9789144117775',
 '', '', '', '',
 'Ledig'),
-('Object-oriented system analysis and design', 'bok', 'IT,OOP,OOAD,Objekt Orienterad Analys och Design,UML,Kurslitteratur', 'D0006N, The book provides a clear, practical framework for development that uses all the major techniques from UML 2.2.',
+('Object-oriented system analysis and design', 'Kurslitteratur', 'IT,OOP,OOAD,Objekt Orienterad Analys och Design,UML,Kurslitteratur', 'D0006N, The book provides a clear, practical framework for development that uses all the major techniques from UML 2.2.',
 'McGraw Hill', '4', 'Simon Bennett,Steve McRobb,Ray Farmer', '9780077125363',
 '', '', '', '',
 'Referens'),
-('Object-oriented system analysis and design', 'bok', 'IT,OOP,OOAD,Objekt Orienterad Analys och Design,UML,Kurslitteratur', 'D0006N, The book provides a clear, practical framework for development that uses all the major techniques from UML 2.2.',
+('Object-oriented system analysis and design', 'Kurslitteratur', 'IT,OOP,OOAD,Objekt Orienterad Analys och Design,UML,Kurslitteratur', 'D0006N, The book provides a clear, practical framework for development that uses all the major techniques from UML 2.2.',
 'McGraw Hill', '4', 'Simon Bennett,Steve McRobb,Ray Farmer', '9780077125363',
 '', '', '', '',
 'Ledig'),
@@ -118,11 +153,11 @@ VALUES
 'Akademiförlaget', '2', 'Lasse Carlsson, Hans Nordström', '9124165336',
 '', '', '', '',
 'Ledig'),
-('Interaktionsdesign Bortom människa-dator-interaktion', 'bok', 'IT,UX,MDI,HMI,Agil', 'Översättare: Lena Svensson, Maria Drangel, Interaktionsdesign: bortom människa-dator-interaktion ger ett tvärvetenskapligt, praktiskt och processorienterat synsätt på människa-dator-interaktion.',
+('Interaktionsdesign Bortom människa-dator-interaktion', 'Kurslitteratur', 'IT,UX,MDI,HMI,Agil', 'Översättare: Lena Svensson, Maria Drangel, Interaktionsdesign: bortom människa-dator-interaktion ger ett tvärvetenskapligt, praktiskt och processorienterat synsätt på människa-dator-interaktion.',
 'Studentlitteratur', '1', 'Jennifer Preece, Yvonne Rogers, Helen Sharp', '9789144092072',
 '', '', '', '',
 'Referens'),
-('Interaktionsdesign Bortom människa-dator-interaktion', 'bok', 'IT,UX,MDI,HMI,Agil', 'Översättare: Lena Svensson, Maria Drangel, Interaktionsdesign: bortom människa-dator-interaktion ger ett tvärvetenskapligt, praktiskt och processorienterat synsätt på människa-dator-interaktion.',
+('Interaktionsdesign Bortom människa-dator-interaktion', 'Kurslitteratur', 'IT,UX,MDI,HMI,Agil', 'Översättare: Lena Svensson, Maria Drangel, Interaktionsdesign: bortom människa-dator-interaktion ger ett tvärvetenskapligt, praktiskt och processorienterat synsätt på människa-dator-interaktion.',
 'Studentlitteratur', '1', 'Jennifer Preece, Yvonne Rogers, Helen Sharp', '9789144092072',
 '', '', '', '',
 'Ledig'),
@@ -146,7 +181,7 @@ VALUES
 "O'Reilly Media", '4', 'Elliotte Rusty Harold', '9781449357672',
 '', '', '', '',
 'Ledig'),
--- filmer
+-- films
 ('The Running Man', 'film', 'Action,Science Fiction,Thriller', 'In the year 2019 an innocent man accused of a crime has a choice - Hard Time or Prime Time. Tim Zinneman,George Linder.',
 '', '', '', '',
 'Paul Michael Glaser', 'Arnold Schwarzenegger,Maria Conchita Alonso, Richard Dawson', 'USA', '18',
@@ -183,7 +218,7 @@ VALUES
 '', '', '', '',
 'John McTiernan,Stephen Hopkins,Nimród Antal', 'Arnold Schwarzenegger,Carl Weathers,Shane Black,Jesse Ventura,Danny Glover,Gary Busey,Maria Conchita Alonso,Bill Paxton,Rubén Blades,Adrien Brody,Topher Grace,Alice Braga,Lawrence Fishburne,Walton Goggins', 'USA', '18',
 'Ledig'),
--- journaler
+-- journals
 ('Chef', 'journal', 'Organisation,Ledarskap,Fackförbund', 'Chef är en månatligt utkommande tidskrift om ledarskap. Chef utges av Ledarna genom det av Ledarna ägda Chefakademin AB. En del av Chefs upplaga distribueras som medlemstidning till Ledarnas medlemmar.',
 'Ledarna', '04/2022', '', '',
 '', '', 'Sverige', '',
@@ -201,66 +236,5 @@ VALUES
 '', '', 'Sverige', '',
 'Referens');
 
--- loan and reservation tables
+-- loans
 
-CREATE TABLE `javafxtest`.`loan` (
-  `loanid` INT NOT NULL,
-  `mediaid` INT NOT NULL,
-  `userid` INT NOT NULL,
-  `loandate` DATE NOT NULL,
-  `returndate` DATE NULL COMMENT 'can be null, is set when loanobject is returned through interface',
-  PRIMARY KEY (`loanid`),
-  INDEX `mediaid_idx` (`mediaid` ASC) VISIBLE,
-  INDEX `userid_idx` (`userid` ASC) VISIBLE,
-  CONSTRAINT `mediaLoanID`
-    FOREIGN KEY (`mediaid`)
-    REFERENCES `javafxtest`.`media` (`mediaid`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `userLoanID`
-    FOREIGN KEY (`userid`)
-    REFERENCES `javafxtest`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-COMMENT = 'table for storing loans';
-
-CREATE TABLE `javafxtest`.`reservation` (
-  `reservationid` INT NOT NULL,
-  `mediaid` INT NOT NULL,
-  `userid` INT NOT NULL,
-  `queuenumber` INT NOT NULL COMMENT 'place in reservation queue',
-  `reservationdate` DATE NOT NULL COMMENT 'date of reservation',
-  PRIMARY KEY (`reservationid`),
-  INDEX `mediaid_idx` (`mediaid` ASC) VISIBLE,
-  INDEX `userid_idx` (`userid` ASC) VISIBLE,
-  CONSTRAINT `mediaReservationID`
-    FOREIGN KEY (`mediaid`)
-    REFERENCES `javafxtest`.`media` (`mediaid`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `userReservationID`
-    FOREIGN KEY (`userid`)
-    REFERENCES `javafxtest`.`users` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-COMMENT = 'table for storing media reservations';
-
-UPDATE `javafxtest`.`media`
-SET
-`title` = <{title: }>,
-`format` = <{format: }>,
-`category` = <{category: }>,
-`description` = <{description: }>,
-`publisher` = <{publisher: }>,
-`edition` = <{edition: }>,
-`author` = <{author: }>,
-`isbn` = <{isbn: }>,
-`director` = <{director: }>,
-`actor` = <{actor: }>,
-`country` = <{country: }>,
-`rating` = <{rating: }>,
-`available` = <{available: }>
-WHERE `mediaid` = <{expr}>;
-
-DELETE FROM `javafxtest`.`media`
-WHERE <{where_expression}>;

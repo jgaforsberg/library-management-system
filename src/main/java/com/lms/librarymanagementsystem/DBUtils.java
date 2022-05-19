@@ -4,6 +4,7 @@ import com.lms.librarymanagementsystem.controllers.AccountController;
 import com.lms.librarymanagementsystem.controllers.InventoryController;
 import com.lms.librarymanagementsystem.controllers.LoanController;
 import com.lms.librarymanagementsystem.controllers.LoginController;
+import com.lms.librarymanagementsystem.models.LoanObjectModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -638,9 +639,7 @@ public class DBUtils {
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
                     System.out.println("Lån skapat! ");
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setContentText("Lån skapat. ");
-                    alert.show();
+                    printReceipt(userid);
                 } else if (mediaFormat.equalsIgnoreCase("film")) {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY ) , 0);");
                     psInsert.setInt(1, mediaid);
@@ -648,9 +647,7 @@ public class DBUtils {
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
                     System.out.println("Lån skapat! ");
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setContentText("Lån skapat. ");
-                    alert.show();
+                    printReceipt(userid);
                 }else if(mediaFormat.equalsIgnoreCase("kurslitteratur"))  {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 14 DAY ) , 0);");
                     psInsert.setInt(1, mediaid);
@@ -659,9 +656,7 @@ public class DBUtils {
                     setUnavailable(mediaid);
 
                     System.out.println("Lån skapat! ");
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setContentText("Lån skapat. ");
-                    alert.show();
+                    printReceipt(userid);
                 }else   {
                     System.out.println("Lån kunde ej skapas, mediaformat ej tillgängligt för utlåning! ");
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -681,6 +676,42 @@ public class DBUtils {
             }finally {
                 closeDBLink(connection, psInsert, null, null, resultSet);
             }
+        }
+    }
+//  Prints the receipt of the user's latest loan to an Alert
+    private static void printReceipt(Integer userid)    {
+        LoanObjectModel loanObjectModel;
+        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
+        Connection connection = null;
+        PreparedStatement psFetchLoan = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psFetchLoan = connection.prepareStatement("SELECT media.mediaid, media.title, loan.loanid, loan.loandate, loan.returndate FROM media " +
+                                                          "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = CURDATE() " +
+                                                          "ORDER BY loan.userid DESC LIMIT 1;");
+            psFetchLoan.setInt(1, userid);
+            resultSet = psFetchLoan.executeQuery();
+            while (resultSet.next())    {
+                Integer mediaid = resultSet.getInt("mediaid");
+                String mediatitle = resultSet.getString("title");
+                Integer loanid = resultSet.getInt("loanid");
+                Date loandate = resultSet.getDate("loandate");
+                Date returndate = resultSet.getDate("returndate");
+                loanObjectModel = new LoanObjectModel(mediaid,mediatitle,loandate,returndate);
+                receipt.setContentText( "MediaID:\t" +loanObjectModel.getMediaid() +
+                                        "\nTitel:\t" + loanObjectModel.getTitle() +
+                                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
+                                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
+                receipt.setTitle("Lånekvitto för lån nummer: "+loanid+" "+loandate);
+                receipt.setHeaderText("Du har lånat: ");
+                receipt.show();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psFetchLoan, null, null, resultSet);
         }
     }
     //  Extends an active loan with a chosen interval

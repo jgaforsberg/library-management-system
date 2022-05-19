@@ -12,13 +12,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.TilePane;
-import javafx.stage.Popup;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.sql.*;
@@ -58,26 +53,9 @@ public class LoanController implements Initializable {
     private ObservableList<LoanModel> loanModelObservableList = FXCollections.observableArrayList();
     private ObservableList<ReservationModel> reservationModelObservableList = FXCollections.observableArrayList();
 
-    private ObservableList<LoanObjectModel> receiptList = FXCollections.observableArrayList();
-    private ListView<LoanObjectModel> receiptListView;
-
-    private Popup receiptPopup = new Popup();
-    private Stage receiptStage = new Stage();
-    private Button receiptButton = new Button("button");
-    private TilePane tilePane = new TilePane();
-    private Label receiptLabel = new Label("Det här är dina lån: ");
-    private Scene receiptScene = new Scene(tilePane, 200, 200);
-
-
     private UserModel activeUser;
     private MediaModel mediaModel;
-//  TODO What to do with these models?
-    private LoanModel activeLoan;
-    private ReservationModel activeReservation;
-    /*
- TODO receipt print with information about: TITLE, MEDIAID, LOANDATE, RETURNDATE
- TODO Send reminder email to users to return overdue loans
-     */
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         search();
@@ -86,23 +64,12 @@ public class LoanController implements Initializable {
             public void handle(ActionEvent event) {
                 extractArticle();
                 if(loanModelObservableList != null) {
-
-
-                 /*   receiptList.add(new LoanObjectModel(loanid,
-                                                        mediaid,
-                                                        loandate,
-                                                        returndate,
-                                                        returned
-                                                        ));
-
-                    receiptPopup.getContent().add((Node) receiptList);
-                 */
                     DBUtils.addLoan(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshLoan();
                     loan();
                     refreshSearch();
                     search();
-                }
+                }else System.out.println("Lån ej laddade! ");
             }
         });
         reserveButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -115,71 +82,15 @@ public class LoanController implements Initializable {
                     reservation();
                     refreshSearch();
                     search();
-               }else System.out.println("Reservationer ej laddade.");
+               }else System.out.println("Reservationer ej laddade!");
             }
         });
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //printReceipt();
-                alertReceipt(activeUser.getUserid(), DBUtils.date(0));
-
                 DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
-    }
-    private void alertReceipt(Integer userid, Date currentDate)  {
-        LoanObjectModel loanObjectModel;
-        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
-        Connection connection = null;
-        PreparedStatement psFetchLoan = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DBUtils.getDBLink();
-            psFetchLoan = connection.prepareStatement(  "SELECT media.mediaid, media.title, loan.loandate, loan.returndate FROM media " +
-                    "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = CURDATE() ORDER BY loan.userid DESC LIMIT 1;");
-            psFetchLoan.setInt(1, userid);
-            resultSet = psFetchLoan.executeQuery();
-            while(resultSet.next()) {
-                Integer mediaid = resultSet.getInt("mediaid");
-                String mediatitle = resultSet.getString("title");
-                Date loandate = resultSet.getDate("loandate");
-                Date returndate = resultSet.getDate("returndate");
-                receiptList.add(loanObjectModel = new LoanObjectModel(mediaid,
-                        mediatitle,
-                        loandate,
-                        returndate
-                ));
-                // receiptListView.setItems(receiptList);
-
-                receipt.setContentText( "Lån: \n"+
-                        "\nMediaID:\t" +loanObjectModel.getMediaid() +
-                        "\nTitel:\t" + loanObjectModel.getTitle() +
-                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
-                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
-            }
-            /*
-
-             */
-            receipt.setTitle("Lånekvitto för: "+activeUser.getUsername()+" "+currentDate);
-            receipt.setHeaderText("Du har lånat: ");
-            receipt.show();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-    private void popupReceipt() {
-        receiptStage.setTitle("Lånekvitto ");
-        receiptLabel.setStyle(" -fx-background-color: #f0f0f0; -fx-text-color: red");
-        receiptPopup.getContent().add(receiptLabel);
-        receiptLabel.setMinWidth(80);
-        receiptLabel.setMinHeight(50);
-        receiptLabel.setLayoutX(0);
-        receiptLabel.setLayoutY(25);
-        tilePane.getChildren().add(receiptLabel);
-        receiptStage.setScene(receiptScene);
-        receiptStage.show();
     }
     private void extractArticle() {
         mediaModel = searchTableView.getSelectionModel().getSelectedItem();
@@ -393,11 +304,5 @@ public class LoanController implements Initializable {
         } finally {
             DBUtils.closeDBLink(connection, psFetchLoans, null, null, resultSet);
         }
-    }
-    private void receipt()  {
-        String title = "", mediaid = "", loandate = "", returndate = "";
-
-        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
-        receipt.setContentText( activeUser.getUsername()+"\nDu har lånat: \t"+mediaModel.titleProperty());
     }
 }
