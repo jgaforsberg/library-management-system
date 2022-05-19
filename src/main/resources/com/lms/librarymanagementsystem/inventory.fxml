@@ -68,7 +68,7 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Button fx:id="overdueButton" layoutX="511.0" layoutY="402.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Se överskridna lån" textFill="#011b3e">
+            <Button fx:id="overdueButton" layoutX="510.0" layoutY="402.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Se överskridna lån" textFill="#011b3e">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>

@@ -882,10 +882,8 @@ public class DBUtils {
         alert.setContentText("Din reservation av: "+mediaTitle+" är avslutad. ");
         alert.show();
     }
-    /*
-        TODO Implement reminder function for overdue loans
-     */
-    private void checkOverdue() {
+//  Checks if there are any overdue loans
+    public static Boolean checkOverdue() {
         Connection connection = null;
         PreparedStatement psCheckOverdue = null;
         ResultSet resultSet = null;
@@ -893,19 +891,8 @@ public class DBUtils {
             connection = getDBLink();
             psCheckOverdue = connection.prepareStatement("SELECT * FROM loan WHERE returndate <= CURDATE();");
             resultSet = psCheckOverdue.executeQuery();
-            if(!resultSet.isBeforeFirst()) {
-                while(resultSet.next()) {
-                    Integer userid = resultSet.getInt("userid");
-                    psCheckOverdue = connection.prepareStatement("SELECT email FROM users WHERE id = ?;");
-                    psCheckOverdue.setInt(1, userid);
-                    while (resultSet.next()) {
-                        String queryEmail = resultSet.getString("email");
-                    /*
-                        TODO Send reminder emails to overdue users
-                        TODO sendReminder();
-                     */
-                    }
-                }
+            if(resultSet.isBeforeFirst()) {
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -913,6 +900,28 @@ public class DBUtils {
         }finally {
             closeDBLink(connection, psCheckOverdue, null, null, resultSet);
         }
+        return false;
+    }
+//  Fetches the email of a user with overdue loans
+    public static String getOverdueUser()  {
+        String overdueUser = "";
+        Connection connection = null;
+        PreparedStatement psFetchUser = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psFetchUser = connection.prepareStatement("SELECT users.email FROM loan JOIN users ON users.id = loan.userid WHERE returndate <= CURDATE();");
+            resultSet = psFetchUser.executeQuery();
+            while (resultSet.next()) {
+                    overdueUser = resultSet.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psFetchUser, null, null, resultSet);
+        }
+        return overdueUser;
     }
     //  Add new media to database
     public static void addMedia(String title, String format, String category, String description,

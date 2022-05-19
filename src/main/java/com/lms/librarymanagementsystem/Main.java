@@ -9,8 +9,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 //  #011B3E blue
 //  #F0F0F0 light gray
-// TODO ??? delegate classes to packages depending on their purpose ???
-// TODO ??? How to delegate DBUtils and Constants to utils package ??? not necessary but nice
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -19,6 +17,12 @@ public class Main extends Application {
         stage.setTitle("D0024E Bibliotekssystem - Välkommen! ");
         stage.setScene(scene);
         stage.show();
+        try {
+            MailUtils.sendMail();
+        }catch (Exception e)    {
+            e.printStackTrace();
+            e.getCause();
+        }
         stage.setOnCloseRequest(e -> Platform.exit());
     }
     public static void main(String[] args) {

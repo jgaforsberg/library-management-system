@@ -3,8 +3,10 @@ package com.lms.librarymanagementsystem.controllers;
 //  #F0F0F0 light gray
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.MailUtils;
 import com.lms.librarymanagementsystem.models.LoanModel;
 import com.lms.librarymanagementsystem.models.MediaModel;
+import com.lms.librarymanagementsystem.models.UserModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -57,12 +59,12 @@ public class InventoryController implements Initializable {
     @FXML
     private Label nameLabel;
 
-    private final ObservableList<String> format = FXCollections.observableArrayList("Bok", "Film", "Journal");
-    private final ObservableList<String> available = FXCollections.observableArrayList("Referens", "Ledig");
+    private final ObservableList<String> format = FXCollections.observableArrayList("Bok", "Kurslitteratur", "Film", "Journal");
+    private final ObservableList<String> available = FXCollections.observableArrayList("Referens", "Ledig", "Utlånad", "Kasserad");
     private final ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
     private ObservableList<LoanModel> loanModelObservableList = FXCollections.observableArrayList();
 
-
+    private LoanModel overdueLoan;
     private Integer userid;
 
     @Override
