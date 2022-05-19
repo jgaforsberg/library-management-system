@@ -891,7 +891,7 @@ public class DBUtils {
         ResultSet resultSet = null;
         try {
             connection = getDBLink();
-            psCheckOverdue = connection.prepareStatement("SELECT * FROM loan WHERE returndate <= CURDATE() + INTERVAL 1 DAY;");
+            psCheckOverdue = connection.prepareStatement("SELECT * FROM loan WHERE returndate <= CURDATE();");
             resultSet = psCheckOverdue.executeQuery();
             if(!resultSet.isBeforeFirst()) {
                 while(resultSet.next()) {

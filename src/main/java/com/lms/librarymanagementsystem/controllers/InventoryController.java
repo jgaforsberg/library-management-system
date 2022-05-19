@@ -3,6 +3,7 @@ package com.lms.librarymanagementsystem.controllers;
 //  #F0F0F0 light gray
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.models.LoanModel;
 import com.lms.librarymanagementsystem.models.MediaModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,10 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ResourceBundle;
 
 // INSERT statement
@@ -36,9 +34,15 @@ public class InventoryController implements Initializable {
     @FXML
     private ChoiceBox<String> formatChoiceBox, availableChoiceBox;
     @FXML
-    private Button  addMediaButton, updateMediaButton, removeMediaButton, finishButton;
+    private Button  addMediaButton, updateMediaButton, removeMediaButton, finishButton, overdueButton;
     @FXML
     private Label   messageLabel;
+    @FXML
+    private TableView<LoanModel> loanTableView;
+    @FXML
+    private TableColumn<LoanModel, Integer> loanLoanIdColumn, loanMediaIdColumn, loanUserIdColumn, loanReturnedColumn;
+    @FXML
+    private TableColumn<LoanModel, Date> loanLoanDateColumn, loanReturnDateColumn;
     @FXML
     private TableView<MediaModel> searchTableView;
     @FXML
@@ -56,6 +60,8 @@ public class InventoryController implements Initializable {
     private final ObservableList<String> format = FXCollections.observableArrayList("Bok", "Film", "Journal");
     private final ObservableList<String> available = FXCollections.observableArrayList("Referens", "Ledig");
     private final ObservableList<MediaModel> mediaModelObservableList = FXCollections.observableArrayList();
+    private ObservableList<LoanModel> loanModelObservableList = FXCollections.observableArrayList();
+
 
     private Integer userid;
 
@@ -97,6 +103,13 @@ public class InventoryController implements Initializable {
                 search();
             }
         });
+        overdueButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                refreshLoan();
+                loan();
+            }
+        });
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -105,6 +118,9 @@ public class InventoryController implements Initializable {
         });
     }
     private void refreshSearch() {mediaModelObservableList.clear();}
+    private void refreshLoan() {
+        loanModelObservableList.clear();
+    }
     private void setActionInformation(String actionInformation){ messageLabel.setText(actionInformation);}
     private void search()  {
         Connection connection = null;
@@ -204,6 +220,43 @@ public class InventoryController implements Initializable {
             e.printStackTrace();
         }finally    {
             DBUtils.closeDBLink(connection, psFetchArticles, null, null, resultSet);
+        }
+    }
+    private void loan() {
+        Connection connection = null;
+        PreparedStatement psFetchLoans = null;
+        ResultSet resultSet = null;
+        try {
+            connection = DBUtils.getDBLink();
+            psFetchLoans = connection.prepareStatement("SELECT * FROM loan WHERE returndate <= CURDATE();");
+            resultSet = psFetchLoans.executeQuery();
+            while (resultSet.next()) {
+                Integer loanid = resultSet.getInt("loanid");
+                Integer mediaid = resultSet.getInt("mediaid");
+                Integer userid = resultSet.getInt("userid");
+                Date loandate = resultSet.getDate("loandate");
+                Date returndate = resultSet.getDate("returndate");
+                Integer returned = resultSet.getInt("returned");
+                loanModelObservableList.add(new LoanModel(  loanid,
+                        mediaid,
+                        userid,
+                        loandate,
+                        returndate,
+                        returned
+                ));
+                loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
+                loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
+                loanUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
+                loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
+                loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
+                loanReturnedColumn.setCellValueFactory((new PropertyValueFactory<>("returned")));
+                loanTableView.setItems((loanModelObservableList));
+            }
+        } catch (SQLException el) {
+            el.printStackTrace();
+            el.getCause();
+        } finally {
+            DBUtils.closeDBLink(connection, psFetchLoans, null, null, resultSet);
         }
     }
     public void setUserInformation(String username) {

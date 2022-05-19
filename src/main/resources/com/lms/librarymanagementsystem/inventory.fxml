@@ -21,7 +21,7 @@
                   <Font name="System Bold" size="21.0" />
                </font>
             </Label>
-            <TableView fx:id="searchTableView" layoutX="25.0" layoutY="86.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">
+            <TableView fx:id="searchTableView" layoutX="25.0" layoutY="86.0" prefHeight="230.0" prefWidth="1450.0" style="-fx-cursor: hand;">
                <columns>
                   <TableColumn fx:id="mediaIdColumn" maxWidth="35.0" minWidth="25.0" prefWidth="25.0" text="ID" />
                   <TableColumn fx:id="titleColumn" maxWidth="1400.0" minWidth="100.0" prefWidth="100.0" text="Titel" />
@@ -53,6 +53,26 @@
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
+            <TableView fx:id="loanTableView" layoutX="25.0" layoutY="338.0" prefHeight="162.0" prefWidth="480.0" style="-fx-cursor: hand;">
+               <columns>
+                  <TableColumn fx:id="loanLoanIdColumn" maxWidth="80.0" minWidth="80.0" text="Lån ID" />
+                  <TableColumn fx:id="loanMediaIdColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
+                  <TableColumn fx:id="loanUserIdColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
+                  <TableColumn fx:id="loanLoanDateColumn" maxWidth="83.0" minWidth="80.0" prefWidth="83.0" text="Låndatum" />
+                  <TableColumn fx:id="loanReturnDateColumn" maxWidth="80.0" minWidth="77.0" prefWidth="77.0" text="Returdatum" />
+                  <TableColumn fx:id="loanReturnedColumn" prefWidth="75.0" text="Återlämnad" />
+               </columns>
+            </TableView>
+            <Label layoutX="24.0" layoutY="316.0" text="Överskridna lån :" textFill="#f0f0f0">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="overdueButton" layoutX="511.0" layoutY="402.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0;" text="Se överskridna lån" textFill="#011b3e">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
          </children>
       </AnchorPane>
       <AnchorPane prefHeight="300.0" prefWidth="1500.0" style="-fx-background-color: #011b3e;">
@@ -144,7 +164,7 @@
                   <Font name="System Bold" size="16.0" />
                </font>
             </Button>
-            <Label fx:id="messageLabel" alignment="CENTER" layoutY="11.0" prefHeight="25.0" prefWidth="1500.0" textFill="#f0f0f0">
+            <Label fx:id="messageLabel" alignment="CENTER" layoutX="1033.0" layoutY="180.0" prefHeight="25.0" prefWidth="300.0" textFill="#f0f0f0">
                <font>
                   <Font size="14.0" />
                </font>

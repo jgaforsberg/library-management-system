@@ -154,10 +154,10 @@ public class LoanController implements Initializable {
                 // receiptListView.setItems(receiptList);
 
                 receipt.setContentText( "Lån: \n"+
-                        "\nMediaID: " +loanObjectModel.getMediaid() +
-                        "\nTitel" + loanObjectModel.getTitle() +
-                        "\nLåndatum" + loanObjectModel.getLoandate() +
-                        "\nReturdatum" + loanObjectModel.getReturndate());
+                        "\nMediaID:\t" +loanObjectModel.getMediaid() +
+                        "\nTitel:\t" + loanObjectModel.getTitle() +
+                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
+                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
             }
             /*
 
