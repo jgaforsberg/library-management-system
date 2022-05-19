@@ -137,9 +137,8 @@ public class LoanController implements Initializable {
         try {
             connection = DBUtils.getDBLink();
             psFetchLoan = connection.prepareStatement(  "SELECT media.mediaid, media.title, loan.loandate, loan.returndate FROM media " +
-                    "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = ?;");
+                    "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = CURDATE() ORDER BY loan.userid DESC LIMIT 1;");
             psFetchLoan.setInt(1, userid);
-            psFetchLoan.setDate(2, currentDate);
             resultSet = psFetchLoan.executeQuery();
             while(resultSet.next()) {
                 Integer mediaid = resultSet.getInt("mediaid");

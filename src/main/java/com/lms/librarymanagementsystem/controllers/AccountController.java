@@ -25,11 +25,11 @@ public class AccountController implements Initializable {
     @FXML
     private TableView<LoanObjectModel> loanTableView;
     @FXML
-    private TableColumn<String, Integer> loanMediaIdColumn, loanLoanIdColumn;
+    private TableColumn<String, Integer> loanMediaIdColumn;
     @FXML
     private TableColumn<String, String> loanTitleColumn;
     @FXML
-    private TableColumn<Date, Date> loanReturndateColumn;
+    private TableColumn<Date, Date> loanLoanDateColumn, loanReturndateColumn;
     @FXML
     private TableColumn<String, Integer> resMediaIdColumn, resResidColumn, resQueueColumn;
     @FXML
@@ -46,6 +46,7 @@ public class AccountController implements Initializable {
     private UserModel activeUser;
     private LoanObjectModel loanObject;
     private ReservationObjectModel reservationObject;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
        returnLoanButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -145,28 +146,28 @@ public class AccountController implements Initializable {
         ResultSet resultSet = null;
         try {
             connection = DBUtils.getDBLink();
-            psFetchLoans = connection.prepareStatement("SELECT loan.loanid, loan.returndate FROM loan where userid = ?;");
+            psFetchLoans = connection.prepareStatement("SELECT loan.loandate, loan.loandate FROM loan where userid = ?;");
             psFetchLoans.setInt(1, activeUser.getUserid());
             resultSet = psFetchLoans.executeQuery();
             while (resultSet.next())    {
-                Integer loanid = resultSet.getInt("loanid");
-                psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loanid, loan.returndate FROM media " +
+          //      Integer loanid = resultSet.getInt("loanid");
+                psFetchLoans = connection.prepareStatement( "SELECT media.mediaid, media.title, loan.loandate, loan.returndate FROM media " +
                                                                 "JOIN loan ON media.mediaid = loan.mediaid WHERE loan.userid = ?;");
                 psFetchLoans.setInt(1, activeUser.getUserid());
                 resultSet = psFetchLoans.executeQuery();
                 while (resultSet.next())    {
                     Integer queryMediaid = resultSet.getInt("mediaid");
                     String queryTitle = resultSet.getString("title");
-                    Integer queryLoanid = resultSet.getInt("loanid");
+                    Date queryLoandate = resultSet.getDate("loandate");
                     Date queryReturndate = resultSet.getDate("returndate");
                     loanObservableList.add(new LoanObjectModel( queryMediaid,
                                                                 queryTitle,
-                                                                queryLoanid,
+                                                                queryLoandate,
                                                                 queryReturndate
                                                                 ));
                     loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
                     loanTitleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
-                    loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
+                    loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
                     loanReturndateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
                     loanTableView.setItems(loanObservableList);
                 }

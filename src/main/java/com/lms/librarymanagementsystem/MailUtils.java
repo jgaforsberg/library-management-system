@@ -8,14 +8,13 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class MailUtils {
-
+//  If conditions are true, reminder emails are sent to accounts with overdue loans
     public static void sendMail() {
         System.out.println("Kollar överskridna lån! ");
         Boolean overdue = DBUtils.checkOverdue();
         if(overdue) {
             System.out.println("Förbereder påminnelseutskick! ");
             String recepient = DBUtils.getOverdueUser();
-            System.out.println("Användaremail = "+recepient);
             Properties properties = new Properties();
 
             properties.put("mail.smtp.auth", "true");
@@ -48,7 +47,7 @@ public class MailUtils {
         }
         else System.out.println("Inga överskridna lån finns! ");
     }
-
+//  Formats the message to be sent
     private static Message prepareMessage(Session session, String myAccountEmail, String recepient) {
         Message message = new MimeMessage(session);
         try {

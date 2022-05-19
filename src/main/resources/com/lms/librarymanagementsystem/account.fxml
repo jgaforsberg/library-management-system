@@ -14,7 +14,7 @@
 
 <AnchorPane prefHeight="500.0" prefWidth="850.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.AccountController">
    <children>
-      <Label alignment="CENTER" layoutY="23.0" prefHeight="35.0" prefWidth="750.0" text="Ditt lånekonto" textFill="#f0f0f0">
+      <Label alignment="CENTER" layoutY="23.0" prefHeight="35.0" prefWidth="1000.0" text="Ditt lånekonto" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="21.0" />
          </font>
@@ -24,10 +24,10 @@
             <Image url="@media/ltu_logga.jpg" />
          </image>
       </ImageView>
-      <GridPane layoutX="14.0" layoutY="86.0" prefWidth="275.0">
+      <GridPane layoutX="14.0" layoutY="86.0" prefWidth="395.0">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="193.0" minWidth="10.0" prefWidth="114.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.0" minWidth="10.0" prefWidth="281.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -61,6 +61,11 @@
                </font>
             </Label>
             <Label prefWidth="135.0" text="Kontotyp :" textFill="#f0f0f0" GridPane.rowIndex="4">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label prefWidth="135.0" text="Email :" textFill="#f0f0f0" GridPane.rowIndex="5">
                <font>
                   <Font size="14.0" />
                </font>
@@ -100,6 +105,11 @@
                   <Font size="14.0" />
                </font>
             </Label>
+            <Label fx:id="emailLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
             <Label fx:id="maxLoanLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                <font>
                   <Font size="14.0" />
@@ -110,34 +120,24 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Label prefWidth="135.0" text="Email :" textFill="#f0f0f0" GridPane.rowIndex="5">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
-            <Label fx:id="emailLabel" prefWidth="135.0" text="Label" textFill="#f0f0f0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Label>
          </children>
       </GridPane>
-      <Label layoutX="300.0" layoutY="67.0" prefWidth="200.0" text="Dina lån :" textFill="#f0f0f0">
+      <Label layoutX="415.0" layoutY="67.0" prefWidth="200.0" text="Dina lån :" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Button fx:id="returnLoanButton" layoutX="300.0" layoutY="325.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="250.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Returnera" textFill="#011b3e">
+      <Button fx:id="returnLoanButton" layoutX="453.0" layoutY="325.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Returnera" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <Label layoutX="570.0" layoutY="67.0" prefWidth="200.0" text="Dina reservationer :" textFill="#f0f0f0">
+      <Label layoutX="730.0" layoutY="67.0" prefWidth="200.0" text="Dina reservationer :" textFill="#f0f0f0">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Button fx:id="endReservationButton" layoutX="570.0" layoutY="325.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="250.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Säg upp" textFill="#011b3e">
+      <Button fx:id="endReservationButton" layoutX="743.0" layoutY="325.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Säg upp" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
@@ -152,20 +152,20 @@
             <Font size="14.0" />
          </font>
       </Label>
-      <Button fx:id="returnButton" layoutX="570.0" layoutY="450.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="250.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
+      <Button fx:id="returnButton" layoutX="743.0" layoutY="450.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="225.0" style="-fx-background-color: #f0f0f0; -fx-cursor: hand;" text="Tillbaka" textFill="#011b3e">
          <font>
             <Font name="System Bold" size="16.0" />
          </font>
       </Button>
-      <TableView fx:id="loanTableView" layoutX="300.0" layoutY="85.0" prefHeight="200.0" prefWidth="250.0">
+      <TableView fx:id="loanTableView" layoutX="415.0" layoutY="85.0" prefHeight="200.0" prefWidth="300.0">
         <columns>
           <TableColumn fx:id="loanMediaIdColumn" maxWidth="56.0" minWidth="20.0" prefWidth="56.0" text="Media ID" />
-          <TableColumn fx:id="loanTitleColumn" maxWidth="150.0" minWidth="20.0" prefWidth="75.0" text="Titel" />
-            <TableColumn fx:id="loanLoanIdColumn" maxWidth="50.0" minWidth="20.0" prefWidth="44.0" text="Lån ID" />
-            <TableColumn fx:id="loanReturndateColumn" maxWidth="100.0" minWidth="20.0" prefWidth="75.0" text="Returdatum" />
+          <TableColumn fx:id="loanTitleColumn" maxWidth="150.0" minWidth="20.0" prefWidth="90.0" text="Titel" />
+            <TableColumn fx:id="loanLoanDateColumn" maxWidth="83.0" minWidth="20.0" prefWidth="72.0" text="Låndatum" />
+            <TableColumn fx:id="loanReturndateColumn" maxWidth="100.0" minWidth="20.0" prefWidth="82.0" text="Returdatum" />
         </columns>
       </TableView>
-      <TableView fx:id="reservationTableView" layoutX="570.0" layoutY="85.0" prefHeight="200.0" prefWidth="250.0">
+      <TableView fx:id="reservationTableView" layoutX="730.0" layoutY="85.0" prefHeight="200.0" prefWidth="250.0">
          <columns>
             <TableColumn fx:id="resMediaIdColumn" maxWidth="56.0" minWidth="20.0" prefWidth="56.0" text="Media ID" />
             <TableColumn fx:id="resTitleColumn" maxWidth="150.0" minWidth="20.0" prefWidth="100.0" text="Titel" />
