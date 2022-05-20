@@ -19,6 +19,7 @@ import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 
 //  #011B3E blue
 //  #F0F0F0 light gray
@@ -635,26 +636,46 @@ public class DBUtils {
         return queueNumber;
     }
     //  Checks whether the parameter userid matches the userid of the media reservation where queue number = min value for addLoan()
-    private static boolean checkQueue(Integer mediaid, Integer userid) {
-        Integer queryUserid = 0;
+    private static Integer checkQueue(Integer mediaid, Integer userid) {
+        Integer queryUserid = null;
+        Integer reserved = null;
         Connection connection = null;
         PreparedStatement psCheckReservation = null;
         ResultSet resultSet = null;
         try {
             connection = getDBLink();
-            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE queuenumber =(SELECT MIN(queuenumber) FROM reservation) AND mediaid = ?;;");
+            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation " +
+                                                                 "WHERE queuenumber =(SELECT MIN(queuenumber) FROM reservation) AND mediaid = ?;");
             psCheckReservation.setInt(1, mediaid);
             resultSet = psCheckReservation.executeQuery();
-            while (resultSet.next()) {
-                queryUserid = resultSet.getInt("userid");
+                while (resultSet.next()) {
+                    queryUserid = resultSet.getInt("userid");
+                    System.out.println("checkQueue() parameter userid = "+userid);
+                    System.out.println("checkQueue() while loop queryUserid = "+queryUserid);
+
+                }
+            if(Objects.equals(queryUserid, userid))  {
+                System.out.println("if (queryUserid.equals(userid)) = parameter userid "+userid+" equals queryUserid "+queryUserid+" -> return 1");
+                reserved = 1;
             }
+            if(!Objects.equals(queryUserid, userid)) {
+                System.out.println("if (!queryUserid.equals(userid)) = parameter userid " + userid + " does not equal queryUserid " + queryUserid + " -> return 0");
+                reserved = 0;
+            }
+            if(queryUserid == null)    {
+                System.out.println("if (queryUserid.equals(null)) = resultSet is empty equals no reservation -> return -1");
+                reserved = -1;
+            }
+
         }catch (SQLException e) {
             e.printStackTrace();
             e.getCause();
         }finally {
             closeDBLink(connection, psCheckReservation, null, null, resultSet);
         }
-        return queryUserid.equals(userid);
+        System.out.println("userid = "+userid+" queryuserid = "+queryUserid);
+        System.out.println("checkQueue() resultset.isBeforeFirst = reservation does not exist -> return -1");
+        return reserved;
     }
     //  Updates all queue numbers of a certain media article, used when ending reservations
     private static void updateQueuenumber(Integer mediaid) {
@@ -732,7 +753,7 @@ public class DBUtils {
     public static void addLoan(Integer mediaid, Integer userid) {
         Integer maxLoans = maxLoans(userid);
         Integer remainingLoans = remainingLoans(maxLoans, userid);
-        Boolean reserved = checkQueue(mediaid, userid);
+        Integer reserved = checkQueue(mediaid, userid);
         System.out.println("addLoan() reserved = "+reserved);
         if(remainingLoans <= 0) {
             System.out.println("Användaren har inga tillgängliga lånetillfällen! ");
@@ -747,14 +768,14 @@ public class DBUtils {
             alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
             alert.show();
         }
-        if(!reserved)   {
+        if(reserved == 0)   {
             System.out.println("En annan användare står före i reservationskön för denna mediaartikel. ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("En annan användare står före i reservationskön för denna mediaartikel. ");
             alert.show();
         }
         String mediaFormat = checkFormat(mediaid);
-        if(remainingLoans > 0 && mediaAvailable.equalsIgnoreCase("ledig") && reserved)   {
+        if(remainingLoans > 0 && mediaAvailable.equalsIgnoreCase("ledig") && (reserved == 1 || reserved == -1))   {
             Connection connection = null;
             PreparedStatement  psInsert = null;
             ResultSet resultSet = null;
