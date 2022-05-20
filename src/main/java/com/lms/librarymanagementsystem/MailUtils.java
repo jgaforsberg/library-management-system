@@ -10,7 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
-
+@SuppressWarnings("ALL")
 public class MailUtils {
 //  If conditions are true, reminder emails are sent to accounts with overdue loans
     public static void sendMail() {

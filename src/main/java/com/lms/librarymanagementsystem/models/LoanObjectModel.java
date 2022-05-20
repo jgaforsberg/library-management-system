@@ -1,7 +1,7 @@
 package com.lms.librarymanagementsystem.models;
 
 import java.sql.Date;
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 public class LoanObjectModel {
     private String title;
     private Integer mediaid, loanid;

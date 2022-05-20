@@ -12,19 +12,17 @@ import java.io.IOException;
 public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("main.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource(Constants.MAIN));
         Scene scene = new Scene(fxmlLoader.load(), 600, 500);
         stage.setTitle("D0024E Bibliotekssystem - Välkommen! ");
         stage.setScene(scene);
         stage.show();
-     /*
        try {
             MailUtils.sendMail();
         }catch (Exception e)    {
             e.printStackTrace();
             e.getCause();
         }
-      */
         stage.setOnCloseRequest(e -> Platform.exit());
     }
     public static void main(String[] args) {

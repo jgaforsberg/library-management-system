@@ -3,7 +3,7 @@ package com.lms.librarymanagementsystem.models;
 import javafx.beans.property.SimpleStringProperty;
 //  #011B3E blue
 //  #F0F0F0 light gray
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 public class MediaModel {
     private Integer mediaid;
     private SimpleStringProperty    title, format, category, description,

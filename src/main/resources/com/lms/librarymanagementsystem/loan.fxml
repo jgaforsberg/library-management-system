@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<!--suppress ALL -->
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoanController">
    <children>
       <TableView fx:id="searchTableView" layoutX="25.0" layoutY="100.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">

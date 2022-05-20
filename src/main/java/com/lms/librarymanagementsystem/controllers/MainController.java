@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 //  #011B3E blue
 //  #F0F0F0 light gray
-@SuppressWarnings({"Convert2Lambda", "Convert2Diamond"})
+@SuppressWarnings("ALL")
 public class MainController implements Initializable {
     @FXML
     private Button loginButton;
@@ -41,7 +41,6 @@ public class MainController implements Initializable {
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            //TODO change scene method name
                 DBUtils.changeSceneLogout(event, Constants.SEARCH, Constants.SEARCH_TITLE);
             }
         });

@@ -1,7 +1,6 @@
 package com.lms.librarymanagementsystem.controllers;
 //  #011B3E blue
 //  #F0F0F0 light gray
-// TODO add functionality for handling loans and reservations
 
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
@@ -18,7 +17,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
-
+@SuppressWarnings("ALL")
 public class AccountController implements Initializable {
     @FXML
     private Label idLabel, usernameLabel, firstnameLabel, lastnameLabel, usertypeLabel, emailLabel, maxLoanLabel, remainingLoanLabel;

@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 //  #011B3E blue
 //  #F0F0F0 light gray
 
-@SuppressWarnings({"Convert2Lambda", "Convert2Diamond"})
+@SuppressWarnings("ALL")
 public class LoginController implements Initializable {
     @FXML @SuppressWarnings("unused")
     private Button logoutButton, searchButton, inventoryButton, accountButton;
@@ -27,39 +27,33 @@ public class LoginController implements Initializable {
         searchButton.setOnAction(new EventHandler<ActionEvent>()    {
             @Override
             public void handle(ActionEvent event) {
-                //information();
                 DBUtils.changeSceneLoan(event, Constants.LOAN, Constants.LOAN_TITLE, nameLabel.getText());
             }
         });
         accountButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //information();
                 DBUtils.changeSceneAccount(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
             }
         });
         inventoryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //information();
                 DBUtils.validateUser(event, nameLabel.getText());
             }
         });
         logoutButton.setOnAction(new EventHandler<ActionEvent>()    {
-            //          changes scenes through DBUtils at press of logoutButton
             @Override
             public void handle(ActionEvent event) {
                 DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
-
     }
-//  display of username on welcome screen
+//  Display of username on welcome screen
     public void setUserInformation(String username)    {
         nameLabel.setText(username);
     }
 //  DUMMY METHOD FOR NOT YET IMPLEMENTED SCENES
-    @SuppressWarnings("unused")
     public void information()   {
         System.out.println("Ej implementerad funktion! ");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

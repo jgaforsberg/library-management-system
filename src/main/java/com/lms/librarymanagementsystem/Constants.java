@@ -1,9 +1,9 @@
 package com.lms.librarymanagementsystem;
-
+@SuppressWarnings("ALL")
 public class Constants {
 
     /*
-    Constant variables for parsing fxml views between controllers
+    Constant variables for passing fxml views between controllers
     and for accessing database
      */
 
@@ -17,7 +17,7 @@ public class Constants {
     public static final String INVENTORY = "inventory.fxml";
     public static final String sample = ".fxml";
 //  DB login credentials
-    public final static String URL = "jdbc:mysql://localhost:3306/javafxtest";
+    public final static String URL = "jdbc:mysql://localhost:3306/d0024e";
     public final static String USER = "root";
     public final static String PWD = "1234";
 //  Scene titles

@@ -28,17 +28,15 @@ import java.util.Objects;
     The purpose of using prepared statements is increased protection against sql injection, it's easier to set parameters,
     and to improve application performance due to queries being precompiled. All statements in this program are prepared
 */
+@SuppressWarnings("ALL")
 public class DBUtils {
-    private static final String URL = "jdbc:mysql://localhost:3306/javafxtest";
-    private static final String USER = "root";
-    private static final String PWD = "1234";
     //  Static connection called through getDBLink() to establish DB connection
     public static Connection DBLink;
     // Returns the database link for all database connections
     public static Connection getDBLink() throws SQLException {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            DBLink = DriverManager.getConnection(URL,USER,PWD);
+            DBLink = DriverManager.getConnection(Constants.URL,Constants.USER,Constants.PWD);
         }catch(ClassNotFoundException e)    {
             e.printStackTrace();
         }
@@ -340,7 +338,6 @@ public class DBUtils {
             closeDBLink(connection, psCheckLogin, null, null, resultSet);
         }
     }
-    // TODO CHECK IF NECESSARY
     public static Date date(int d){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
@@ -623,7 +620,6 @@ public class DBUtils {
             psCheckQueue = connection.prepareStatement("SELECT COUNT(*) AS rowcount FROM reservation WHERE mediaid = ?;");
             psCheckQueue.setInt(1, mediaid);
             resultSet = psCheckQueue.executeQuery();
-  //          System.out.println("getQueuenumber() after executeQuery() queueNumber = "+queueNumber);
             if (resultSet.next())    {
                 queueNumber = resultSet.getInt("rowcount")+1;
             }
@@ -650,20 +646,14 @@ public class DBUtils {
             resultSet = psCheckReservation.executeQuery();
                 while (resultSet.next()) {
                     queryUserid = resultSet.getInt("userid");
-                    System.out.println("checkQueue() parameter userid = "+userid);
-                    System.out.println("checkQueue() while loop queryUserid = "+queryUserid);
-
                 }
             if(Objects.equals(queryUserid, userid))  {
-                System.out.println("if (queryUserid.equals(userid)) = parameter userid "+userid+" equals queryUserid "+queryUserid+" -> return 1");
                 reserved = 1;
             }
             if(!Objects.equals(queryUserid, userid)) {
-                System.out.println("if (!queryUserid.equals(userid)) = parameter userid " + userid + " does not equal queryUserid " + queryUserid + " -> return 0");
                 reserved = 0;
             }
             if(queryUserid == null)    {
-                System.out.println("if (queryUserid.equals(null)) = resultSet is empty equals no reservation -> return -1");
                 reserved = -1;
             }
 
@@ -673,13 +663,10 @@ public class DBUtils {
         }finally {
             closeDBLink(connection, psCheckReservation, null, null, resultSet);
         }
-        System.out.println("userid = "+userid+" queryuserid = "+queryUserid);
-        System.out.println("checkQueue() resultset.isBeforeFirst = reservation does not exist -> return -1");
         return reserved;
     }
     //  Updates all queue numbers of a certain media article, used when ending reservations
     private static void updateQueuenumber(Integer mediaid) {
-        System.out.println("updateQueuenumber() ");
         Integer userid = null;
         Connection connection = null;
         PreparedStatement psUpdate = null;
@@ -731,30 +718,31 @@ public class DBUtils {
     public static void returnReservation(Integer reservationid, Integer mediaid, String mediaTitle) {
         Connection connection = null;
         PreparedStatement psRemove = null;
-        try {
-            connection = getDBLink();
-            psRemove = connection.prepareStatement("DELETE FROM reservation WHERE reservationid = ? AND mediaid = ?;");
-            psRemove.setInt(1, reservationid);
-            psRemove.setInt(2, mediaid);
-            psRemove.executeUpdate();
-            System.out.println("Reservation med reservationid: "+reservationid+" terminerat! ");
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psRemove, null, null, null);
+        if(reservationid != null) {
+            try {
+                connection = getDBLink();
+                psRemove = connection.prepareStatement("DELETE FROM reservation WHERE reservationid = ? AND mediaid = ?;");
+                psRemove.setInt(1, reservationid);
+                psRemove.setInt(2, mediaid);
+                psRemove.executeUpdate();
+                System.out.println("Reservation med reservationid: " + reservationid + " terminerat! ");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                e.getCause();
+            } finally {
+                closeDBLink(connection, psRemove, null, null, null);
+            }
+            updateQueuenumber(mediaid);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText("Din reservation av: "+mediaTitle+" är avslutad. ");
+            alert.show();
         }
-        updateQueuenumber(mediaid);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText("Din reservation av: "+mediaTitle+" är avslutad. ");
-        alert.show();
     }
     //  Add a loan and tie it to the user id and media id
     public static void addLoan(Integer mediaid, Integer userid) {
         Integer maxLoans = maxLoans(userid);
         Integer remainingLoans = remainingLoans(maxLoans, userid);
         Integer reserved = checkQueue(mediaid, userid);
-        System.out.println("addLoan() reserved = "+reserved);
         if(remainingLoans <= 0) {
             System.out.println("Användaren har inga tillgängliga lånetillfällen! ");
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -805,7 +793,7 @@ public class DBUtils {
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
                     System.out.println("Boklån skapat! ");
-                    printReceipt(userid);
+                    printReceipt(userid, mediaid);
                 } else if (mediaFormat.equalsIgnoreCase("film")) {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY ) , 0);");
                     psInsert.setInt(1, mediaid);
@@ -813,7 +801,7 @@ public class DBUtils {
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
                     System.out.println("Filmlån skapat! ");
-                    printReceipt(userid);
+                    printReceipt(userid, mediaid);
                 }else if(mediaFormat.equalsIgnoreCase("kurslitteratur"))  {
                     psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 14 DAY ) , 0);");
                     psInsert.setInt(1, mediaid);
@@ -821,7 +809,7 @@ public class DBUtils {
                     psInsert.executeUpdate();
                     setUnavailable(mediaid);
                     System.out.println("Kurslitteraturlån skapat! ");
-                    printReceipt(userid);
+                    printReceipt(userid, mediaid);
                 }else   {
                     System.out.println("Lån kunde ej skapas, mediaformat ej tillgängligt för utlåning! ");
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -885,7 +873,7 @@ public class DBUtils {
         }
     }
     //  Prints the receipt of the user's latest loan to an Alert
-    private static void printReceipt(Integer userid)    {
+    private static void printReceipt(Integer userid, Integer mediaid)    {
         LoanObjectModel loanObjectModel;
         Alert receipt = new Alert(Alert.AlertType.INFORMATION);
         Connection connection = null;
@@ -894,21 +882,21 @@ public class DBUtils {
         try {
             connection = getDBLink();
             psFetchLoan = connection.prepareStatement("SELECT media.mediaid, media.title, loan.loanid, loan.loandate, loan.returndate FROM media " +
-                    "JOIN loan on media.mediaid = loan.mediaid WHERE userid = ? AND loandate = CURDATE() " +
-                    "ORDER BY loan.userid DESC LIMIT 1;");
+                                                        "JOIN loan on media.mediaid = loan.mediaid WHERE loan.userid = ? AND loan.mediaid = ? AND loandate = CURDATE() " +
+                                                        "ORDER BY loan.userid DESC LIMIT 1;");
             psFetchLoan.setInt(1, userid);
+            psFetchLoan.setInt(2, mediaid);
             resultSet = psFetchLoan.executeQuery();
             while (resultSet.next())    {
-                Integer mediaid = resultSet.getInt("mediaid");
                 String mediatitle = resultSet.getString("title");
                 Integer loanid = resultSet.getInt("loanid");
                 Date loandate = resultSet.getDate("loandate");
                 Date returndate = resultSet.getDate("returndate");
                 loanObjectModel = new LoanObjectModel(mediaid,mediatitle,loandate,returndate);
                 receipt.setContentText( "MediaID:\t" +loanObjectModel.getMediaid() +
-                        "\nTitel:\t" + loanObjectModel.getTitle() +
-                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
-                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
+                                        "\nTitel:\t" + loanObjectModel.getTitle() +
+                                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
+                                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
                 receipt.setTitle("Lånekvitto för lån nummer: "+loanid+" "+loandate);
                 receipt.setHeaderText("Du har lånat: ");
                 receipt.show();
@@ -1051,38 +1039,5 @@ public class DBUtils {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setContentText("Media med mediaid: "+mediaid+" är borttagen ur databasen. ");
         alert.show();
-    }
-    //  TODO delegate search function to DBUtils
-    public static ResultSet initSearch()  {
-        Connection connection = null;
-        PreparedStatement psFetchArticles = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psFetchArticles = connection.prepareStatement("SELECT mediaid, title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available FROM media;");
-            resultSet = psFetchArticles.executeQuery();
-            while (resultSet.next()) {
-                Integer queryMediaId = resultSet.getInt("mediaid");
-                String queryTitle = resultSet.getString("title");
-                String queryFormat = resultSet.getString("format");
-                String queryCategory = resultSet.getString("category");
-                String queryDescription = resultSet.getString("description");
-                String queryPublisher = resultSet.getString("publisher");
-                String queryEdition = resultSet.getString("edition");
-                String queryAuthor = resultSet.getString("author");
-                String queryIsbn = resultSet.getString("isbn");
-                String queryDirector = resultSet.getString("director");
-                String queryActor = resultSet.getString("actor");
-                String queryCountry = resultSet.getString("country");
-                String queryRating = resultSet.getString("rating");
-                String queryAvailable = resultSet.getString("available");
-            }
-            return resultSet;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally    {
-            closeDBLink(connection, psFetchArticles, null, null, resultSet);
-        }
-        return resultSet;
     }
 }

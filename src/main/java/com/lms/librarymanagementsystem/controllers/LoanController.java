@@ -19,7 +19,7 @@ import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
 
-@SuppressWarnings({"IndexOfReplaceableByContains", "ConstantConditions", "Convert2Diamond", "Convert2Lambda", "CodeBlock2Expr", "RedundantIfStatement", "DuplicatedCode"})
+@SuppressWarnings("ALL")
 public class LoanController implements Initializable {
     @FXML
     private TableView<MediaModel> searchTableView;

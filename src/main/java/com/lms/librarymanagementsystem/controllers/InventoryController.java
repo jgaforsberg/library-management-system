@@ -3,10 +3,8 @@ package com.lms.librarymanagementsystem.controllers;
 //  #F0F0F0 light gray
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
-import com.lms.librarymanagementsystem.MailUtils;
 import com.lms.librarymanagementsystem.models.LoanModel;
 import com.lms.librarymanagementsystem.models.MediaModel;
-import com.lms.librarymanagementsystem.models.UserModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -21,13 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
-
-// INSERT statement
-// INSERT INTO media(title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available) VALUES('title', 'format', 'category', 'description', 'publisher', 'edition', 'author', 'isbn', 'director', 'actor', 'country', 'rating', 'available');
-// UPDATE statement
-// UPDATE media SET mediaid = mediaid, title = 'title', format = 'format', category = 'category', description = 'description', publisher = 'publisher', edition = 'edition', author = 'author', isbn = 'isbn', director = 'director', actor = 'actor', country = 'country', rating = 'rating', available = 'available' WHERE mediaid = mediaid;
-// DELETE statement
-// DELETE FROM media WHERE mediaid = mediaid;
+@SuppressWarnings("ALL")
 public class InventoryController implements Initializable {
     @FXML
     private TextField   mediaIdTextField, titleTextField, categoryTextField, descriptionTextField,

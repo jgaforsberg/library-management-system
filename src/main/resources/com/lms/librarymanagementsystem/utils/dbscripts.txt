@@ -1,8 +1,8 @@
--- url:  "jdbc:mysql://localhost:3306/javafxtest"
+-- url:  "jdbc:mysql://localhost:3306/d0024e"
 -- username: "your mysql username" (default is root)
 -- password: "your mysql password" (default is 1234)
 
--- change url username and password in DBUtils.java if your db name, username and password differs from default
+-- change url username and password in Constants.java if your db name, username and password differs from default
 -- check data source configuration in intellij for troubleshooting
 -- for mysql intellij setup tutorial, visit: https://www.youtube.com/watch?v=e8g9eNnFpHQ
 
@@ -236,5 +236,34 @@ VALUES
 '', '', 'Sverige', '',
 'Referens');
 
+-- users
+
+INSERT INTO `d0024e`.`users`
+(`username`,`password`,`firstname`,`lastname`,`usertype`,`email`)
+VALUES
+('ltuadmin1','123','Ad','Min','admin','ltuadmin1@dummy-ltu.se'),
+('ltuanstalld1','123','Ann','Stalt','anställd','ltuanstalld1@dummy-ltu.se'),
+('ltubibliotekarie1','123','Bib','Lo','bibliotekarie','ltubibliotekarie1@dummy-ltu.se'),
+('ltularare1', 123, 'Teo','Ree', 'forskare', 'ltularare1@dummy-ltu.se'),
+('ltustudent1','123','Bea','Neise','student','fksyg.g16@gmail.com');
+
 -- loans
+
+INSERT INTO `d0024e`.`loan`
+(`mediaid`,`userid`,`loandate`,`returndate`,`returned`)
+VALUES
+(15,5,'2022-04-21','2022-05-19',0);
+
+UPDATE `d0024e`.`media`
+SET
+`available` = 'Utlånad'
+WHERE `mediaid` = 15;
+
+-- reservations
+
+INSERT INTO `d0024e`.`reservation`
+(`mediaid`,`userid`,`queuenumber`,`reservationdate`)
+VALUES
+(15,4,1,'2022-05-15');
+
 

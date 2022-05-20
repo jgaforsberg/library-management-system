@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 //  #011B3E blue
 //  #F0F0F0 light gray
-@SuppressWarnings({"Convert2Lambda", "Convert2Diamond"})
+@SuppressWarnings("ALL")
 public class SignUpController implements Initializable {
     @FXML
     private Button signupButton, loginButton;
@@ -25,7 +25,7 @@ public class SignUpController implements Initializable {
     @FXML
     private ChoiceBox<String> usertypeChoiceBox;
 
-    private final ObservableList<String> userTypes = FXCollections.observableArrayList("admin", "bibliotekarie", "anställd" ,"forskare", "student", "plebej");
+    private final ObservableList<String> userTypes = FXCollections.observableArrayList("admin", "bibliotekarie", "anställd" ,"forskare", "student", "allmän");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -47,7 +47,6 @@ public class SignUpController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            // TODO change scene method name
                 DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });

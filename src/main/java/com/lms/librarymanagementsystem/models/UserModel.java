@@ -1,7 +1,7 @@
 package com.lms.librarymanagementsystem.models;
 //  #011B3E blue
 //  #F0F0F0 light gray
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 public class UserModel {
     private Integer userid;
     private String username, password, firstname, lastname, usertype, email;

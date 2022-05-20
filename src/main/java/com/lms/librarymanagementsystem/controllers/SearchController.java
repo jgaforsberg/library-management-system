@@ -19,7 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
-
+@SuppressWarnings("ALL")
 public class SearchController implements Initializable {
     @FXML
     public TableView<MediaModel> searchTableView;
@@ -43,7 +43,6 @@ public class SearchController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // TODO change scene method name
                 DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
@@ -71,7 +70,7 @@ public class SearchController implements Initializable {
                 String queryCountry = resultSet.getString("country");
                 String queryRating = resultSet.getString("rating");
                 String queryAvailable =  resultSet.getString("available");
-//              populates the observable list
+//              Populates the observable list
                 mediaModelObservableList.add(new MediaModel(queryMediaId,
                                                             queryTitle,
                                                             queryFormat,
@@ -88,7 +87,7 @@ public class SearchController implements Initializable {
                                                             queryAvailable
                                                             ));
 //              PropertyValueFactory corresponds to the new BookSearchModel
-//              populate the tableview columns
+//              Populate the tableview columns
                 mediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
                 titleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
                 formatColumn.setCellValueFactory((new PropertyValueFactory<>("format")));
@@ -105,17 +104,18 @@ public class SearchController implements Initializable {
                 availableColumn.setCellValueFactory((new PropertyValueFactory<>("available")));
 
                 searchTableView.setItems(mediaModelObservableList);
-//              initialize filtered list for interactive search
+//              Initialize filtered list for interactive search
                 FilteredList<MediaModel> filteredData = new FilteredList<>(mediaModelObservableList, b -> true);
                 searchTextField.textProperty().addListener((observable, oldValue, newValue) -> {
                     filteredData.setPredicate(mediaModel -> {
-//                  if no search value is present, all records, or all current records will be displayed
+//                  If no search value is present, all records, or all current records will be displayed
                         if (newValue.isEmpty() || newValue.isBlank() || newValue == null) {return true;}
                         String searchKeyWord = newValue.toLowerCase();
-//                      an index > 0 means a match has been found
+//                      An index > 0 means a match has been found
 //                      to return Integer type, use toString() method
+//                      Match in book attirbutes
                         if (mediaModel.titleProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)  {
-//                      match in book title etc.
+
                             return true;
                         }else if (mediaModel.formatProperty().toString().toLowerCase().indexOf(searchKeyWord) > -1)   {
                             return true;
@@ -146,10 +146,10 @@ public class SearchController implements Initializable {
 //                      return false = no match found in database
                     });
                 });
-//              bind sorted result with table view
+//              Bind sorted result with table view
                 SortedList<MediaModel> sortedData = new SortedList<>(filteredData);
                 sortedData.comparatorProperty().bind(searchTableView.comparatorProperty());
-//              apply filtered and sorted data to the table view
+//              Apply filtered and sorted data to the table view
                 searchTableView.setItems(sortedData);
             }
         } catch (SQLException e) {

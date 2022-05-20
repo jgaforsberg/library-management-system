@@ -6,7 +6,7 @@ import java.util.Date;
 
 //  #011B3E blue
 //  #F0F0F0 light gray
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 public class LoanModel {
     private SimpleIntegerProperty loanid, mediaid, userid, returned;
     private Date loandate, returndate;

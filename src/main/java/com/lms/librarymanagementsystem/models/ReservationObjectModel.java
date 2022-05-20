@@ -1,8 +1,5 @@
 package com.lms.librarymanagementsystem.models;
-
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 public class ReservationObjectModel{
 
     private String title;
