@@ -47,7 +47,7 @@ public class DBUtils {
             Done to prevent e.g., memory leakage and to free DB resources
             Connection is closed last
             Implements method overloading depending on the type of DB connection to close
-         */
+    */
     public static void closeDBLink(Connection connection, PreparedStatement ps1, PreparedStatement ps2, PreparedStatement ps3, ResultSet resultSet) {
         if (resultSet != null) {
             try {
@@ -158,14 +158,4 @@ public class DBUtils {
             }
         }
     }
-
-    public static Date date(int d){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, d);
-        return Date.valueOf(dateFormat.format(cal.getTime()));
-    }
-
-
-
 }
