@@ -7,30 +7,31 @@ import java.util.Date;
 //  #011B3E blue
 //  #F0F0F0 light gray
 @SuppressWarnings("ALL")
-public class LoanModel {
-    private SimpleIntegerProperty loanid, mediaid, userid, returned;
+public class LoanModel extends MediaModel{
+    private Integer loanid, mediaid, userid, returned;
     private Date loandate, returndate;
 
-    public LoanModel(Integer loanid, Integer mediaid, Integer userid, Date loandate, Date returndate, Integer returned) {
-        this.loanid = new SimpleIntegerProperty(loanid);
-        this.mediaid = new SimpleIntegerProperty(mediaid);
-        this.userid = new SimpleIntegerProperty(userid);
+    public LoanModel()  {}
+    public LoanModel(Integer loanid, Integer mediaid, String title, Integer userid, Date loandate, Date returndate, Integer returned) {
+        super(mediaid, title);
+        this.loanid = loanid;
+        this.mediaid = mediaid;
+        this.userid = userid;
         this.loandate = loandate;
         this.returndate = returndate;
-        this.returned = new SimpleIntegerProperty(returned);
+        this.returned = returned;
     }
-    public SimpleIntegerProperty loanidProperty() {return loanid;}
-    public SimpleIntegerProperty mediaidProperty() {return mediaid;}
-    public SimpleIntegerProperty useridProperty() {return userid;}
+    public Integer getLoanid() {return loanid;}
+    public Integer getUserid() {return userid;}
     public Date getLoandate() {return loandate;}
     public Date getReturndate() {return returndate;}
-    public SimpleIntegerProperty returnedProperty() {return returned;}
-    public void setLoanid(SimpleIntegerProperty loanid) {this.loanid = loanid;}
-    public void setMediaid(SimpleIntegerProperty mediaid) {this.mediaid = mediaid;}
-    public void setUserid(SimpleIntegerProperty userid) {this.userid = userid;}
+    public Integer returnedProperty() {return returned;}
+    public void setLoanid(Integer loanid) {this.loanid = loanid;}
+    public void setMediaid(Integer mediaid) {this.mediaid = mediaid;}
+    public void setUserid(Integer userid) {this.userid = userid;}
     public void setLoandate(Date loandate) {this.loandate = loandate;}
     public void setReturndate(Date returndate) {this.returndate = returndate;}
-    public void setReturned(SimpleIntegerProperty returned) {
+    public void setReturned(Integer returned) {
         this.returned = returned;
     }
 }

@@ -3,6 +3,8 @@ package com.lms.librarymanagementsystem.controllers;
 //  #F0F0F0 light gray
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.SceneUtils;
+import com.lms.librarymanagementsystem.ServiceUtils;
 import com.lms.librarymanagementsystem.models.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -64,7 +66,7 @@ public class LoanController implements Initializable {
             public void handle(ActionEvent event) {
                 extractArticle();
                 if(loanModelObservableList != null) {
-                    DBUtils.addLoan(mediaModel.getMediaid(), activeUser.getUserid());
+                    ServiceUtils.addLoan(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshLoan();
                     loan();
                     refreshSearch();
@@ -77,7 +79,7 @@ public class LoanController implements Initializable {
             public void handle(ActionEvent event) {
                 extractArticle();
                 if(reservationModelObservableList != null) {
-                    DBUtils.addReservation(mediaModel.getMediaid(), activeUser.getUserid());
+                    ServiceUtils.addReservation(mediaModel.getMediaid(), activeUser.getUserid());
                     refreshReservation();
                     reservation();
                     refreshSearch();
@@ -88,7 +90,7 @@ public class LoanController implements Initializable {
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
+                SceneUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
     }
@@ -238,20 +240,21 @@ public class LoanController implements Initializable {
         ResultSet resultSet = null;
         try{
             connection = DBUtils.getDBLink();
-            psFetchReservations = connection.prepareStatement("SELECT reservationid, mediaid, userid, queuenumber, reservationdate FROM reservation WHERE userid = ?;");
+            psFetchReservations = connection.prepareStatement("SELECT reservation.reservationid, reservation.mediaid, media.title, reservation.queuenumber, reservation.reservationdate FROM media JOIN reservation on media.mediaid = reservation.mediaid WHERE userid = ?;");
             psFetchReservations.setInt(1, activeUser.getUserid());
             resultSet = psFetchReservations.executeQuery();
             while (resultSet.next()) {
-                Integer reservationid = resultSet.getInt("reservationid");
-                Integer mediaid = resultSet.getInt("mediaid");
-                Integer userid = resultSet.getInt("userid");
-                Integer queuenumber = resultSet.getInt("queuenumber");
-                Date reservationdate = resultSet.getDate("reservationdate");
-                reservationModelObservableList.add(new ReservationModel(reservationid,
-                                                                        mediaid,
-                                                                        userid,
-                                                                        queuenumber,
-                                                                        reservationdate
+                Integer queryReservationid = resultSet.getInt("reservationid");
+                Integer queryMediaid = resultSet.getInt("mediaid");
+                String queryTitle = resultSet.getString("title");
+                Integer queryQueueNumber = resultSet.getInt("queuenumber");
+                Date queryReservationdate = resultSet.getDate("reservationdate");
+                reservationModelObservableList.add(new ReservationModel(queryReservationid,
+                                                                        queryMediaid,
+                                                                        queryTitle,
+                                                                        null,
+                                                                        queryQueueNumber,
+                                                                        queryReservationdate
                                                                         ));
                 resResIdColumn.setCellValueFactory((new PropertyValueFactory<>("reservationid")));
                 resMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
@@ -273,22 +276,23 @@ public class LoanController implements Initializable {
         ResultSet resultSet = null;
         try {
             connection = DBUtils.getDBLink();
-            psFetchLoans = connection.prepareStatement("SELECT loanid, mediaid, userid, loandate, returndate, returned FROM loan WHERE userid = ?;");
+            psFetchLoans = connection.prepareStatement("SELECT loan.loanid, loan.mediaid, loan.userid, media.title, loan.loandate, loan.returndate FROM media JOIN loan ON media.mediaid = loan.mediaid WHERE userid = ?;");
             psFetchLoans.setInt(1, activeUser.getUserid());
             resultSet = psFetchLoans.executeQuery();
             while (resultSet.next()) {
-                Integer loanid = resultSet.getInt("loanid");
-                Integer mediaid = resultSet.getInt("mediaid");
-                Integer userid = resultSet.getInt("userid");
-                Date loandate = resultSet.getDate("loandate");
-                Date returndate = resultSet.getDate("returndate");
-                Integer returned = resultSet.getInt("returned");
-                loanModelObservableList.add(new LoanModel(  loanid,
-                                                            mediaid,
-                                                            userid,
-                                                            loandate,
-                                                            returndate,
-                                                            returned
+                Integer queryLoanid = resultSet.getInt("loanid");
+                Integer queryMediaid = resultSet.getInt("mediaid");
+                String queryTitle = resultSet.getString("title");
+                Integer queryUserid = resultSet.getInt("userid");
+                Date queryLoandate = resultSet.getDate("loandate");
+                Date queryReturndate = resultSet.getDate("returndate");
+                loanModelObservableList.add(new LoanModel(  queryLoanid,
+                                                            queryMediaid,
+                                                            queryTitle,
+                                                            queryUserid,
+                                                            queryLoandate,
+                                                            queryReturndate,
+                                                            null
                                                             ));
                 loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
                 loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));

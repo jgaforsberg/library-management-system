@@ -2,6 +2,7 @@ package com.lms.librarymanagementsystem.controllers;
 
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.SceneUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -35,7 +36,7 @@ public class SignUpController implements Initializable {
             public void handle(ActionEvent event) {
                 String boxChoice = usertypeChoiceBox.getValue();
                 if(!usernameTextField.getText().trim().isEmpty() && !passwordPasswordField.getText().trim().isEmpty())  {
-                    DBUtils.signUpUser(event, usernameTextField.getText(), passwordPasswordField.getText(), firstnameTextField.getText(), lastnameTextField.getText(), boxChoice, emailTextField.getText());
+                    SceneUtils.signUpUser(event, usernameTextField.getText(), passwordPasswordField.getText(), firstnameTextField.getText(), lastnameTextField.getText(), boxChoice, emailTextField.getText());
                 }else   {
                     System.out.println("All information krävs! ");
                     Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -47,7 +48,7 @@ public class SignUpController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
+                SceneUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
     }

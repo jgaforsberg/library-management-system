@@ -2,6 +2,7 @@ package com.lms.librarymanagementsystem.controllers;
 
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.SceneUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,19 +36,19 @@ public class MainController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.logInUser(event, usernameTextField.getText(), passwordPasswordField.getText());
+                SceneUtils.logInUser(event, usernameTextField.getText(), passwordPasswordField.getText());
             }
         });
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogout(event, Constants.SEARCH, Constants.SEARCH_TITLE);
+                SceneUtils.changeSceneLogout(event, Constants.SEARCH, Constants.SEARCH_TITLE);
             }
         });
         signupButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogin(event, Constants.SIGN_UP, Constants.SIGN_UP_TITLE,null);
+                SceneUtils.changeSceneLogin(event, Constants.SIGN_UP, Constants.SIGN_UP_TITLE,null);
             }
         });
         exitButton.setOnAction(new EventHandler<ActionEvent>() {

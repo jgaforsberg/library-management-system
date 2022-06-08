@@ -7,9 +7,11 @@ import javafx.beans.property.SimpleStringProperty;
 public class MediaModel {
     private Integer mediaid;
     private SimpleStringProperty    title, format, category, description,
-                            publisher, edition, author, isbn,
-                            director, actor, country, rating,
-                            available;
+            publisher, edition, author, isbn,
+            director, actor, country, rating,
+            available;
+    public MediaModel() {
+    }
     public MediaModel(Integer mediaid,
                       String title, String format, String category, String description,
                       String publisher, String edition, String author, String isbn,
@@ -29,6 +31,10 @@ public class MediaModel {
         this.country = new SimpleStringProperty(country);
         this.rating = new SimpleStringProperty(rating);
         this.available = new SimpleStringProperty(available);
+    }
+    public MediaModel(Integer mediaid, String title) {
+        this.mediaid = mediaid;
+        this.title = new SimpleStringProperty(title);
     }
     public Integer getMediaid() {
         return mediaid;

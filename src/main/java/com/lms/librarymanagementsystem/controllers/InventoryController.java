@@ -1,8 +1,10 @@
 package com.lms.librarymanagementsystem.controllers;
 //  #011B3E blue
 //  #F0F0F0 light gray
+import com.lms.librarymanagementsystem.ArticleUtils;
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.SceneUtils;
 import com.lms.librarymanagementsystem.models.LoanModel;
 import com.lms.librarymanagementsystem.models.MediaModel;
 import javafx.collections.FXCollections;
@@ -67,7 +69,7 @@ public class InventoryController implements Initializable {
         addMediaButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.addMedia(   titleTextField.getText(), formatChoiceBox.getValue(), categoryTextField.getText(), descriptionTextField.getText(),
+                ArticleUtils.addMedia(   titleTextField.getText(), formatChoiceBox.getValue(), categoryTextField.getText(), descriptionTextField.getText(),
                                     publisherTextField.getText(),editionTextField.getText(), authorTextField.getText(), isbnTextField.getText(),
                                     directorTextField.getText(), actorTextField.getText(), countryTextField.getText(), ratingTextField.getText(),
                                     availableChoiceBox.getValue());
@@ -79,7 +81,7 @@ public class InventoryController implements Initializable {
         updateMediaButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.updateMedia(Integer.valueOf(mediaIdTextField.getText()), titleTextField.getText(), formatChoiceBox.getValue(), categoryTextField.getText(), descriptionTextField.getText(),
+                ArticleUtils.updateMedia(Integer.valueOf(mediaIdTextField.getText()), titleTextField.getText(), formatChoiceBox.getValue(), categoryTextField.getText(), descriptionTextField.getText(),
                                                     publisherTextField.getText(),editionTextField.getText(), authorTextField.getText(), isbnTextField.getText(),
                                                     directorTextField.getText(), actorTextField.getText(), countryTextField.getText(), ratingTextField.getText(),
                                                     availableChoiceBox.getValue());
@@ -91,7 +93,7 @@ public class InventoryController implements Initializable {
         removeMediaButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.removeMedia(Integer.valueOf(mediaIdTextField.getText()));
+                ArticleUtils.removeMedia(Integer.valueOf(mediaIdTextField.getText()));
                 setActionInformation("Media borttagen ");
                 refreshSearch();
                 search();
@@ -107,7 +109,7 @@ public class InventoryController implements Initializable {
         finishButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, nameLabel.getText());
+                SceneUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, nameLabel.getText());
             }
         });
     }
@@ -233,6 +235,7 @@ public class InventoryController implements Initializable {
                 Integer returned = resultSet.getInt("returned");
                 loanModelObservableList.add(new LoanModel(  loanid,
                         mediaid,
+                        null,
                         userid,
                         loandate,
                         returndate,

@@ -17,12 +17,14 @@ public class Main extends Application {
         stage.setTitle("D0024E Bibliotekssystem - Välkommen! ");
         stage.setScene(scene);
         stage.show();
-       try {
+   /*    try {
             MailUtils.sendMail();
         }catch (Exception e)    {
             e.printStackTrace();
             e.getCause();
         }
+
+    */
         stage.setOnCloseRequest(e -> Platform.exit());
     }
     public static void main(String[] args) {

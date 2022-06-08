@@ -5,6 +5,8 @@ package com.lms.librarymanagementsystem.models;
 public class UserModel {
     private Integer userid;
     private String username, password, firstname, lastname, usertype, email;
+    public UserModel()  {
+    }
     public UserModel(Integer userid, String username, String password, String firstname, String lastname, String usertype, String email) {
         this.userid = userid;
         this.username = username;
@@ -13,11 +15,6 @@ public class UserModel {
         this.lastname = lastname;
         this.usertype = usertype;
         this.email = email;
-    }
-    public UserModel(String username)   {this.username = username;}
-    public UserModel(Integer userid, String username, String firstname, String lastname, String usertype) {
-    }
-    public UserModel()  {
     }
     public Integer getUserid() {return userid;}
     public String getUsername() {return username;}

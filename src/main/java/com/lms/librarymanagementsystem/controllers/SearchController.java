@@ -3,6 +3,7 @@ package com.lms.librarymanagementsystem.controllers;
 //  #F0F0F0 light gray
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.SceneUtils;
 import com.lms.librarymanagementsystem.models.MediaModel;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -43,7 +44,7 @@ public class SearchController implements Initializable {
         loginButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
+                SceneUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
     }
@@ -155,7 +156,7 @@ public class SearchController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
-            DBUtils.closeDBLink(connection, psFetchArticles, null, null, resultSet);
+            DBUtils.closeDBLink(connection, psFetchArticles, resultSet);
         }
     }
 }

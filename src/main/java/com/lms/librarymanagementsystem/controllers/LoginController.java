@@ -2,6 +2,7 @@ package com.lms.librarymanagementsystem.controllers;
 
 import com.lms.librarymanagementsystem.Constants;
 import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.SceneUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,25 +28,25 @@ public class LoginController implements Initializable {
         searchButton.setOnAction(new EventHandler<ActionEvent>()    {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLoan(event, Constants.LOAN, Constants.LOAN_TITLE, nameLabel.getText());
+                SceneUtils.changeSceneLoan(event, Constants.LOAN, Constants.LOAN_TITLE, nameLabel.getText());
             }
         });
         accountButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneAccount(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
+                SceneUtils.changeSceneAccount(event, Constants.ACCOUNT, Constants.ACCOUNT_TITLE, nameLabel.getText());
             }
         });
         inventoryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.validateUser(event, nameLabel.getText());
+                SceneUtils.validateUser(event, nameLabel.getText());
             }
         });
         logoutButton.setOnAction(new EventHandler<ActionEvent>()    {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
+                SceneUtils.changeSceneLogout(event, Constants.MAIN, Constants.MAIN_TITLE);
             }
         });
     }

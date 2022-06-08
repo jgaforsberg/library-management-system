@@ -15,10 +15,10 @@ public class MailUtils {
 //  If conditions are true, reminder emails are sent to accounts with overdue loans
     public static void sendMail() {
         System.out.println("Kollar överskridna lån! ");
-        Boolean overdue = checkOverdue();
+        Boolean overdue = ServiceUtils.checkOverdue();
         if(overdue) {
             System.out.println("Förbereder påminnelseutskick! ");
-            String recepient = getOverdueUser();
+            String recepient = UserUtils.getOverdueUser();
             Properties properties = new Properties();
 
             properties.put("mail.smtp.auth", "true");
@@ -64,45 +64,6 @@ public class MailUtils {
         }
         return null;
     }
-    //  Fetches the email of a user with overdue loans
-    private static String getOverdueUser()  {
-        String overdueUser = "";
-        Connection connection = null;
-        PreparedStatement psFetchUser = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DBUtils.getDBLink();
-            psFetchUser = connection.prepareStatement("SELECT users.email FROM loan JOIN users ON users.id = loan.userid WHERE returndate <= CURDATE();");
-            resultSet = psFetchUser.executeQuery();
-            while (resultSet.next()) {
-                overdueUser = resultSet.getString("email");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            DBUtils.closeDBLink(connection, psFetchUser, null, null, resultSet);
-        }
-        return overdueUser;
-    }
-    //  Checks if there are any overdue loans
-    public static Boolean checkOverdue() {
-        Connection connection = null;
-        PreparedStatement psCheckOverdue = null;
-        ResultSet resultSet = null;
-        try {
-            connection = DBUtils.getDBLink();
-            psCheckOverdue = connection.prepareStatement("SELECT * FROM loan WHERE returndate <= CURDATE();");
-            resultSet = psCheckOverdue.executeQuery();
-            if(resultSet.isBeforeFirst()) {
-                return true;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            DBUtils.closeDBLink(connection, psCheckOverdue, null, null, resultSet);
-        }
-        return false;
-    }
+
+
 }

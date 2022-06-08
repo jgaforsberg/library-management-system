@@ -4,7 +4,7 @@ import com.lms.librarymanagementsystem.controllers.AccountController;
 import com.lms.librarymanagementsystem.controllers.InventoryController;
 import com.lms.librarymanagementsystem.controllers.LoanController;
 import com.lms.librarymanagementsystem.controllers.LoginController;
-import com.lms.librarymanagementsystem.models.LoanObjectModel;
+import com.lms.librarymanagementsystem.models.LoanModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -43,10 +43,11 @@ public class DBUtils {
         return DBLink;
     }
     /*
-        Method to be called at the end of each DB transaction
-        done to prevent e.g., memory leakage and to free DB resources
-        connection is closed last
-     */
+            Methods to be called at the end of each DB transaction
+            Done to prevent e.g., memory leakage and to free DB resources
+            Connection is closed last
+            Implements method overloading depending on the type of DB connection to close
+         */
     public static void closeDBLink(Connection connection, PreparedStatement ps1, PreparedStatement ps2, PreparedStatement ps3, ResultSet resultSet) {
         if (resultSet != null) {
             try {
@@ -85,959 +86,86 @@ public class DBUtils {
             }
         }
     }
-    // Initializes the logged in view - same format is used throughout every changeSceneXXX()
-    public static void changeSceneLogin(ActionEvent event, String fxmlFile, String title, String username)   {
-        Parent root = null;
-//      make sure username is passed to login scene
-        if(username != null)    {
+    public static void closeDBLink(Connection connection, PreparedStatement ps1, PreparedStatement ps2, ResultSet resultSet)    {
+        if (resultSet != null) {
             try {
-//              Passing fxmlfile allows to choose fxmlfile to pass in as parameter
-                FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
-                root = loader.load();
-                LoginController loginController = loader.getController();
-                loginController.setUserInformation(username);
-            }   catch(IOException e) {
+                resultSet.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-                e.getCause();
             }
-        }   else    {
+        }
+        if (ps1 != null) {
             try {
-                root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
-            }   catch(IOException e)    {
+                ps1.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-                e.getCause();
             }
         }
-        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        stage.setTitle(title);
-        stage.setScene((new Scene(root)));
-        stage.show();
-    }
-    // Initializes the search and loan view for a logged in user
-    public static void changeSceneLoan(ActionEvent event, String fxmlfile, String title, String username)   {
-        Parent root = null;
-        if(username != null)    {
-            try{
-                FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlfile));
-                root = loader.load();
-                LoanController loanController = loader.getController();
-                loanController.setUserInformation(username);
-                System.out.println("Sök- och lånevy initierad! ");
-            }catch (IOException e)  {
-                e.printStackTrace();
-                e.getCause();
-            }
-        }else{
+        if (ps2!= null) {
             try {
-                root = FXMLLoader.load(DBUtils.class.getResource(fxmlfile));
-                System.out.println("Kunde ej initiera lånevy! ");
-            }catch (IOException e)  {
+                ps2.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-                e.getCause();
             }
         }
-        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        stage.setTitle(title);
-        stage.setScene((new Scene(root)));
-        stage.show();
-    }
-    //  Initializes a view that does not require a user to be logged in
-    public static void changeSceneLogout(ActionEvent event, String fxmlFile, String title) {
-        Parent root = null;
-        try {
-            root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-            e.getCause();
-        }
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setTitle(title);
-        stage.setScene((new Scene(root)));
-        stage.show();
-    }
-    // Loads the user account scene and sets user information in that scene through the AccountController object
-    public static void changeSceneInventory(ActionEvent event, String fxmlFile, String title, String username)   {
-        Parent root = null;
-        if(username != null)    {
-            try{
-                FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
-                root = loader.load();
-                InventoryController inventoryController = loader.getController();
-                inventoryController.setUserInformation(username);
-                System.out.println("Artikelhanteringsvy initierad! ");
-            }catch (IOException e)  {
-                e.printStackTrace();
-                e.getCause();
-            }
-        }else{
+        if (connection != null) {
             try {
-                root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
-                System.out.println("Kunde ej initiera artikelhanteringsvy! ");
-            }catch (IOException e)  {
+                connection.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
                 e.getCause();
             }
         }
-        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        stage.setTitle(title);
-        stage.setScene((new Scene(root)));
-        stage.show();
     }
-    // Loads the user account scene and sets user information in that scene through the AccountController object
-    public static void changeSceneAccount(ActionEvent event, String fxmlFile, String title, String username)    {
-        Parent root = null;
-        if(username != null)    {
-            try{
-                System.out.println(username);
-                FXMLLoader loader = new FXMLLoader(DBUtils.class.getResource(fxmlFile));
-                root = loader.load();
-                AccountController accountController = loader.getController();
-                accountController.setUserInformation(username);
-                System.out.println(username);
-                System.out.println("Kontovy initierad! ");
-            }catch (IOException e)  {
+    public static void closeDBLink(Connection connection, PreparedStatement ps1, ResultSet resultSet)   {
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
-                e.getCause();
             }
-        }else{
-            try{
-                root = FXMLLoader.load(DBUtils.class.getResource(fxmlFile));
-                System.out.println("Kunde ej initiera kontovy! ");
-            }catch (IOException e)  {
+        }
+        if (ps1 != null) {
+            try {
+                ps1.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
                 e.printStackTrace();
                 e.getCause();
             }
         }
-        Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-        stage.setTitle(title);
-        stage.setScene((new Scene(root)));
-        stage.show();
     }
-    //  Creating a new user and inserting the user into the database. Comments of this method is universal through all changeScene methods
-    public static void signUpUser(ActionEvent event, String username, String password, String firstname, String lastname, String usertype, String email) {
-        Connection connection = null;
-//      prepared statements are used to query the database
-        PreparedStatement psInsert = null;
-        PreparedStatement psCheckUserExists = null;
-//      resultset is query result
-        ResultSet resultSet = null;
-        try {
-//              change parameters depending on dbms
-            connection = getDBLink();
-//              question mark is the user input from sign-up form
-            psCheckUserExists = connection.prepareStatement("SELECT * FROM users WHERE username = ?");
-//              parameter index 1 is the first ? from above prepared statement, a second ? above would entail another method call with parameter index 2
-//              in this case, username is checked so second parameter is the username passed by the user through the sign-up form
-            psCheckUserExists.setString(1, username);
-//              if resultSet is empty, no equal username exists -> sign-up completes
-            resultSet = psCheckUserExists.executeQuery();
-//              isBeforeFirst() checks if returned username query is empty, if returned true the username is taken
-            if (resultSet.isBeforeFirst()) {
-                System.out.println("Användare finns redan! ");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-//              For alert, a generic error message is shown for security reasons, i.e., user is not told the name already exists in the database
-                alert.setContentText("Felaktigt användarnamn, försök med ett annat. ");
-                alert.show();
-//              User doesn't exist, psInsert queries database with new user transaction
-            }else {
-                psCheckUserExists = connection.prepareStatement("SELECT * FROM users WHERE email = ?");
-                psCheckUserExists.setString(1, email);
-                resultSet = psCheckUserExists.executeQuery();
-                if (resultSet.isBeforeFirst()){
-                    System.out.println("Email används redan! ");
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Felaktig email, försök med en annan. ");
-                    alert.show();
-                }else {
-                    psInsert = connection.prepareStatement("INSERT INTO users (username, password, firstname, lastname, usertype, email) VALUES (?, ?, ?, ?, ?, ?)");
-                    psInsert.setString(1, username);
-                    psInsert.setString(2, password);
-                    psInsert.setString(3, firstname);
-                    psInsert.setString(4, lastname);
-                    psInsert.setString(5, usertype);
-                    psInsert.setString(6, email);
-                    psInsert.executeUpdate();
-//                  Change scenes to logged in scene
-                    changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
-                }
+    public static void closeDBLink(Connection connection, PreparedStatement ps1)    {
+        if (ps1 != null) {
+            try {
+                ps1.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                e.getCause();
+            }
+        }
+    }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-//      Close connection to DB with finally block - executed no matter what happens before
-        } finally {
-            closeDBLink(connection, psInsert, psCheckUserExists, null, resultSet);
-        }
-    }
-    // Used to validate the user type of a user trying to access the InventoryController
-    public static void validateUser(ActionEvent event, String username) {
-        String authorizedLibrarian = "bibliotekarie";
-        String authorizedAdmin = "admin";
-        Connection connection = null;
-        PreparedStatement psCheckUserType = null;
-        ResultSet resultSet = null;
-        try{
-            connection = getDBLink();
-            psCheckUserType = connection.prepareStatement("SELECT usertype FROM users WHERE username = ?;");
-            psCheckUserType.setString(1, username);
-            resultSet = psCheckUserType.executeQuery();
-            while (resultSet.next())    {
-                String actualUsertype = resultSet.getString("usertype");
-                if(actualUsertype.equalsIgnoreCase(authorizedLibrarian) || actualUsertype.equalsIgnoreCase(authorizedAdmin)) {
-                    changeSceneInventory(event, Constants.INVENTORY, Constants.INVENTORY_TITLE, username);
-                    System.out.println("Användare validerad! ");
-                }else {
-                    System.out.println();
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Du har inte behörighet för denna funktion. ");
-                    alert.show();
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckUserType, null, null, resultSet);
-        }
-    }
-    //  Logs in the user if credentials exist and match
-    public static void logInUser(ActionEvent event, String username, String password) {
-        Connection connection = null;
-        PreparedStatement psCheckLogin = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckLogin = connection.prepareStatement("SELECT password FROM users WHERE username = ?;");
-            psCheckLogin.setString(1, username);
-            resultSet = psCheckLogin.executeQuery();
-//          if username query returns false = no username in database
-            if (!resultSet.isBeforeFirst()) {
-                System.out.println("Användare finns ej i databasen! ");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Ogiltigt användarnamn, försök igen. ");
-                alert.show();
-            } else {
-//                  querying if entered password matches username's password in database
-                while (resultSet.next()) {
-//                      DB table columns are varchar, which is why getString("column name") is used
-                    String retrievePassword = resultSet.getString("password");
-                    if (retrievePassword.equals(password)) {
-                        changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, username);
-                        System.out.println("Inloggad vy initierad! ");
-                    } else {
-                        System.out.println("Lösenord matchar ej användare! ");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setContentText("Ogiltigt lösenord, försök igen. ");
-                        alert.show();
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeDBLink(connection, psCheckLogin, null, null, resultSet);
-        }
-    }
     public static Date date(int d){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, d);
         return Date.valueOf(dateFormat.format(cal.getTime()));
     }
-    // Defines the max allowed reservations of a certain user type
-    public static Integer maxReservations(Integer userid)   {
-        Integer maxReservations = null;
-        Connection connection = null;
-        PreparedStatement  psCheckUser = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckUser = connection.prepareStatement("SELECT usertype FROM users WHERE id = ?;");
-            psCheckUser.setInt(1, userid);
-            resultSet = psCheckUser.executeQuery();
-            while (resultSet.next()) {
-                String queryUsertype = resultSet.getString("usertype");
-                switch (queryUsertype.toLowerCase()) {
-                    case "allmän" -> {
-                        maxReservations = 1;
-                        return maxReservations;
-                    }
-                    case "anställd" -> {
-                        maxReservations = 3;
-                        return maxReservations;
-                    }
-                    case "student" -> {
-                        maxReservations = 3;
-                        return maxReservations;
-                    }
-                    case "forskare" -> {
-                        maxReservations = 5;
-                        return maxReservations;
-                    }
-                    case "admin" -> {
-                        maxReservations = 100;
-                        return maxReservations;
-                    }
-                    default -> {
-                        System.out.println("Kan ej läsa användartyp! ");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setContentText("Fel i användarverifiering. ");
-                        alert.show();
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
-            closeDBLink(connection, psCheckUser, null, null, resultSet);
-        }
-        return maxReservations;
-    }
-    // Defines the max allowed loans of a certain user type
-    public static Integer maxLoans(Integer userid)  {
-        Integer maxLoans = null;
-        Connection connection = null;
-        PreparedStatement  psCheckUser = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckUser = connection.prepareStatement("SELECT usertype FROM users WHERE id = ?;");
-            psCheckUser.setInt(1, userid);
-            resultSet = psCheckUser.executeQuery();
-            while (resultSet.next()) {
-                String queryUsertype = resultSet.getString("usertype");
-                switch (queryUsertype.toLowerCase()) {
-                    case "allmän" -> {
-                        maxLoans = 3;
-                        return maxLoans;
-                    }
-                    case "anställd" -> {
-                        maxLoans = 5;
-                        return maxLoans;
-                    }
-                    case "student" -> {
-                        maxLoans = 5;
-                        return maxLoans;
-                    }
-                    case "forskare" -> {
-                        maxLoans = 10;
-                        return maxLoans;
-                    }
-                    case "admin" -> {
-                        maxLoans = 100;
-                        return maxLoans;
-                    }
-                    default -> {
-                        System.out.println("Kan ej läsa användartyp! ");
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        alert.setContentText("Fel i användarverifiering. ");
-                        alert.show();
-                    }
-                }
-            }
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckUser, null, null, resultSet);
-        }
-        System.out.println(maxLoans);
-        return maxLoans;
-    }
-    // Returns the remaining reservations a user has by counting rows in the database.reservation
-    public static Integer remainingReservations(Integer maxReservations, Integer userid) {
-        Integer remainingReservations = null;
-        Connection connection = null;
-        PreparedStatement psCheckUser = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckUser = connection.prepareStatement("SELECT COUNT(*) FROM reservation WHERE userid = ?;");
-            psCheckUser.setInt(1, userid);
-            resultSet = psCheckUser.executeQuery();
-            while (resultSet.next())    {
-                remainingReservations = maxReservations - resultSet.getInt("COUNT(*)");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
-            closeDBLink(connection, psCheckUser, null, null, resultSet);
-        }
-        return remainingReservations;
-    }
-    // Returns the remaining loans a user has by counting rows in the database.loan
-    public static Integer remainingLoans(Integer maxLoans, Integer userid) {
-        Integer remainingLoans = null;
-        Connection connection = null;
-        PreparedStatement  psCheckUser = null;
-        ResultSet resultSet = null;
-        try{
-            connection = getDBLink();
-            psCheckUser = connection.prepareStatement("SELECT COUNT(*)FROM loan WHERE userid = ?;");
-            psCheckUser.setInt(1, userid);
-            resultSet = psCheckUser.executeQuery();
-            while (resultSet.next())    {
-                remainingLoans = maxLoans - resultSet.getInt("COUNT(*)");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckUser, null, null, resultSet);
-        }
-        return remainingLoans;
-    }
-    // Returns the value of a media's "available" column in the database
-    private static String checkAvailable(Integer mediaid) {
-        String queryAvailable = "";
-        Connection connection = null;
-        PreparedStatement psCheckAvailable = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckAvailable = connection.prepareStatement("SELECT * FROM media WHERE mediaid = ?;");
-            psCheckAvailable.setInt(1, mediaid);
-            resultSet = psCheckAvailable.executeQuery();
-            while (resultSet.next())    {
-                queryAvailable = resultSet.getString("available");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckAvailable, null, null, resultSet);
-        }
-        return queryAvailable;
-    }
-    // Checks and returns the format of an entered media article
-    private static String checkFormat(Integer mediaid)   {
-        String queryFormat = "";
-        Connection connection = null;
-        PreparedStatement psCheckFormat = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckFormat = connection.prepareStatement("SELECT format FROM media WHERE mediaid = ?;");
-            psCheckFormat.setInt(1, mediaid);
-            resultSet = psCheckFormat.executeQuery();
-            while (resultSet.next())    {
-                queryFormat = resultSet.getString("format");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckFormat, null, null, resultSet);
-        }
-        return queryFormat;
-    }
-    // Checks whether a user has an active reservation of the media for addReservation
-    private static boolean checkReservation(Integer mediaid, Integer userid)    {
-        Integer queryUserid = -1;
-        Connection connection = null;
-        PreparedStatement psCheckReservation = null;
-        ResultSet resultSet = null;
-        try{
-            connection = getDBLink();
-            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation WHERE mediaid = ?;");
-            psCheckReservation.setInt(1, mediaid);
-            resultSet = psCheckReservation.executeQuery();
-                if(resultSet.next())    {
-                    queryUserid = resultSet.getInt("userid");
-                }
 
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckReservation, null, null, resultSet);
-        }
-        return queryUserid.equals(userid);
-    }
-    //  Extends an active loan with a chosen interval
-    public static void extendLoan(Integer loanid)   {
-        Connection connection = null;
-        PreparedStatement psUpdate = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psUpdate = connection.prepareStatement("UPDATE loan SET returndate = returndate+interval 7 day WHERE loanid = ?;");
-            psUpdate.setInt(1, loanid);
-            psUpdate.executeUpdate();
-            System.out.println("Returdatum för lån med lånid: "+loanid+" förlängt 7 dagar! ");
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psUpdate, null, null, resultSet);
-        }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Ditt lån med lånid: "+loanid+" är förlängt med 7 dagar. ");
-        alert.show();
-    }
-    // Sets a returned media to available "Ledig" status when a loan is returned
-    private static void setAvailable(Integer mediaid)   {
-        Connection connection = null;
-        PreparedStatement psUpdate = null;
-        try{
-            connection = getDBLink();
-            psUpdate = connection.prepareStatement("UPDATE media SET available = 'Ledig' WHERE mediaid = ?");
-            psUpdate.setInt(1, mediaid);
-            psUpdate.executeUpdate();
-            System.out.println("Media med mediaid: "+mediaid+" satt till status 'Ledig'! ");
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psUpdate, null, null, null);
-        }
-    }
-    //  Sets a media article as unavailable ("Utlånad") when a new loan is created
-    private static void setUnavailable(Integer mediaid) {
-        Connection connection = null;
-        PreparedStatement psUpdate = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psUpdate = connection.prepareStatement("UPDATE media SET available = 'Utlånad' WHERE mediaid = ?");
-            psUpdate.setInt(1, mediaid);
-            psUpdate.executeUpdate();
-            System.out.println("Mediatillgänglighet för mediaartikel "+mediaid+" satt till status utlånad! ");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
-            closeDBLink(connection, psUpdate, null, null, resultSet);
-        }
-    }
-    //  Returns the queuenumber for a reserved media article, used for updating queuenumber and adding loans
-    private static Integer getQueuenumber(Integer mediaid)  {
-        Integer queueNumber = null;
-        Connection connection = null;
-        PreparedStatement psCheckQueue = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckQueue = connection.prepareStatement("SELECT COUNT(*) AS rowcount FROM reservation WHERE mediaid = ?;");
-            psCheckQueue.setInt(1, mediaid);
-            resultSet = psCheckQueue.executeQuery();
-            if (resultSet.next())    {
-                queueNumber = resultSet.getInt("rowcount")+1;
-            }
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckQueue, null, null, resultSet);
-        }
-        return queueNumber;
-    }
-    //  Checks whether the parameter userid matches the userid of the media reservation where queue number = min value for addLoan()
-    private static Integer checkQueue(Integer mediaid, Integer userid) {
-        Integer queryUserid = null;
-        Integer reserved = null;
-        Connection connection = null;
-        PreparedStatement psCheckReservation = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckReservation = connection.prepareStatement("SELECT userid FROM reservation " +
-                                                                 "WHERE queuenumber =(SELECT MIN(queuenumber) FROM reservation) AND mediaid = ?;");
-            psCheckReservation.setInt(1, mediaid);
-            resultSet = psCheckReservation.executeQuery();
-                while (resultSet.next()) {
-                    queryUserid = resultSet.getInt("userid");
-                }
-            if(Objects.equals(queryUserid, userid))  {
-                reserved = 1;
-            }
-            if(!Objects.equals(queryUserid, userid)) {
-                reserved = 0;
-            }
-            if(queryUserid == null)    {
-                reserved = -1;
-            }
 
-        }catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psCheckReservation, null, null, resultSet);
-        }
-        return reserved;
-    }
-    //  Updates all queue numbers of a certain media article, used when ending reservations
-    private static void updateQueuenumber(Integer mediaid) {
-        Integer userid = null;
-        Connection connection = null;
-        PreparedStatement psUpdate = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            // Update queue numbers of all reservations of media article
-            psUpdate = connection.prepareStatement("UPDATE reservation SET queuenumber = queuenumber - 1 WHERE mediaid = ?;");
-            psUpdate.setInt(1, mediaid);
-            psUpdate.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psUpdate, null, null, resultSet);
-        }
-    }
-    //  Returns loan
-    public static void returnLoan(Integer loanid, Integer mediaid)   {
-        String mediaTitle = "";
-        Connection connection = null;
-        PreparedStatement psRemove = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psRemove = connection.prepareStatement("DELETE FROM loan WHERE loanid = ?;");
-            psRemove.setInt(1, loanid);
-            psRemove.executeUpdate();
-            psRemove = connection.prepareStatement("SELECT title FROM media WHERE mediaid = ?;");
-            psRemove.setInt(1, mediaid);
-            resultSet = psRemove.executeQuery();
-            while (resultSet.next())    {
-                mediaTitle = resultSet.getString("title");
-            }
-            System.out.println("Lån med lånid: "+loanid+ " terminerat! ");
-            // Sets returned item as "Ledig"
-            setAvailable(mediaid);
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("Ditt lån av: "+mediaTitle+" är avslutat. ");
-            alert.show();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psRemove, null, null, resultSet);
-        }
-    }
-    //  Returns reservation from AccountController and through addLoan()
-    public static void returnReservation(Integer reservationid, Integer mediaid, String mediaTitle) {
-        Connection connection = null;
-        PreparedStatement psRemove = null;
-        if(reservationid != null) {
-            try {
-                connection = getDBLink();
-                psRemove = connection.prepareStatement("DELETE FROM reservation WHERE reservationid = ? AND mediaid = ?;");
-                psRemove.setInt(1, reservationid);
-                psRemove.setInt(2, mediaid);
-                psRemove.executeUpdate();
-                System.out.println("Reservation med reservationid: " + reservationid + " terminerat! ");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                e.getCause();
-            } finally {
-                closeDBLink(connection, psRemove, null, null, null);
-            }
-            updateQueuenumber(mediaid);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("Din reservation av: "+mediaTitle+" är avslutad. ");
-            alert.show();
-        }
-    }
-    //  Add a loan and tie it to the user id and media id
-    public static void addLoan(Integer mediaid, Integer userid) {
-        Integer maxLoans = maxLoans(userid);
-        Integer remainingLoans = remainingLoans(maxLoans, userid);
-        Integer reserved = checkQueue(mediaid, userid);
-        if(remainingLoans <= 0) {
-            System.out.println("Användaren har inga tillgängliga lånetillfällen! ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Du har nått din maxgräns för aktiva lån. ");
-            alert.show();
-        }
-        String mediaAvailable = checkAvailable(mediaid);
-        if(!mediaAvailable.equalsIgnoreCase("ledig"))   {
-            System.out.println("Artikeln är otillgänglig för utlåning! ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Artikeln är inte tillgänglig för utlåning. ");
-            alert.show();
-        }
-        if(reserved == 0)   {
-            System.out.println("En annan användare står före i reservationskön för denna mediaartikel. ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("En annan användare står före i reservationskön för denna mediaartikel. ");
-            alert.show();
-        }
-        String mediaFormat = checkFormat(mediaid);
-        if(remainingLoans > 0 && mediaAvailable.equalsIgnoreCase("ledig") && (reserved == 1 || reserved == -1))   {
-            Connection connection = null;
-            PreparedStatement  psInsert = null;
-            ResultSet resultSet = null;
-            try {
-                String mediatitle = "";
-                Integer reservationid = null;
-                connection = getDBLink();
-             /*
-                psInsert = connection.prepareStatement("DELETE FROM reservation WHERE queuenumber =(SELECT MIN(queuenumber) FROM reservation) AND mediaid = ? AND userid = ?;");
-                psInsert.setInt(1, mediaid);
-                psInsert.setInt(2, userid);
-                psInsert.executeUpdate();
-             */
-                psInsert = connection.prepareStatement("SELECT media.title, reservation.reservationid FROM media " +
-                                                            "INNER JOIN reservation ON media.mediaid = reservation.mediaid " +
-                                                            "WHERE reservation.mediaid = ?;");
-                psInsert.setInt(1, mediaid);
-                resultSet = psInsert.executeQuery();
-                if (resultSet.next()) {
-                    mediatitle = resultSet.getString("title");
-                    reservationid = resultSet.getInt("reservationid");
-                }
-                if (mediaFormat.equalsIgnoreCase("bok")) {
-                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, curdate(), date_add(curdate(),interval 28 day ) , 0);");
-                    psInsert.setInt(1, mediaid);
-                    psInsert.setInt(2, userid);
-                    psInsert.executeUpdate();
-                    setUnavailable(mediaid);
-                    System.out.println("Boklån skapat! ");
-                    printReceipt(userid, mediaid);
-                } else if (mediaFormat.equalsIgnoreCase("film")) {
-                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 7 DAY ) , 0);");
-                    psInsert.setInt(1, mediaid);
-                    psInsert.setInt(2, userid);
-                    psInsert.executeUpdate();
-                    setUnavailable(mediaid);
-                    System.out.println("Filmlån skapat! ");
-                    printReceipt(userid, mediaid);
-                }else if(mediaFormat.equalsIgnoreCase("kurslitteratur"))  {
-                    psInsert = connection.prepareStatement("INSERT INTO loan (mediaid, userid,loandate,returndate,returned) VALUES (?, ?, CURDATE(), DATE_ADD(CURDATE(),INTERVAL 14 DAY ) , 0);");
-                    psInsert.setInt(1, mediaid);
-                    psInsert.setInt(2, userid);
-                    psInsert.executeUpdate();
-                    setUnavailable(mediaid);
-                    System.out.println("Kurslitteraturlån skapat! ");
-                    printReceipt(userid, mediaid);
-                }else   {
-                    System.out.println("Lån kunde ej skapas, mediaformat ej tillgängligt för utlåning! ");
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Lån misslyckades. ");
-                    alert.show();
-                }
-                returnReservation(reservationid, mediaid, mediatitle);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                e.getCause();
-            }finally {
-                closeDBLink(connection, psInsert, null, null, resultSet);
-            }
-        }
-    }
-    //  Adds new reservation
-    public static void addReservation(Integer mediaid, Integer userid)  {
-        Integer maxReservations = maxReservations(userid);
-        Integer remainingReservations = remainingReservations(maxReservations, userid);
-        Boolean activeReservation = checkReservation(mediaid, userid);
-        if(remainingReservations <= 0)  {
-            System.out.println("Användaren har inga tillgängliga reservationstillfällen! ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Du har nått din maxgräns för aktiva reservationer. ");
-            alert.show();
-        }
-        String queryAvailable = checkAvailable(mediaid);
-        if(!queryAvailable.equalsIgnoreCase("Utlånad") && !queryAvailable.equalsIgnoreCase("Ledig"))   {
-            System.out.println("Användaren har försökt reservera en ej utlånad eller ledig mediaartikel! ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Du kan bara reservera utlånade eller lediga mediaartiklar. ");
-            alert.show();
-        }
-        if(activeReservation)  {
-            System.out.println("Användaren har redan reserverat denna artikel! ");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Du har redan en reservation för den här artikeln. ");
-            alert.show();
-        }
-        if((queryAvailable.equalsIgnoreCase("Utlånad") || queryAvailable.equalsIgnoreCase("Ledig")) && remainingReservations >0 && !activeReservation)   {
-            Integer queueNumber = getQueuenumber(mediaid);
-            Connection connection = null;
-            PreparedStatement psInsert = null;
-            try {
-                connection = getDBLink();
-                psInsert = connection.prepareStatement("INSERT INTO reservation(mediaid, userid, queuenumber,reservationdate) VALUES (?,?,?,CURDATE());");
-                psInsert.setInt(1, mediaid);
-                psInsert.setInt(2, userid);
-                psInsert.setInt(3, queueNumber);
-                psInsert.executeUpdate();
-                System.out.println("Reservation skapad! ");
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setContentText("Reservation skapad. ");
-                alert.show();
-            }catch (SQLException e) {
-                e.printStackTrace();
-                e.getCause();
-            }finally {
-                closeDBLink(connection, psInsert, null, null, null);
-            }
-        }
-    }
-    //  Prints the receipt of the user's latest loan to an Alert
-    private static void printReceipt(Integer userid, Integer mediaid)    {
-        LoanObjectModel loanObjectModel;
-        Alert receipt = new Alert(Alert.AlertType.INFORMATION);
-        Connection connection = null;
-        PreparedStatement psFetchLoan = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psFetchLoan = connection.prepareStatement("SELECT media.mediaid, media.title, loan.loanid, loan.loandate, loan.returndate FROM media " +
-                                                        "JOIN loan on media.mediaid = loan.mediaid WHERE loan.userid = ? AND loan.mediaid = ? AND loandate = CURDATE() " +
-                                                        "ORDER BY loan.userid DESC LIMIT 1;");
-            psFetchLoan.setInt(1, userid);
-            psFetchLoan.setInt(2, mediaid);
-            resultSet = psFetchLoan.executeQuery();
-            while (resultSet.next())    {
-                String mediatitle = resultSet.getString("title");
-                Integer loanid = resultSet.getInt("loanid");
-                Date loandate = resultSet.getDate("loandate");
-                Date returndate = resultSet.getDate("returndate");
-                loanObjectModel = new LoanObjectModel(mediaid,mediatitle,loandate,returndate);
-                receipt.setContentText( "MediaID:\t" +loanObjectModel.getMediaid() +
-                                        "\nTitel:\t" + loanObjectModel.getTitle() +
-                                        "\nLåndatum:\t" + loanObjectModel.getLoandate() +
-                                        "\nReturdatum:\t" + loanObjectModel.getReturndate());
-                receipt.setTitle("Lånekvitto för lån nummer: "+loanid+" "+loandate);
-                receipt.setHeaderText("Du har lånat: ");
-                receipt.show();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psFetchLoan, null, null, resultSet);
-        }
-    }
-    //  Add new media to database
-    public static void addMedia(String title, String format, String category, String description,
-                                String publisher, String edition, String author, String isbn,
-                                String director, String actor, String country, String rating,
-                                String available)   {
-        Integer mediaid = null;
-        Connection connection = null;
-        PreparedStatement psInsert = null;
-//      may be unnecessary variable
-        PreparedStatement psCheckMediaDuplicate = null;
-        ResultSet resultSet = null;
-        try{
-            connection = getDBLink();
-           /* psCheckMediaDuplicate = connection.prepareStatement("SELECT * FROM media WHERE columnname = ?");
-            psCheckMediaDuplicate.setString(1, columname);
-            resultSet = psCheckMediaDuplicate.executeQuery(); */
-            psInsert = connection.prepareStatement( "INSERT INTO media(title,format,category,description," +
-                    "publisher,edition,author,isbn," +
-                    "director,actor,country,rating,available)" +
-                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            psInsert.setString(1, title);
-            psInsert.setString(2, format);
-            psInsert.setString(3, category);
-            psInsert.setString(4, description);
-            psInsert.setString(5, publisher);
-            psInsert.setString(6, edition);
-            psInsert.setString(7, author);
-            psInsert.setString(8, isbn);
-            psInsert.setString(9, director);
-            psInsert.setString(10, actor);
-            psInsert.setString(11, country);
-            psInsert.setString(12, rating);
-            psInsert.setString(13, available);
-            psInsert.executeUpdate();
-            System.out.println("Mediaartikel tillagd! ");
-            psInsert = connection.prepareStatement("SELECT mediaid FROM media ORDER BY mediaid DESC LIMIT 1;");
-            resultSet = psInsert.executeQuery();
-            while (resultSet.next())    {
-                mediaid = resultSet.getInt("mediaid");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }finally {
-            closeDBLink(connection, psInsert, null, null, resultSet);
-        }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Media med mediaid: "+mediaid+" är uppdaterad. ");
-        alert.show();
-    }
-    //  Updates existing media in database
-    public static void updateMedia(Integer mediaid, String title, String format, String category, String description,
-                                   String publisher, String edition, String author, String isbn,
-                                   String director, String actor, String country, String rating,
-                                   String available)    {
-        Connection connection = null;
-        PreparedStatement psUpdate = null;
-        PreparedStatement psCheckMediaExists = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckMediaExists = connection.prepareStatement("SELECT mediaid FROM media WHERE mediaid = ?;");
-            psCheckMediaExists.setInt(1, mediaid);
-            resultSet = psCheckMediaExists.executeQuery();
-            if(!resultSet.isBeforeFirst()) {
-                System.out.println("Artikel med angett artikelnummer finns ej i databasen! ");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Kontrollera att artikelnumret är rätt och försök igen. ");
-                alert.show();
-            }else {
-                psUpdate = connection.prepareStatement( "UPDATE media SET title = ?,format = ?,category = ?,description = ?," +
-                        "publisher = ?,edition = ?,author = ?,isbn = ?," +
-                        "director = ?,actor = ?,country = ?,rating = ?,available = ?" +
-                        "WHERE mediaid = ?;");
-                psUpdate.setString(1, title);
-                psUpdate.setString(2, format);
-                psUpdate.setString(3, category);
-                psUpdate.setString(4, description);
-                psUpdate.setString(5, publisher);
-                psUpdate.setString(6, edition);
-                psUpdate.setString(7, author);
-                psUpdate.setString(8, isbn);
-                psUpdate.setString(9, director);
-                psUpdate.setString(10, actor);
-                psUpdate.setString(11, country);
-                psUpdate.setString(12, rating);
-                psUpdate.setString(13, available);
-                psUpdate.setInt(14, mediaid);
-                psUpdate.executeUpdate();
-                System.out.println("Mediaartikel uppdaterad! ");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psUpdate, psCheckMediaExists, null, resultSet);
-        }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Media med mediaid: "+mediaid+" är uppdaterad. ");
-        alert.show();
-    }
-    //  Delete media from database
-    public static void removeMedia(Integer mediaid)    {
-        Connection connection = null;
-        PreparedStatement psRemove = null;
-        PreparedStatement psCheckMediaExists = null;
-        ResultSet resultSet = null;
-        try {
-            connection = getDBLink();
-            psCheckMediaExists = connection.prepareStatement("SELECT mediaid FROM media WHERE mediaid = ?;");
-            psCheckMediaExists.setInt(1, mediaid);
-            resultSet = psCheckMediaExists.executeQuery();
-            if(!resultSet.isBeforeFirst()) {
-                System.out.println("Artikel med angett artikelnummer finns ej i databasen! ");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Kontrollera att artikelnumret är rätt och försök igen. ");
-                alert.show();
-            }else {
-                psRemove = connection.prepareStatement("DELETE FROM media WHERE mediaid = ?;");
-                psRemove.setInt(1, mediaid);
-                psRemove.executeUpdate();
-                System.out.println("Mediaartikel borttagen! ");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            e.getCause();
-        }finally {
-            closeDBLink(connection, psRemove, psCheckMediaExists, null, resultSet);
-        }
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Media med mediaid: "+mediaid+" är borttagen ur databasen. ");
-        alert.show();
-    }
+
 }

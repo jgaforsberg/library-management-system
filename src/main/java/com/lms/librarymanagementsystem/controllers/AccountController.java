@@ -2,8 +2,7 @@ package com.lms.librarymanagementsystem.controllers;
 //  #011B3E blue
 //  #F0F0F0 light gray
 
-import com.lms.librarymanagementsystem.Constants;
-import com.lms.librarymanagementsystem.DBUtils;
+import com.lms.librarymanagementsystem.*;
 import com.lms.librarymanagementsystem.models.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.io.Serial;
 import java.net.URL;
 import java.sql.*;
 import java.util.ResourceBundle;
@@ -22,7 +22,7 @@ public class AccountController implements Initializable {
     @FXML
     private Label idLabel, usernameLabel, firstnameLabel, lastnameLabel, usertypeLabel, emailLabel, maxLoanLabel, remainingLoanLabel;
     @FXML
-    private TableView<LoanObjectModel> loanTableView;
+    private TableView<LoanModel> loanTableView;
     @FXML
     private TableColumn<String, Integer> loanMediaIdColumn, loanLoanidColumn;
     @FXML
@@ -34,17 +34,17 @@ public class AccountController implements Initializable {
     @FXML
     private TableColumn<String, String> resTitleColumn;
     @FXML
-    private TableView<ReservationObjectModel> reservationTableView;
+    private TableView<ReservationModel> reservationTableView;
     @FXML
     private Button returnLoanButton, endReservationButton, returnButton;
     @FXML
-    private ObservableList<LoanObjectModel> loanObservableList = FXCollections.observableArrayList();
+    private ObservableList<LoanModel> loanObservableList = FXCollections.observableArrayList();
     @FXML
-    private ObservableList<ReservationObjectModel> reservationObservableList = FXCollections.observableArrayList();
+    private ObservableList<ReservationModel> reservationObservableList = FXCollections.observableArrayList();
 
     private UserModel activeUser;
-    private LoanObjectModel loanObject;
-    private ReservationObjectModel reservationObject;
+    private LoanModel loanObject;
+    private ReservationModel reservationObject;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -60,7 +60,7 @@ public class AccountController implements Initializable {
                     alert.show();
                 }
                 if(loanObservableList != null)  {
-                    DBUtils.returnLoan(loanObject.getLoanid(), loanObject.getMediaid());
+                    ServiceUtils.returnLoan(loanObject.getLoanid(), loanObject.getMediaid());
                     refreshLoan();
                     loan();
                 }
@@ -78,7 +78,7 @@ public class AccountController implements Initializable {
                 alert.show();
             }
                 if(reservationObservableList != null)   {
-                    DBUtils.returnReservation(reservationObject.getReservationid(), reservationObject.getMediaid(), reservationObject.getTitle());
+                    ServiceUtils.returnReservation(reservationObject.getReservationid(), reservationObject.getMediaid(), reservationObject.titleProperty().getValue());
                     refreshReservation();
                     reservation();
                 }
@@ -87,7 +87,7 @@ public class AccountController implements Initializable {
         returnButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                DBUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
+                SceneUtils.changeSceneLogin(event, Constants.LOGIN, Constants.LOGIN_TITLE, activeUser.getUsername());
             }
         });
     }
@@ -106,8 +106,8 @@ public class AccountController implements Initializable {
         lastnameLabel.setText(activeUser.getLastname());
         usertypeLabel.setText(activeUser.getUsertype());
         emailLabel.setText(activeUser.getEmail());
-        maxLoanLabel.setText(DBUtils.maxLoans(activeUser.getUserid()).toString());
-        remainingLoanLabel.setText(DBUtils.remainingLoans(Integer.valueOf(maxLoanLabel.getText()), activeUser.getUserid()).toString());
+        maxLoanLabel.setText(UserUtils.maxLoans(activeUser.getUserid()).toString());
+        remainingLoanLabel.setText(UserUtils.remainingLoans(Integer.valueOf(maxLoanLabel.getText()), activeUser.getUserid()).toString());
         loan();
         reservation();
     }
@@ -160,11 +160,13 @@ public class AccountController implements Initializable {
                     String queryTitle = resultSet.getString("title");
                     Date queryLoandate = resultSet.getDate("loandate");
                     Date queryReturndate = resultSet.getDate("returndate");
-                    loanObservableList.add(new LoanObjectModel( queryLoanid,
+                    loanObservableList.add(new LoanModel( queryLoanid,
                                                                 queryMediaid,
                                                                 queryTitle,
+                                                                null,
                                                                 queryLoandate,
-                                                                queryReturndate
+                                                                queryReturndate,
+                                                                null
                                                                 ));
                     loanLoanidColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
                     loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
@@ -201,10 +203,12 @@ public class AccountController implements Initializable {
                     String queryTitle = resultSet.getString("title");
                     Integer queryReservationid = resultSet.getInt("reservationid");
                     Integer queryQueuenumber = resultSet.getInt("queuenumber");
-                    reservationObservableList.add(new ReservationObjectModel(   queryMediaid,
+                    reservationObservableList.add(new ReservationModel(         queryReservationid,
+                                                                                queryMediaid,
                                                                                 queryTitle,
-                                                                                queryReservationid,
-                                                                                queryQueuenumber
+                                                                                null,
+                                                                                queryQueuenumber,
+                                                                                null
                                                                                 ));
                     resMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
                     resTitleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
