@@ -32,13 +32,17 @@ public class LoanController implements Initializable {
                                                     directorColumn, actorColumn, countryColumn, ratingColumn,
                                                     availableColumn;
     @FXML
-    private TableColumn<LoanModel, Integer> loanLoanIdColumn, loanMediaIdColumn, loanUserIdColumn, loanReturnedColumn;
+    private TableColumn<LoanModel, Integer> loanLoanIdColumn, loanMediaIdColumn;
     @FXML
     private TableColumn<LoanModel, Date> loanLoanDateColumn, loanReturnDateColumn;
     @FXML
-    private TableColumn<ReservationModel, Integer> resResIdColumn, resMediaIdColumn, resUserIdColumn, resQueueColumn;
+    private TableColumn<LoanModel, String> loanTitleColumn;
+    @FXML
+    private TableColumn<ReservationModel, Integer> resResIdColumn, resMediaIdColumn, resQueueColumn;
     @FXML
     private TableColumn<ReservationModel, Date> resResDateColumn;
+    @FXML
+    private TableColumn<ReservationModel, String> resTitleColumn;
     @FXML
     private TextField searchTextField;
     @FXML
@@ -195,7 +199,7 @@ public class LoanController implements Initializable {
         reservationModelObservableList.addAll(reservationModelArrayList);
         resResIdColumn.setCellValueFactory((new PropertyValueFactory<>("reservationid")));
         resMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
-        resUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
+        resTitleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
         resQueueColumn.setCellValueFactory((new PropertyValueFactory<>("queuenumber")));
         resResDateColumn.setCellValueFactory((new PropertyValueFactory<>("reservationdate")));
         reserveTableView.setItems(reservationModelObservableList);
@@ -206,10 +210,9 @@ public class LoanController implements Initializable {
         loanModelObservableList.addAll(loanModelArrayList);
         loanLoanIdColumn.setCellValueFactory((new PropertyValueFactory<>("loanid")));
         loanMediaIdColumn.setCellValueFactory((new PropertyValueFactory<>("mediaid")));
-        loanUserIdColumn.setCellValueFactory((new PropertyValueFactory<>("userid")));
+        loanTitleColumn.setCellValueFactory((new PropertyValueFactory<>("title")));
         loanLoanDateColumn.setCellValueFactory((new PropertyValueFactory<>("loandate")));
         loanReturnDateColumn.setCellValueFactory((new PropertyValueFactory<>("returndate")));
-        loanReturnedColumn.setCellValueFactory((new PropertyValueFactory<>("returned")));
         loanTableView.setItems((loanModelObservableList));
     }
 }

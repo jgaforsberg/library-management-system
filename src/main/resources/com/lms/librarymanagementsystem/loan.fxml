@@ -12,6 +12,7 @@
 <?import javafx.scene.text.Font?>
 
 <!--suppress ALL -->
+
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1500.0" style="-fx-background-color: #011B3E;" xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.librarymanagementsystem.controllers.LoanController">
    <children>
       <TableView fx:id="searchTableView" layoutX="25.0" layoutY="100.0" prefHeight="400.0" prefWidth="1450.0" style="-fx-cursor: hand;">
@@ -41,21 +42,20 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <TableView fx:id="loanTableView" layoutX="225.0" layoutY="540.0" prefHeight="200.0" prefWidth="480.0" style="-fx-cursor: hand;">
+      <TableView fx:id="loanTableView" layoutX="264.0" layoutY="540.0" prefHeight="200.0" style="-fx-cursor: hand;">
         <columns>
           <TableColumn fx:id="loanLoanIdColumn" maxWidth="80.0" minWidth="80.0" text="Lån ID" />
           <TableColumn fx:id="loanMediaIdColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
-            <TableColumn fx:id="loanUserIdColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
+            <TableColumn fx:id="loanTitleColumn" maxWidth="80.0" minWidth="80.0" text="Titel" />
             <TableColumn fx:id="loanLoanDateColumn" maxWidth="80.0" minWidth="80.0" text="Låndatum" />
             <TableColumn fx:id="loanReturnDateColumn" maxWidth="80.0" minWidth="80.0" text="Returdatum" />
-            <TableColumn fx:id="loanReturnedColumn" prefWidth="75.0" text="Återlämnad" />
         </columns>
       </TableView>
       <TableView fx:id="reserveTableView" layoutX="740.0" layoutY="540.0" prefHeight="200.0" prefWidth="400.0" style="-fx-cursor: hand;">
         <columns>
           <TableColumn fx:id="resResIdColumn" maxWidth="80.0" minWidth="80.0" text="Res.ID" />
           <TableColumn fx:id="resMediaIdColumn" maxWidth="80.0" minWidth="80.0" text="Media ID" />
-            <TableColumn fx:id="resUserIdColumn" maxWidth="80.0" minWidth="80.0" text="User ID" />
+            <TableColumn fx:id="resTitleColumn" maxWidth="80.0" minWidth="80.0" text="Titel" />
             <TableColumn fx:id="resQueueColumn" maxWidth="80.0" minWidth="80.0" text="Könummer" />
             <TableColumn fx:id="resResDateColumn" maxWidth="80.0" minWidth="80.0" text="Res.Datum" />
         </columns>

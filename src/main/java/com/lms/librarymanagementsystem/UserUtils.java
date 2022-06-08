@@ -44,7 +44,7 @@ public class UserUtils extends DBUtils{
     return reservationModelArrayList;
     }
 //  Method returning users loans as ArrayList of loan objects
-    public static ArrayList<MediaModel>  loan(Integer userid)    {
+    public static ArrayList<MediaModel> loan(Integer userid)    {
         ArrayList<MediaModel> loanModelArrayList = new ArrayList<>();
         Connection connection = null;
         PreparedStatement psFetchLoans = null;
