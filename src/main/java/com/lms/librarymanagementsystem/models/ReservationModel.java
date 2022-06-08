@@ -16,6 +16,14 @@ public class ReservationModel extends MediaModel{
         this.queuenumber = queuenumber;
         this.reservationdate = reservationdate;
     }
+
+    public ReservationModel(Integer reservationid, Integer mediaid, String title, Integer queuenumber, Date reservationdate) {
+        super(mediaid, title);
+        this.reservationid = reservationid;
+        this.queuenumber = queuenumber;
+        this.reservationdate = reservationdate;
+    }
+
     public Integer getReservationid() {return reservationid;}
     public Integer getUserid() {return userid;}
     public Integer getQueuenumber() {return queuenumber;}

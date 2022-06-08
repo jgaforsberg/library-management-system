@@ -1,11 +1,13 @@
 package com.lms.librarymanagementsystem;
 
+import com.lms.librarymanagementsystem.models.MediaModel;
 import javafx.scene.control.Alert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ArticleUtils extends DBUtils{
     //  Add new media to database
@@ -239,5 +241,45 @@ public class ArticleUtils extends DBUtils{
             closeDBLink(connection, psCheckFormat, resultSet);
         }
         return queryFormat;
+    }
+//  Method returning ArrayList of media objects for search function
+    public static ArrayList<MediaModel> search()    {
+        ArrayList<MediaModel> mediaModelArrayList = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement psFetchArticles = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psFetchArticles = connection.prepareStatement(
+                    "SELECT mediaid, title, format, category, description, publisher, edition, author, isbn, director, actor, country, rating, available FROM media;"
+            );
+            resultSet = psFetchArticles.executeQuery();
+            while (resultSet.next())    {
+                Integer queryMediaId = resultSet.getInt("mediaid");
+                String queryTitle = resultSet.getString("title");
+                String queryFormat = resultSet.getString("format");
+                String queryCategory = resultSet.getString("category");
+                String queryDescription = resultSet.getString("description");
+                String queryPublisher = resultSet.getString("publisher");
+                String queryEdition = resultSet.getString("edition");
+                String queryAuthor = resultSet.getString("author");
+                String queryIsbn = resultSet.getString("isbn");
+                String queryDirector = resultSet.getString("director");
+                String queryActor = resultSet.getString("actor");
+                String queryCountry = resultSet.getString("country");
+                String queryRating = resultSet.getString("rating");
+                String queryAvailable = resultSet.getString("available");
+                mediaModelArrayList.add(new MediaModel(     queryMediaId, queryTitle, queryFormat, queryCategory, queryDescription,
+                                                            queryPublisher, queryEdition, queryAuthor, queryIsbn,
+                                                            queryDirector, queryActor, queryCountry, queryRating, queryAvailable));
+            }
+        }catch (SQLException e) {
+            System.out.println("Kan ej ladda mediaartiklar till sökfältet!");
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection,psFetchArticles, resultSet);
+        }
+    return mediaModelArrayList;
     }
 }

@@ -21,6 +21,12 @@ public class LoanModel extends MediaModel{
         this.returndate = returndate;
         this.returned = returned;
     }
+    public LoanModel(Integer loanid, Integer mediaid, String title, Date loandate, Date returndate)  {
+        super(mediaid, title);
+        this.loanid = loanid;
+        this.loandate = loandate;
+        this.returndate = returndate;
+    }
     public Integer getLoanid() {return loanid;}
     public Integer getUserid() {return userid;}
     public Date getLoandate() {return loandate;}

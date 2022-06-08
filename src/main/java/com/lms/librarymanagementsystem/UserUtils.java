@@ -1,13 +1,82 @@
 package com.lms.librarymanagementsystem;
 
+import com.lms.librarymanagementsystem.models.LoanModel;
+import com.lms.librarymanagementsystem.models.MediaModel;
+import com.lms.librarymanagementsystem.models.ReservationModel;
 import javafx.scene.control.Alert;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class UserUtils extends DBUtils{
+//  Method of returning users reservations as ArrayList of reservation objects
+    public static ArrayList<MediaModel> reservation(Integer userid) {
+        ArrayList<MediaModel> reservationModelArrayList = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement psFetchReservations = null;
+        ResultSet resultSet = null;
+        try {
+            connection = getDBLink();
+            psFetchReservations = connection.prepareStatement("SELECT reservation.reservationid, reservation.mediaid, media.title, reservation.queuenumber, reservation.reservationdate FROM media JOIN reservation on media.mediaid = reservation.mediaid WHERE userid = ?;");
+            psFetchReservations.setInt(1, userid);
+            resultSet = psFetchReservations.executeQuery();
+            while (resultSet.next())    {
+                Integer queryReservationid = resultSet.getInt("reservationid");
+                Integer queryMediaid = resultSet.getInt("mediaid");
+                String queryTitle = resultSet.getString("title");
+                Integer queryQueueNumber = resultSet.getInt("queuenumber");
+                Date queryReservationdate = resultSet.getDate("reservationdate");
+//              The ArrayList<MediaModel> is populated by subclass objects, i.e., ReservationModel objects. Example of downcasting
+                reservationModelArrayList.add(new ReservationModel( queryReservationid,
+                                                                    queryMediaid,
+                                                                    queryTitle,
+                                                                    queryQueueNumber,
+                                                                    queryReservationdate));
+            }
+        }catch (SQLException e) {
+            System.out.println("Kan ej ladda reservationer till tabellen! ");
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection,psFetchReservations,resultSet);
+    }
+
+    return reservationModelArrayList;
+    }
+//  Method returning users loans as ArrayList of loan objects
+    public static ArrayList<MediaModel>  loan(Integer userid)    {
+        ArrayList<MediaModel> loanModelArrayList = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement psFetchLoans = null;
+        ResultSet resultSet = null;
+        try{
+            connection = getDBLink();
+            psFetchLoans = connection.prepareStatement( "SELECT loan.loanid, loan.mediaid, media.title, loan.loandate, loan.returndate FROM media " +
+                    "JOIN loan ON media.mediaid = loan.mediaid WHERE userid = ?;");
+            psFetchLoans.setInt(1, userid);
+            resultSet = psFetchLoans.executeQuery();
+            while (resultSet.next())    {
+                Integer queryLoanid = resultSet.getInt("loanid");
+                Integer queryMediaid = resultSet.getInt("mediaid");
+                String queryTitle = resultSet.getString("title");
+                java.sql.Date queryLoandate = resultSet.getDate("loandate");
+                java.sql.Date queryReturndate = resultSet.getDate("returndate");
+//              The ArrayList<MediaModel> is populated by subclass objects, i.e., LoanModel objects. Example of downcasting
+                loanModelArrayList.add(new LoanModel(   queryLoanid,
+                                                        queryMediaid,
+                                                        queryTitle,
+                                                        queryLoandate,
+                                                        queryReturndate));
+            }
+        }catch (SQLException e) {
+            System.out.println("Kan ej ladda lån till tabellen! ");
+            e.printStackTrace();
+            e.getCause();
+        }finally {
+            closeDBLink(connection, psFetchLoans, resultSet);
+        }
+        return loanModelArrayList;
+    }
     //  Fetches the email of a user with overdue loans
     protected static String getOverdueUser()  {
         String overdueUser = "";
